@@ -2,7 +2,7 @@
   <nav class="sidebar glass" aria-label="Navegação principal">
     <div class="brand desktop-only">
       <i class="uil uil-book-reader" aria-hidden="true"></i>
-      <span>Bíblia 365</span>
+      <span>Pão diário</span>
     </div>
 
     <div class="nav-links">
@@ -31,16 +31,20 @@
         <i class="uil uil-setting" aria-hidden="true"></i>
         <span>Ajustes</span>
       </a>
+      <button type="button" class="nav-item mobile-only nav-logout" (click)="logout()">
+        <i class="uil uil-sign-out-alt" aria-hidden="true"></i>
+        <span>Sair</span>
+      </button>
     </div>
 
     <div class="sidebar-footer desktop-only">
-      <div class="profile-pic">
-        <img src="https://i.pravatar.cc/150?img=11" alt="" width="44" height="44" />
+      <div class="profile-block">
         <div class="profile-info">
-          <span class="name">{{ userName }} Silva</span>
+          <span class="name">{{ auth.user()?.name ?? 'Visitante' }}</span>
           <span class="plan">Plano não definido</span>
         </div>
       </div>
+      <button type="button" class="btn-logout" (click)="logout()">Sair</button>
     </div>
   </nav>
 

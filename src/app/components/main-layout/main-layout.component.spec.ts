@@ -1,13 +1,34 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { routes } from '../../app.routes';
+import { AuthService } from '../../services/auth.service';
 import { MainLayoutComponent } from './main-layout.component';
 
 describe('MainLayoutComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MainLayoutComponent],
-      providers: [provideRouter(routes)]
+      providers: [
+        provideRouter(routes),
+        {
+          provide: AuthService,
+          useValue: {
+            user: signal({
+              id: 1,
+              name: 'João Silva',
+              email: 'j@x.com',
+              username: 'joao'
+            }),
+            isAuthenticated: () => true,
+            fetchProfile: () => of(null),
+            logout: () => {
+              /* noop */
+            }
+          }
+        }
+      ]
     }).compileComponents();
   });
 
@@ -24,8 +45,10 @@ describe('MainLayoutComponent', () => {
     expect(el.querySelector('main.main-content router-outlet')).not.toBeNull();
   });
 
-  it('should expose profile user name for sidebar', () => {
+  it('should show app brand name', () => {
     const fixture = TestBed.createComponent(MainLayoutComponent);
-    expect(fixture.componentInstance.userName).toBe('João');
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.textContent).toContain('Pão diário');
   });
 });

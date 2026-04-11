@@ -2,3 +2,40 @@
   display: block;
   min-height: 100vh;
 }
+
+button.nav-item {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+
+.nav-logout {
+  color: var(--text-secondary);
+}
+
+.btn-logout {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(239, 68, 68, 0.08);
+  }
+}

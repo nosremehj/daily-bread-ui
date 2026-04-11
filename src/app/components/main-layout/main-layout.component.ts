@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { afterNextRender, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -9,5 +10,17 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './main-layout.component.scss'
 })
 export class MainLayoutComponent {
-  readonly userName = 'João';
+  readonly auth = inject(AuthService);
+
+  constructor() {
+    afterNextRender(() => {
+      if (this.auth.isAuthenticated()) {
+        this.auth.fetchProfile().subscribe();
+      }
+    });
+  }
+
+  logout(): void {
+    this.auth.logout();
+  }
 }

@@ -35,7 +35,7 @@ $daily-theme: mat.define-light-theme((
 // that you are using.
 @include mat.all-component-themes($daily-theme);
 
-/* Bíblia 365 — design tokens e layout (baseado em docs/style.css) */
+/* Pão diário — design tokens e layout (baseado em docs/style.css) */
 :root {
   --bg-color: #0a0d14;
   --text-primary: #ffffff;
@@ -247,14 +247,6 @@ p {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
-}
-
-.profile-pic img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid var(--accent-purple);
-  padding: 2px;
 }
 
 .progress-section,
@@ -647,15 +639,8 @@ p {
     width: 100%;
   }
 
-  .sidebar .profile-pic {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .sidebar .profile-pic img {
-    width: 44px;
-    height: 44px;
+  .sidebar .profile-block {
+    min-width: 0;
   }
 
   .profile-info {

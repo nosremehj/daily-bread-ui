@@ -1,0 +1,84 @@
+<header class="page-header">
+  <h1>Perfil e conta</h1>
+  <p class="subtitle">
+    Atualize nome, e-mail e usuário de login. A troca de senha é feita em um passo à parte, por segurança.
+  </p>
+</header>
+
+@if (successMessage(); as msg) {
+  <p class="banner-success" role="status">{{ msg }}</p>
+}
+
+@if (serverError(); as err) {
+  <p class="banner-error" role="alert">{{ err }}</p>
+}
+
+<section class="card glass" aria-labelledby="profile-form-heading">
+  <h2 id="profile-form-heading" class="section-title">Dados da conta</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <label class="field">
+      <span class="field-label">Nome</span>
+      <input
+        type="text"
+        formControlName="name"
+        autocomplete="name"
+        class="input"
+        [class.invalid]="form.controls.name.invalid && form.controls.name.touched"
+      />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+        <span class="field-error">Informe seu nome.</span>
+      }
+    </label>
+
+    <label class="field">
+      <span class="field-label">E-mail</span>
+      <input
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        class="input"
+        [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
+      />
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <span class="field-error">Informe um e-mail válido.</span>
+      }
+    </label>
+
+    <label class="field">
+      <span class="field-label">Usuário (login)</span>
+      <input
+        type="text"
+        formControlName="username"
+        autocomplete="username"
+        class="input"
+        [class.invalid]="form.controls.username.invalid && form.controls.username.touched"
+      />
+      @if (form.controls.username.invalid && form.controls.username.touched) {
+        <span class="field-error">Mínimo 3 caracteres, máximo 64.</span>
+      }
+      <span class="field-hint"
+        >Se alterar o usuário, a sessão será renovada automaticamente após salvar.</span
+      >
+    </label>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary inline" [disabled]="saving()">
+        @if (saving()) {
+          <span>Salvando…</span>
+        } @else {
+          <span>Salvar alterações</span>
+        }
+      </button>
+      <button type="button" class="btn-outline" (click)="openPasswordModal()">
+        Alterar senha…
+      </button>
+    </div>
+  </form>
+</section>
+
+<app-change-password-modal
+  [open]="passwordModalOpen()"
+  (dismiss)="closePasswordModal()"
+  (passwordChanged)="onPasswordChanged()"
+/>
