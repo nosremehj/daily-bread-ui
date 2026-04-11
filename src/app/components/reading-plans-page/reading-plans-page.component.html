@@ -1,0 +1,68 @@
+<header class="page-header">
+  <h1>Plano de leitura</h1>
+  <p class="subtitle">Importe um PDF ou veja os planos já disponíveis neste dispositivo.</p>
+</header>
+
+<section class="actions-bar glass" aria-label="Ações">
+  <button type="button" class="btn-primary inline" (click)="openUploadModal()">
+    <i class="uil uil-upload" aria-hidden="true"></i>
+    Enviar plano (PDF)
+  </button>
+  <button type="button" class="btn-ghost" (click)="refreshPlans()" [disabled]="loading()">
+    @if (loading()) {
+      Atualizando…
+    } @else {
+      Atualizar lista
+    }
+  </button>
+</section>
+
+@if (loadError(); as err) {
+  <p class="banner-error" role="alert">{{ err }}</p>
+}
+
+<section class="plans-section" aria-labelledby="plans-heading">
+  <h2 id="plans-heading" class="section-title">Planos disponíveis</h2>
+
+  @if (loading() && plans() === null) {
+    <p class="muted">Carregando…</p>
+  } @else {
+    @if (plans(); as list) {
+      @if (list.length === 0) {
+        <div class="empty glass">
+          <p>Nenhum plano importado ainda.</p>
+          <p class="muted small">Use “Enviar plano” para importar um PDF.</p>
+        </div>
+      } @else {
+        <ul class="plan-list">
+          @for (p of list; track p.id) {
+            <li class="plan-card glass">
+              <div class="plan-card-main">
+                <span class="plan-name">{{ p.originalFilename }}</span>
+                <span class="plan-meta">
+                  {{ p.dayCount }} dias · importado em
+                  {{ p.importedAt | date: 'short' }}
+                </span>
+              </div>
+              <button type="button" class="btn-outline" (click)="openPlanDetail(p.id)">
+                Ver plano
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    }
+  }
+</section>
+
+<app-upload-plan-modal
+  [open]="uploadModalOpen()"
+  (openChange)="onUploadModalChange($event)"
+  (uploaded)="onUploaded()"
+/>
+
+<app-plan-detail-modal
+  [open]="detailModalOpen()"
+  [planId]="detailPlanId()"
+  (openChange)="onDetailModalChange($event)"
+/>

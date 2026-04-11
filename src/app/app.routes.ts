@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { HomeComponent } from './components/home/home.component';
 import { PlaceholderPageComponent } from './components/placeholder-page/placeholder-page.component';
+import { ReadingPlansPageComponent } from './components/reading-plans-page/reading-plans-page.component';
 
 export const routes: Routes = [
   {
@@ -10,6 +11,7 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'home' },
       { path: 'home', component: HomeComponent },
+      { path: 'reading-plans', component: ReadingPlansPageComponent },
       {
         path: 'bible',
         component: PlaceholderPageComponent,

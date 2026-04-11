@@ -1,0 +1,74 @@
+@if (open) {
+  <div class="overlay" (click)="onOverlayClick()" aria-hidden="true"></div>
+  <div
+    class="modal glass"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="plan-detail-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <div class="modal-titles">
+        <h2 id="plan-detail-title">Conteúdo do plano</h2>
+        @if (detail(); as d) {
+          <p class="filename">{{ d.originalFilename }}</p>
+          <p class="meta">
+            Importado em {{ d.importedAt | date: 'short' }} · {{ d.days.length }} dias
+          </p>
+        }
+      </div>
+      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+        <i class="uil uil-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    @if (loading()) {
+      <p class="state-msg">Carregando leituras…</p>
+    } @else {
+      @if (errorMessage(); as err) {
+        <p class="state-msg error" role="alert">{{ err }}</p>
+        <div class="footer-actions">
+          <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+        </div>
+      } @else {
+        @if (detail(); as plan) {
+          <div class="table-scroll" tabindex="0">
+            <table class="days-table">
+              <thead>
+                <tr>
+                  <th scope="col">Dia</th>
+                  <th scope="col">Leitura</th>
+                  <th scope="col" class="hide-narrow">Livro</th>
+                  <th scope="col" class="hide-narrow">Capítulos</th>
+                  <th scope="col">Feito</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (day of plan.days; track day.id) {
+                  <tr>
+                    <td>{{ day.dayNumber }}</td>
+                    <td class="reading-cell">{{ day.readingText }}</td>
+                    <td class="hide-narrow">{{ day.bookName }}</td>
+                    <td class="hide-narrow nowrap">
+                      {{ day.startChapter }}–{{ day.endChapter }}
+                    </td>
+                    <td>
+                      @if (day.completed) {
+                        <span class="badge done">Sim</span>
+                      } @else {
+                        <span class="badge">Não</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="footer-actions">
+            <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+          </div>
+        }
+      }
+    }
+  </div>
+}

@@ -1,0 +1,52 @@
+@if (open) {
+  <div class="overlay" (click)="onOverlayClick()" aria-hidden="true"></div>
+  <div
+    class="modal glass"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="upload-dialog-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <h2 id="upload-dialog-title">Importar plano em PDF</h2>
+      <button type="button" class="btn-icon" (click)="close()" [disabled]="uploading()" aria-label="Fechar">
+        <i class="uil uil-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <p class="hint">
+      Envie um PDF com texto selecionável. PDFs apenas com imagem não podem ser importados.
+    </p>
+    <div class="field">
+      <label for="plan-pdf-file" class="file-label">Arquivo</label>
+      <input
+        #fileInput
+        id="plan-pdf-file"
+        type="file"
+        accept="application/pdf,.pdf"
+        [disabled]="uploading()"
+        (change)="onFilePicked($event)"
+      />
+    </div>
+    @if (selectedFile(); as f) {
+      <p class="file-meta">{{ f.name }} · {{ f.size | number }} bytes</p>
+    }
+    @if (errorMessage(); as err) {
+      <p class="error" role="alert">{{ err }}</p>
+    }
+    <div class="actions">
+      <button type="button" class="btn-secondary" (click)="close()" [disabled]="uploading()">Cancelar</button>
+      <button
+        type="button"
+        class="btn-primary inline"
+        (click)="submit()"
+        [disabled]="!selectedFile() || uploading()"
+      >
+        @if (uploading()) {
+          <span>Enviando…</span>
+        } @else {
+          <span>Importar</span>
+        }
+      </button>
+    </div>
+  </div>
+}
