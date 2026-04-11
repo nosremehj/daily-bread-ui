@@ -1,0 +1,46 @@
+<div class="layout-wrapper">
+  <nav class="sidebar glass" aria-label="Navegação principal">
+    <div class="brand desktop-only">
+      <i class="uil uil-book-reader" aria-hidden="true"></i>
+      <span>Bíblia 365</span>
+    </div>
+
+    <div class="nav-links">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-item"
+      >
+        <i class="uil uil-home-alt" aria-hidden="true"></i>
+        <span>Início</span>
+      </a>
+      <a routerLink="/bible" routerLinkActive="active" class="nav-item">
+        <i class="uil uil-book-open" aria-hidden="true"></i>
+        <span>Bíblia</span>
+      </a>
+      <a routerLink="/statistics" routerLinkActive="active" class="nav-item">
+        <i class="uil uil-chart-pie-alt" aria-hidden="true"></i>
+        <span>Estatísticas</span>
+      </a>
+      <a routerLink="/settings" routerLinkActive="active" class="nav-item">
+        <i class="uil uil-setting" aria-hidden="true"></i>
+        <span>Ajustes</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer desktop-only">
+      <div class="profile-pic">
+        <img src="https://i.pravatar.cc/150?img=11" alt="" width="44" height="44" />
+        <div class="profile-info">
+          <span class="name">{{ userName }} Silva</span>
+          <span class="plan">Plano Anual</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet />
+  </main>
+</div>
