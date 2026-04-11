@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bíblia 365 - Plano de Leitura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="layout-wrapper">
+        
+        <!-- SIDEBAR (Desktop) / BOTTOM NAV (Mobile) -->
+        <nav class="sidebar glass">
+            <div class="brand desktop-only">
+                <i class="uil uil-book-reader"></i>
+                <span>Bíblia 365</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#" class="nav-item active">
+                    <i class="uil uil-home-alt"></i>
+                    <span>Início</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="uil uil-book-open"></i>
+                    <span>Bíblia</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="uil uil-chart-pie-alt"></i>
+                    <span>Estatísticas</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="uil uil-setting"></i>
+                    <span>Ajustes</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer desktop-only">
+                <div class="profile-pic">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Perfil">
+                    <div class="profile-info">
+                        <span class="name">João Silva</span>
+                        <span class="plan">Plano Anual</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN DASHBOARD CONTENT -->
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="header">
+                <div class="user-info">
+                    <h1>Olá, João 👋</h1>
+                    <p>10 de Abril, Quinta-feira</p>
+                </div>
+                <div class="profile-pic mobile-only">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Perfil">
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                
+                <!-- LEFT COLUMN: PROGRESS & CALENDAR -->
+                <div class="dashboard-left">
+                    <section class="progress-section">
+                        <div class="progress-card glass">
+                            <div class="progress-info">
+                                <h2>Seu Progresso Anual</h2>
+                                <p>Continue firme, você está indo super bem! Mantendo o ritmo, terminaremos no final do ano.</p>
+                                <div class="stats">
+                                    <span class="streak"><i class="uil uil-fire"></i> 12 Dias Seguidos</span>
+                                    <span class="days-left"><i class="uil uil-calendar-alt"></i>&nbsp; 265 dias restantes</span>
+                                </div>
+                            </div>
+                            <div class="progress-ring-container">
+                                <svg class="progress-ring" width="120" height="120">
+                                    <circle class="ring-track" stroke-width="12" fill="transparent" r="48" cx="60" cy="60"/>
+                                    <circle class="ring-progress" stroke-width="12" fill="transparent" r="48" cx="60" cy="60" stroke-dasharray="301" stroke-dashoffset="217"/>
+                                </svg>
+                                <div class="progress-text">28%</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="calendar-section">
+                        <div class="section-header">
+                            <h3>Essa Semana</h3>
+                            <a href="#" class="view-all desktop-only">Ver calendário completo</a>
+                        </div>
+                        <div class="days-row">
+                            <div class="day-item completed">
+                                <span class="day-name">D</span>
+                                <span class="day-num">6</span>
+                                <div class="indicator"><i class="uil uil-check"></i></div>
+                            </div>
+                            <div class="day-item completed">
+                                <span class="day-name">S</span>
+                                <span class="day-num">7</span>
+                                <div class="indicator"><i class="uil uil-check"></i></div>
+                            </div>
+                            <div class="day-item completed">
+                                <span class="day-name">T</span>
+                                <span class="day-num">8</span>
+                                <div class="indicator"><i class="uil uil-check"></i></div>
+                            </div>
+                            <div class="day-item completed">
+                                <span class="day-name">Q</span>
+                                <span class="day-num">9</span>
+                                <div class="indicator"><i class="uil uil-check"></i></div>
+                            </div>
+                            <div class="day-item active">
+                                <span class="day-name">Q</span>
+                                <span class="day-num">10</span>
+                                <div class="indicator dot"></div>
+                            </div>
+                            <div class="day-item">
+                                <span class="day-name">S</span>
+                                <span class="day-num">11</span>
+                                <div class="indicator"></div>
+                            </div>
+                            <div class="day-item">
+                                <span class="day-name">S</span>
+                                <span class="day-num">12</span>
+                                <div class="indicator"></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                
+                <!-- RIGHT COLUMN: TODAY'S READING -->
+                <div class="dashboard-right">
+                    <section class="today-section">
+                        <div class="section-header">
+                            <h3>Leitura de Hoje</h3>
+                            <span class="time-est glass-pill"><i class="uil uil-clock"></i> 15 min</span>
+                        </div>
+
+                        <div class="reading-card glass accent">
+                            <div class="reading-bg-pattern"></div>
+                            <div class="reading-content">
+                                <div class="book-info">
+                                    <span class="testament">Antigo Testamento</span>
+                                    <h2>Gênesis 1-3</h2>
+                                    <p>O Princípio da Criação e a Queda do Homem.</p>
+                                </div>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"><i class="uil uil-check"></i></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="reading-card glass">
+                            <div class="reading-content">
+                                <div class="book-info">
+                                    <span class="testament">Novo Testamento</span>
+                                    <h2>Mateus 1</h2>
+                                    <p>A Genealogia de Jesus Cristo e o Nascimento.</p>
+                                </div>
+                                <label class="custom-checkbox">
+                                    <input type="checkbox">
+                                    <span class="checkmark"><i class="uil uil-check"></i></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-primary desktop-only">Começar Leitura de Hoje</button>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

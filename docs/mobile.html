@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bíblia 365 - Mobile App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="mobile-style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="user-info">
+                <h1>Olá, João 👋</h1>
+                <p>10 de Abril, Quinta-feira</p>
+            </div>
+            <div class="profile-pic">
+                <img src="https://i.pravatar.cc/150?img=11" alt="Perfil">
+            </div>
+        </header>
+
+        <!-- PROGRESS SECTION -->
+        <section class="progress-section">
+            <div class="progress-card glass">
+                <div class="progress-info">
+                    <h2>Seu Progresso</h2>
+                    <p>Continue firme!</p>
+                    <div class="stats">
+                        <span class="streak"><i class="uil uil-fire"></i> 12 Dias Seguidos</span>
+                        <span class="days-left"><i class="uil uil-calendar-alt"></i> 265 restam</span>
+                    </div>
+                </div>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" width="80" height="80">
+                        <circle class="ring-track" stroke-width="8" fill="transparent" r="32" cx="40" cy="40"/>
+                        <circle class="ring-progress" stroke-width="8" fill="transparent" r="32" cx="40" cy="40" stroke-dasharray="201" stroke-dashoffset="145"/>
+                    </svg>
+                    <div class="progress-text">28%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WEEKLY CALENDAR -->
+        <section class="calendar-section">
+            <div class="calendar-header">
+                <h3>Essa Semana</h3>
+            </div>
+            <div class="days-row">
+                <div class="day-item completed">
+                    <span class="day-name">D</span>
+                    <span class="day-num">6</span>
+                    <div class="indicator"><i class="uil uil-check"></i></div>
+                </div>
+                <div class="day-item completed">
+                    <span class="day-name">S</span>
+                    <span class="day-num">7</span>
+                    <div class="indicator"><i class="uil uil-check"></i></div>
+                </div>
+                <div class="day-item completed">
+                    <span class="day-name">T</span>
+                    <span class="day-num">8</span>
+                    <div class="indicator"><i class="uil uil-check"></i></div>
+                </div>
+                <div class="day-item completed">
+                    <span class="day-name">Q</span>
+                    <span class="day-num">9</span>
+                    <div class="indicator"><i class="uil uil-check"></i></div>
+                </div>
+                <div class="day-item active">
+                    <span class="day-name">Q</span>
+                    <span class="day-num">10</span>
+                    <div class="indicator dot"></div>
+                </div>
+                <div class="day-item">
+                    <span class="day-name">S</span>
+                    <span class="day-num">11</span>
+                    <div class="indicator"></div>
+                </div>
+                <div class="day-item">
+                    <span class="day-name">S</span>
+                    <span class="day-num">12</span>
+                    <div class="indicator"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TODAY'S READING -->
+        <section class="today-section">
+            <div class="section-header">
+                <h3>Leitura de Hoje</h3>
+                <span class="time-est"><i class="uil uil-clock"></i> 15 min</span>
+            </div>
+
+            <div class="reading-card glass accent">
+                <div class="reading-bg-pattern"></div>
+                <div class="reading-content">
+                    <div class="book-info">
+                        <span class="testament">Antigo Testamento</span>
+                        <h2>Gênesis 1-3</h2>
+                        <p>O Princípio da Criação.</p>
+                    </div>
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"><i class="uil uil-check"></i></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="reading-card glass">
+                <div class="reading-content">
+                    <div class="book-info">
+                        <span class="testament">Novo Testamento</span>
+                        <h2>Mateus 1</h2>
+                        <p>A Genealogia de Jesus Cristo.</p>
+                    </div>
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"><i class="uil uil-check"></i></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav glass">
+            <a href="#" class="nav-item active">
+                <i class="uil uil-home-alt"></i>
+                <span>Início</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="uil uil-book-open"></i>
+                <span>Bíblia</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="uil uil-chart-pie-alt"></i>
+                <span>Estatísticas</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="uil uil-setting"></i>
+                <span>Ajustes</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>
