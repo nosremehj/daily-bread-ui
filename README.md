@@ -1,27 +1,71 @@
-# Daily
+# Pão diário — frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Interface web do **Daily Bread**: plano de leitura bíblica, autenticação (login, cadastro, perfil) e importação de planos em PDF. SPA em português (pt-BR).
 
-## Development server
+## Stack
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- [Angular](https://angular.io/) 17, TypeScript
+- [Angular Material](https://material.angular.io/) + CDK
+- SSR com Express (`@angular/ssr`)
 
-## Code scaffolding
+## API (backend)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+O backend é uma API REST **Spring Boot** (repositório separado). O frontend **não** fixa URLs completas nos serviços: a base vem de `src/environments/`.
 
-## Build
+| Ambiente | URL base da API |
+|----------|-----------------|
+| Produção | `https://api-daily-bread.onrender.com` |
+| Desenvolvimento local | `http://localhost:9090` |
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Prefixo REST: `/api/v1` (ex.: `/api/v1/auth/login`, `/api/v1/reading-plans`).
 
-## Running unit tests
+### Frontend em produção
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+A aplicação está hospedada na **Vercel**: [https://daily-bread-ui.vercel.app](https://daily-bread-ui.vercel.app)
 
-## Running end-to-end tests
+O build de produção usa `environment.prod.ts` e aponta para a API no Render. Se aparecer erro de **CORS** no navegador, o ajuste é no backend (origens permitidas), não só no Angular.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Pré-requisitos
 
-## Further help
+- Node.js (recomendado: LTS compatível com o Angular 17)
+- npm
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Scripts
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm start` ou `npm run start:local` | Dev server (`ng serve`) com API em **localhost:9090** |
+| `npm run start:remote-api` | Mesmo dev server, mas chamadas para a API no **Render** (útil para testar o back deployado) |
+| `npm run build` | Build de produção (saída em `dist/daily`) |
+| `npm run watch` | Build em modo desenvolvimento com watch |
+| `npm test` | Testes unitários (Karma/Jasmine) |
+| `npm run serve:ssr:daily` | Servir o bundle SSR após `npm run build` (Node em `dist/daily/server`) |
+
+Após `npm start`, abra [http://localhost:4200](http://localhost:4200) (porta padrão do CLI; outra porta pode ser exibida no terminal).
+
+## Variáveis e ambientes
+
+- **Desenvolvimento:** `src/environments/environment.ts` → API local.
+- **Produção (Vercel):** `src/environments/environment.prod.ts` → API Render (substituição via `angular.json` no build).
+- **Dev contra API remota:** `src/environments/environment.remote.ts`, usado pelo script `start:remote-api`.
+
+Há um `.env.example` na raiz com referência às URLs; o Angular não carrega `.env` automaticamente — os valores ficam nos arquivos de environment acima.
+
+## Estrutura útil
+
+- `src/app/services/` — `AuthService`, `ReadingPlanService`, etc.
+- `src/app/interceptors/` — JWT e refresh (`auth.interceptor.ts`)
+- `src/environments/` — URLs base por ambiente
+
+## Documentação adicional
+
+- Integração front/API: `docs/prompts/PROMPT_INTEGRACAO_FRONTEND_API.md`
+- Swagger da API em produção: [https://api-daily-bread.onrender.com/swagger-ui.html](https://api-daily-bread.onrender.com/swagger-ui.html)
+
+## Gerar código (Angular CLI)
+
+```bash
+ng generate component nome-do-componente
+```
+
+Veja `ng help` ou a [documentação do Angular CLI](https://angular.dev/tools/cli).
