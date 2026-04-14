@@ -44,9 +44,14 @@
                   {{ p.importedAt | date: 'short' }}
                 </span>
               </div>
-              <button type="button" class="btn-outline" (click)="openPlanDetail(p.id)">
-                Ver plano
-              </button>
+              <div class="plan-card-actions">
+                <button type="button" class="btn-outline" (click)="openPlanDetail(p.id)">
+                  Ver plano
+                </button>
+                <button type="button" class="btn-primary inline" (click)="openEnrollFromSummary(p)">
+                  Seguir
+                </button>
+              </div>
             </li>
           }
         </ul>
@@ -65,4 +70,12 @@
   [open]="detailModalOpen()"
   [planId]="detailPlanId()"
   (openChange)="onDetailModalChange($event)"
+  (enrollRequest)="onEnrollRequest($event)"
+/>
+
+<app-enroll-plan-modal
+  [open]="enrollModalOpen()"
+  [planId]="enrollPlanId()"
+  [planFilename]="enrollPlanName()"
+  (openChange)="onEnrollModalChange($event)"
 />

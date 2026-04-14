@@ -545,6 +545,10 @@ p {
   .mobile-only {
     display: none !important;
   }
+  /* Vence `.progress-ring-container.mobile-only { display: flex }` fora deste bloco. */
+  .progress-ring-container.mobile-only {
+    display: none !important;
+  }
   .title-desktop {
     display: inline;
   }

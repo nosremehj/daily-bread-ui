@@ -29,6 +29,7 @@ export class PlanDetailModalComponent implements OnChanges {
   @Input() planId: number | null = null;
 
   @Output() openChange = new EventEmitter<boolean>();
+  @Output() enrollRequest = new EventEmitter<{ id: number; filename: string }>();
 
   readonly detail = signal<ReadingPlanDetail | null>(null);
   readonly loading = signal(false);
@@ -86,5 +87,13 @@ export class PlanDetailModalComponent implements OnChanges {
 
   close(): void {
     this.openChange.emit(false);
+  }
+
+  requestEnroll(): void {
+    const id = this.planId;
+    const d = this.detail();
+    if (id != null && d) {
+      this.enrollRequest.emit({ id, filename: d.originalFilename });
+    }
   }
 }

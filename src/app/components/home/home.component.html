@@ -1,17 +1,143 @@
 <header class="header">
   <div class="user-info">
     <h1>Olá, {{ userName() }} 👋</h1>
-    <p>{{ headerDate }}</p>
+    <p>{{ headerDate() }}</p>
   </div>
 </header>
 
-<section class="home-empty glass" aria-labelledby="home-empty-heading">
-  <h2 id="home-empty-heading">Bem-vindo</h2>
-  <p class="home-empty-text">
-    Seu progresso de leitura e as leituras do dia aparecerão aqui quando estiverem disponíveis.
-  </p>
-  <p class="home-empty-hint">
-    Enquanto isso, defina ou importe o seu plano de leitura em PDF.
-  </p>
-  <a routerLink="/reading-plans" class="btn-primary home-cta"> Plano de leitura </a>
-</section>
+@if (loadError(); as err) {
+  <p class="banner-error" role="alert">{{ err }}</p>
+}
+
+@if (loading()) {
+  <p class="muted state-loading">Carregando seu painel…</p>
+} @else {
+  @if (dashboard(); as dash) {
+    <div class="dashboard-grid">
+      <div class="dashboard-left">
+        <section class="progress-section">
+          <div class="progress-card glass">
+            <div class="progress-info">
+              <h2>Seu progresso</h2>
+              <p class="plan-filename">{{ dash.planFilename }}</p>
+              <p class="progress-blurb">
+                Você concluiu {{ dash.completedDays }} de {{ dash.totalPlanDays }} dias do plano. Continue firme no ritmo.
+              </p>
+              <div class="stats">
+                <span class="streak">
+                  <i class="uil uil-fire" aria-hidden="true"></i>
+                  {{ dash.currentStreakDays }} dias seguidos
+                </span>
+                <span class="days-left">
+                  <i class="uil uil-calendar-alt" aria-hidden="true"></i>
+                  {{ dash.daysRemainingInYear }} dias restantes no ano
+                </span>
+              </div>
+            </div>
+            <div class="progress-ring-container" aria-hidden="true">
+              <svg class="progress-ring" width="120" height="120" viewBox="0 0 120 120">
+                <circle class="ring-track" stroke-width="12" fill="transparent" r="48" cx="60" cy="60" />
+                <circle
+                  class="ring-progress"
+                  stroke-width="12"
+                  fill="transparent"
+                  r="48"
+                  cx="60"
+                  cy="60"
+                  [attr.stroke-dasharray]="ringCircumference"
+                  [attr.stroke-dashoffset]="ringDashOffset()"
+                />
+              </svg>
+              <div class="progress-text">{{ progressPercentRounded() }}%</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="calendar-section">
+          <div class="section-header">
+            <h3>Esta semana</h3>
+            <button type="button" class="view-all desktop-only" (click)="openCalendar()">
+              Ver calendário completo
+            </button>
+          </div>
+          <button type="button" class="view-all mobile-only week-mobile-link" (click)="openCalendar()">
+            Ver calendário completo
+          </button>
+          <div class="days-row" role="list">
+            @for (d of dash.weekStrip; track d.date) {
+              <div
+                role="listitem"
+                class="day-item"
+                [class.completed]="d.status === 'COMPLETED'"
+                [class.active]="d.status === 'ACTIVE'"
+                [class.missed]="d.status === 'MISSED'"
+                [class.upcoming]="d.status === 'UPCOMING'"
+                [attr.aria-label]="d.weekdayLabel + ' ' + d.dayOfMonth + ', ' + d.status"
+              >
+                <span class="day-name">{{ d.weekdayLabel }}</span>
+                <span class="day-num">{{ d.dayOfMonth }}</span>
+                <div class="indicator" aria-hidden="true">
+                  @if (d.status === 'COMPLETED') {
+                    <i class="uil uil-check"></i>
+                  } @else if (d.status === 'ACTIVE') {
+                    <span class="dot"></span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div class="dashboard-right">
+        <section class="today-section">
+          <div class="section-header">
+            <h3>Leitura de hoje</h3>
+            @if (dash.today.scheduledDayNumber != null) {
+              <span class="time-est glass-pill">Dia {{ dash.today.scheduledDayNumber }}</span>
+            }
+          </div>
+
+          @if (dash.today.blocks.length === 0) {
+            <p class="muted">Não há leituras agendadas para esta data.</p>
+          } @else {
+            @for (block of dash.today.blocks; track block.planDayId; let i = $index) {
+              <div class="reading-card glass" [class.accent]="i === 0">
+                @if (i === 0) {
+                  <div class="reading-bg-pattern" aria-hidden="true"></div>
+                }
+                <div class="reading-content">
+                  <div class="book-info">
+                    <span class="testament">Dia {{ block.dayNumber }}</span>
+                    <h2>{{ block.bookName }} {{ block.startChapter }}–{{ block.endChapter }}</h2>
+                    <p>{{ block.readingText }}</p>
+                  </div>
+                  <label class="custom-checkbox" [attr.aria-busy]="markBusy()">
+                    <input
+                      type="checkbox"
+                      [checked]="block.completed"
+                      [disabled]="block.completed || markBusy()"
+                      (change)="onReadCheckbox(block, $event)"
+                    />
+                    <span class="checkmark"><i class="uil uil-check" aria-hidden="true"></i></span>
+                  </label>
+                </div>
+              </div>
+            }
+          }
+        </section>
+      </div>
+    </div>
+
+    <app-reading-calendar-modal [open]="calendarOpen()" (openChange)="onCalendarOpenChange($event)" />
+  } @else {
+    <section class="home-empty glass" aria-labelledby="home-empty-heading">
+      <h2 id="home-empty-heading">Bem-vindo</h2>
+      <p class="home-empty-text">
+        Escolha um plano de leitura e defina quando você começou para acompanhar seu progresso aqui.
+      </p>
+      <p class="home-empty-hint">Importe um PDF ou use um plano já disponível.</p>
+      <a routerLink="/reading-plans" class="btn-primary home-cta">Plano de leitura</a>
+    </section>
+  }
+}

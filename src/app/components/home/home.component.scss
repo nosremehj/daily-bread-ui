@@ -2,6 +2,68 @@
   display: block;
 }
 
+.banner-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fecaca;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.state-loading {
+  margin-top: 8px;
+}
+
+.plan-filename {
+  font-size: 0.85rem;
+  color: var(--accent-purple);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.progress-blurb {
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.day-item.missed {
+  opacity: 0.85;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.day-item.upcoming {
+  opacity: 0.75;
+}
+
+.indicator .dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.week-mobile-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 12px;
+  background: none;
+  border: none;
+  color: var(--accent-purple);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .week-mobile-link {
+    display: none !important;
+  }
+}
+
 .home-empty {
   padding: 28px 24px;
   max-width: 520px;

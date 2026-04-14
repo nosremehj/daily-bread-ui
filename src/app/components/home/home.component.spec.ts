@@ -3,7 +3,9 @@ import localePt from '@angular/common/locales/pt';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { ReadingProgressService } from '../../services/reading-progress.service';
 import { HomeComponent } from './home.component';
 
 registerLocaleData(localePt, 'pt-BR');
@@ -24,6 +26,15 @@ describe('HomeComponent', () => {
               username: 'joao'
             }),
             getFirstName: () => 'João'
+          }
+        },
+        {
+          provide: ReadingProgressService,
+          useValue: {
+            getDashboardOrNull: () => of(null),
+            loadEnrollmentSummary: () => {
+              /* noop */
+            }
           }
         }
       ]

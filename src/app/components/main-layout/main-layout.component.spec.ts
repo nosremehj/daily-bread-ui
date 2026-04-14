@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { routes } from '../../app.routes';
 import { AuthService } from '../../services/auth.service';
+import { ReadingProgressService } from '../../services/reading-progress.service';
 import { MainLayoutComponent } from './main-layout.component';
 
 describe('MainLayoutComponent', () => {
@@ -24,6 +25,15 @@ describe('MainLayoutComponent', () => {
             isAuthenticated: () => true,
             fetchProfile: () => of(null),
             logout: () => {
+              /* noop */
+            }
+          }
+        },
+        {
+          provide: ReadingProgressService,
+          useValue: {
+            enrollmentSummary: signal(null),
+            loadEnrollmentSummary: () => {
               /* noop */
             }
           }

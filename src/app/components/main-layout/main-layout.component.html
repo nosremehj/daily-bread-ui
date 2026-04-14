@@ -41,7 +41,7 @@
       <div class="profile-block">
         <div class="profile-info">
           <span class="name">{{ auth.user()?.name ?? 'Visitante' }}</span>
-          <span class="plan">Plano não definido</span>
+          <span class="plan">{{ sidebarPlanLabel() }}</span>
         </div>
       </div>
       <button type="button" class="btn-logout" (click)="logout()">Sair</button>

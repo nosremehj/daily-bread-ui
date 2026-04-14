@@ -1,0 +1,63 @@
+@if (open) {
+  <div class="overlay" (click)="onOverlayClick()" aria-hidden="true"></div>
+  <div
+    class="modal glass"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cal-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <h2 id="cal-title">Calendário de leituras</h2>
+      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+        <i class="uil uil-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <button type="button" class="btn-ghost-sm" (click)="prevMonth()" aria-label="Mês anterior">
+        <i class="uil uil-angle-left-b" aria-hidden="true"></i>
+      </button>
+      <span class="month-label">{{ monthTitle() }}</span>
+      <button type="button" class="btn-ghost-sm" (click)="nextMonth()" aria-label="Próximo mês">
+        <i class="uil uil-angle-right-b" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    @if (loading()) {
+      <p class="state-msg">Carregando…</p>
+    } @else {
+      @if (errorMessage(); as err) {
+        <p class="state-msg error" role="alert">{{ err }}</p>
+      } @else {
+        <div class="weekday-row" aria-hidden="true">
+          @for (w of weekdayLabels; track w) {
+            <span class="weekday">{{ w }}</span>
+          }
+        </div>
+        <div class="cells" role="grid" [attr.aria-label]="'Dias de ' + monthTitle()">
+          @for (c of cells(); track c.date) {
+            <div
+              role="gridcell"
+              class="cell"
+              [class.out-month]="!c.inMonth"
+              [class.read]="c.read === true"
+              [class.no-read]="c.inMonth && c.read === false"
+              [attr.aria-label]="c.date + (c.read === true ? ', lido' : c.read === false ? ', não lido' : '')"
+            >
+              <span class="num">{{ c.dayNum }}</span>
+            </div>
+          }
+        </div>
+        <p class="legend">
+          <span class="dot read"></span> Dia com leitura registrada
+          <span class="dot missed"></span> Dia sem leitura (no mês atual)
+        </p>
+      }
+    }
+
+    <div class="footer-actions">
+      <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+    </div>
+  </div>
+}

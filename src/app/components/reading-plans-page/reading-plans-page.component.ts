@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, inject, NgZone, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { ReadingPlanService, ReadingPlanSummary } from '../../services/reading-plan.service';
+import { EnrollPlanModalComponent } from '../enroll-plan-modal/enroll-plan-modal.component';
 import { PlanDetailModalComponent } from '../plan-detail-modal/plan-detail-modal.component';
 import { UploadPlanModalComponent } from '../upload-plan-modal/upload-plan-modal.component';
 
 @Component({
   selector: 'app-reading-plans-page',
   standalone: true,
-  imports: [CommonModule, UploadPlanModalComponent, PlanDetailModalComponent],
+  imports: [CommonModule, UploadPlanModalComponent, PlanDetailModalComponent, EnrollPlanModalComponent],
   templateUrl: './reading-plans-page.component.html',
   styleUrl: './reading-plans-page.component.scss'
 })
@@ -22,6 +23,9 @@ export class ReadingPlansPageComponent {
   readonly uploadModalOpen = signal(false);
   readonly detailModalOpen = signal(false);
   readonly detailPlanId = signal<number | null>(null);
+  readonly enrollModalOpen = signal(false);
+  readonly enrollPlanId = signal<number | null>(null);
+  readonly enrollPlanName = signal('');
 
   constructor() {
     afterNextRender(() => this.refreshPlans());
@@ -76,6 +80,28 @@ export class ReadingPlansPageComponent {
     this.detailModalOpen.set(open);
     if (!open) {
       this.detailPlanId.set(null);
+    }
+  }
+
+  openEnrollFromSummary(plan: ReadingPlanSummary): void {
+    this.enrollPlanId.set(plan.id);
+    this.enrollPlanName.set(plan.originalFilename);
+    this.enrollModalOpen.set(true);
+  }
+
+  onEnrollRequest(payload: { id: number; filename: string }): void {
+    this.enrollPlanId.set(payload.id);
+    this.enrollPlanName.set(payload.filename);
+    this.detailModalOpen.set(false);
+    this.detailPlanId.set(null);
+    this.enrollModalOpen.set(true);
+  }
+
+  onEnrollModalChange(open: boolean): void {
+    this.enrollModalOpen.set(open);
+    if (!open) {
+      this.enrollPlanId.set(null);
+      this.enrollPlanName.set('');
     }
   }
 }

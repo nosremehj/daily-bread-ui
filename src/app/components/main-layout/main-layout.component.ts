@@ -1,6 +1,7 @@
-import { afterNextRender, Component, inject } from '@angular/core';
+import { afterNextRender, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ReadingProgressService } from '../../services/reading-progress.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -11,11 +12,24 @@ import { AuthService } from '../../services/auth.service';
 })
 export class MainLayoutComponent {
   readonly auth = inject(AuthService);
+  private readonly readingProgress = inject(ReadingProgressService);
+
+  readonly sidebarPlanLabel = computed(() => {
+    const e = this.readingProgress.enrollmentSummary();
+    if (e === undefined) {
+      return 'Carregando…';
+    }
+    if (e === null) {
+      return 'Plano não definido';
+    }
+    return e.planFilename;
+  });
 
   constructor() {
     afterNextRender(() => {
       if (this.auth.isAuthenticated()) {
         this.auth.fetchProfile().subscribe();
+        this.readingProgress.loadEnrollmentSummary();
       }
     });
   }
