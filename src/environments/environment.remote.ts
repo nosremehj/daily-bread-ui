@@ -1,4 +1,7 @@
+import { DEPLOYED_API_URL } from './deployed-api-url';
+
+/** Dev local (`ng serve`) contra a API publicada (EasyPanel). */
 export const environment = {
   production: false,
-  apiUrl: 'https://api-daily-bread.onrender.com'
+  apiUrl: DEPLOYED_API_URL,
 };

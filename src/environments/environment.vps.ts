@@ -1,8 +1,10 @@
+import { DEPLOYED_API_URL } from './deployed-api-url';
+
 /**
- * Build para VPS / Docker: API no mesmo host, servida pelo proxy em /api (Nginx/Caddy).
- * `apiUrl` vazio faz as chamadas usarem caminhos relativos (/api/v1/...).
+ * Build Docker/VPS (EasyPanel): mesma API pública que `environment.prod.ts`.
+ * Garanta CORS no backend para a origem do front.
  */
 export const environment = {
   production: true,
-  apiUrl: '',
+  apiUrl: DEPLOYED_API_URL,
 };

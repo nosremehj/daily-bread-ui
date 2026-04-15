@@ -10,21 +10,19 @@ Interface web do **Daily Bread**: plano de leitura bíblica, autenticação (log
 
 ## API (backend)
 
-O backend é uma API REST **Spring Boot** (repositório separado). O frontend **não** fixa URLs completas nos serviços: a base vem de `src/environments/`.
+O backend é uma API REST **Spring Boot** (repositório separado). A base da URL vem de `src/environments/` (valor público centralizado em `deployed-api-url.ts`).
 
 | Ambiente | URL base da API |
 |----------|-----------------|
-| Produção | `https://api-daily-bread.onrender.com` |
+| Produção (`ng build`) | `deployed-api-url.ts` (API no EasyPanel) |
 | Desenvolvimento local | `http://localhost:9090` |
-| VPS / Docker (Nginx proxy) | `''` (vazio) — chamadas relativas a `/api/v1/...`; ver `environment.vps.ts` e `deploy/` |
+| Imagem Docker (`build:vps`) | Mesma URL (`environment.vps.ts` → `deployed-api-url.ts`) |
 
 Prefixo REST: `/api/v1` (ex.: `/api/v1/auth/login`, `/api/v1/reading-plans`).
 
 ### Frontend em produção
 
-A aplicação está hospedada na **Vercel**: [https://daily-bread-ui.vercel.app](https://daily-bread-ui.vercel.app)
-
-O build de produção usa `environment.prod.ts` e aponta para a API no Render. Se aparecer erro de **CORS** no navegador, o ajuste é no backend (origens permitidas), não só no Angular.
+Hospede o build estático ou a imagem Docker conforme `deploy/README.md` e o `Dockerfile` (ex.: EasyPanel). O build padrão usa `environment.prod.ts`. Configure **CORS** no Spring para o domínio onde o front for servido.
 
 ## Pré-requisitos
 
@@ -36,9 +34,9 @@ O build de produção usa `environment.prod.ts` e aponta para a API no Render. S
 | Comando | Descrição |
 |---------|-----------|
 | `npm start` ou `npm run start:local` | Dev server (`ng serve`) com API em **localhost:9090** |
-| `npm run start:remote-api` | Mesmo dev server, mas chamadas para a API no **Render** (útil para testar o back deployado) |
+| `npm run start:remote-api` | Dev server local chamando a API publicada (`deployed-api-url.ts`) |
 | `npm run build` | Build de produção (saída em `dist/daily`) |
-| `npm run build:vps` | Build para VPS: mesmo host que a API via proxy `/api` (`environment.vps.ts`) |
+| `npm run build:vps` | Build para imagem Docker (`environment.vps.ts`) |
 | `npm run watch` | Build em modo desenvolvimento com watch |
 | `npm test` | Testes unitários (Karma/Jasmine) |
 | `npm run serve:ssr:daily` | Servir o bundle SSR após `npm run build` (Node em `dist/daily/server`) |
@@ -48,11 +46,11 @@ Após `npm start`, abra [http://localhost:4200](http://localhost:4200) (porta pa
 ## Variáveis e ambientes
 
 - **Desenvolvimento:** `src/environments/environment.ts` → API local.
-- **Produção (Vercel):** `src/environments/environment.prod.ts` → API Render (substituição via `angular.json` no build).
-- **VPS / Docker:** `src/environments/environment.vps.ts` — `apiUrl` vazio + `npm run build:vps`; imagem: `Dockerfile` e `deploy/nginx.conf`.
-- **Dev contra API remota:** `src/environments/environment.remote.ts`, usado pelo script `start:remote-api`.
+- **Produção:** `src/environments/environment.prod.ts` + `deployed-api-url.ts`.
+- **VPS / Docker:** `src/environments/environment.vps.ts` (build `vps`).
+- **Dev contra API publicada:** `src/environments/environment.remote.ts` + script `start:remote-api`.
 
-Há um `.env.example` na raiz com referência às URLs; o Angular não carrega `.env` automaticamente — os valores ficam nos arquivos de environment acima.
+O Angular não carrega `.env` automaticamente — os valores ficam nos arquivos acima. Veja `.env.example` para referência rápida.
 
 ## Estrutura útil
 
@@ -63,7 +61,7 @@ Há um `.env.example` na raiz com referência às URLs; o Angular não carrega `
 ## Documentação adicional
 
 - Integração front/API: `docs/prompts/PROMPT_INTEGRACAO_FRONTEND_API.md`
-- Swagger da API em produção: [https://api-daily-bread.onrender.com/swagger-ui.html](https://api-daily-bread.onrender.com/swagger-ui.html)
+- Swagger (API publicada): anexe `/swagger-ui.html` à URL em `deployed-api-url.ts`.
 
 ## Gerar código (Angular CLI)
 

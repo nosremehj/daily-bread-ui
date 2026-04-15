@@ -1,18 +1,18 @@
 # Deploy do frontend (VPS / Docker)
 
-Build de produção com `apiUrl` vazio: o browser chama `/api/v1/...` no mesmo host. O Nginx encaminha `/api/` para o container da API Spring (`api:9090` na rede Docker).
+O build **`vps`** (`npm run build:vps`) usa a mesma URL pública da API que produção, definida em **`src/environments/deployed-api-url.ts`** (via `environment.vps.ts`).
 
-## Imagem só do front
+## Imagem do front
 
 Na raiz do repositório:
 
 ```bash
 docker build -t daily-bread-ui .
-docker run -p 8080:80 --network SUA_REDE_COM_O_SERVICO_api daily-bread-ui
+docker run -p 8080:80 daily-bread-ui
 ```
 
-O container precisa estar na **mesma rede Docker** que o serviço nomeado **`api`** (como no `docker-compose` do backend), para o `proxy_pass http://api:9090` resolver.
+O Nginx só serve o **Angular estático**; o browser chama a API em `apiUrl` (cross-origin). Configure **CORS** no Spring para a origem do front.
 
-## Compose completo
+## Mudar a URL da API
 
-Use o `docker-compose` do repositório da API (ou um compose unificado) para subir `postgres`, `api` e este serviço `web`, com `web` dependendo de `api` e ambos em `networks: internal`.
+Edite **`src/environments/deployed-api-url.ts`** (sem barra no final) e faça **rebuild** da imagem e/ou `npm run build`.
