@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -84,6 +84,25 @@ export interface MarkDayReadRequest {
 export interface CatchUpDateRangeRequest {
   fromInclusive: string;
   toInclusive: string;
+}
+
+/** Resposta de `GET /reading-progress/statistics`. */
+export interface ReadingStatistics {
+  planId: number;
+  planFilename: string;
+  planStartDate: string;
+  periodFrom: string;
+  periodTo: string;
+  totalPlanDays: number;
+  completedDaysInPlan: number;
+  daysReadInPeriod: number;
+  daysMissedInPeriod: number;
+  currentStreakDays: number;
+  longestStreakDays: number;
+  annualProgressPercent: number;
+  readDatesInPeriod: string[];
+  nextMilestonePercent: number | null;
+  daysUntilNextMilestone: number | null;
 }
 
 interface ApiErrorBody {
@@ -202,6 +221,53 @@ export class ReadingProgressService {
           throwError(() => this.toError(err, 'Não foi possível carregar o calendário.'))
         )
       );
+  }
+
+  /** Calendário de leitura para todos os dias de um ano civil (heatmap anual). */
+  getCalendarYear(year: number): Observable<CalendarDayRead[]> {
+    return this.http
+      .get<CalendarDayRead[]>(`${this.baseUrl}/calendar/year`, {
+        params: { year: String(year) }
+      })
+      .pipe(
+        catchError((err) =>
+          throwError(() => this.toError(err, 'Não foi possível carregar o calendário do ano.'))
+        )
+      );
+  }
+
+  getStatistics(from?: string, to?: string): Observable<ReadingStatistics> {
+    let params = new HttpParams();
+    if (from) {
+      params = params.set('from', from);
+    }
+    if (to) {
+      params = params.set('to', to);
+    }
+    return this.http.get<ReadingStatistics>(`${this.baseUrl}/statistics`, { params }).pipe(
+      catchError((err) =>
+        throwError(() => this.toError(err, 'Não foi possível carregar as estatísticas.'))
+      )
+    );
+  }
+
+  /** `null` quando não há matrícula ativa (404). */
+  getStatisticsOrNull(from?: string, to?: string): Observable<ReadingStatistics | null> {
+    let params = new HttpParams();
+    if (from) {
+      params = params.set('from', from);
+    }
+    if (to) {
+      params = params.set('to', to);
+    }
+    return this.http.get<ReadingStatistics>(`${this.baseUrl}/statistics`, { params }).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 404) {
+          return of(null);
+        }
+        return throwError(() => this.toError(err, 'Não foi possível carregar as estatísticas.'));
+      })
+    );
   }
 
   markDayRead(body: MarkDayReadRequest): Observable<void> {

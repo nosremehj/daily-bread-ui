@@ -1,0 +1,142 @@
+<header class="page-header">
+  <h1>Estatísticas</h1>
+  <p class="subtitle">
+    Acompanhe seu ritmo de leitura, sequências e leituras registradas no período.
+  </p>
+</header>
+
+@if (loading()) {
+  <p class="muted state-loading">Carregando estatísticas…</p>
+} @else {
+  @if (errorMessage(); as err) {
+    <p class="banner-error" role="alert">{{ err }}</p>
+  }
+
+  @if (stats() === null && !errorMessage()) {
+    <section class="empty-state glass" aria-labelledby="stats-empty-heading">
+      <h2 id="stats-empty-heading">Nenhum plano ativo</h2>
+      <p class="empty-text">
+        Para ver estatísticas, escolha um plano de leitura e defina quando você começou.
+      </p>
+      <a routerLink="/reading-plans" class="btn-primary stats-cta">Plano de leitura</a>
+    </section>
+  } @else {
+    @if (stats(); as s) {
+      <section class="filters glass" aria-label="Período">
+        <span class="filters-label">Período</span>
+        <div class="preset-row">
+          <button
+            type="button"
+            class="btn-preset"
+            [class.active]="preset() === 'default'"
+            (click)="applyPreset('default')"
+          >
+            Padrão (API)
+          </button>
+          <button
+            type="button"
+            class="btn-preset"
+            [class.active]="preset() === 'last30'"
+            (click)="applyPreset('last30')"
+          >
+            Ultimos 30 dias
+          </button>
+          <button
+            type="button"
+            class="btn-preset"
+            [class.active]="preset() === 'month'"
+            (click)="applyPreset('month')"
+          >
+            Este mês
+          </button>
+          <button
+            type="button"
+            class="btn-preset"
+            [class.active]="preset() === 'year'"
+            (click)="applyPreset('year')"
+          >
+            Ano civil
+          </button>
+        </div>
+        <div class="custom-range">
+          <label class="date-field">
+            <span class="visually-hidden">De</span>
+            <span class="field-label">De</span>
+            <input type="date" [value]="customFrom()" (change)="customFrom.set($any($event.target).value)" />
+          </label>
+          <label class="date-field">
+            <span class="visually-hidden">Até</span>
+            <span class="field-label">Até</span>
+            <input type="date" [value]="customTo()" (change)="customTo.set($any($event.target).value)" />
+          </label>
+          <button type="button" class="btn-secondary-inline" (click)="applyCustomRange()">
+            Aplicar
+          </button>
+        </div>
+        @if (clientRangeError(); as cre) {
+          <p class="field-error" role="alert">{{ cre }}</p>
+        }
+        <p class="period-hint muted small">
+          Período efetivo:
+          {{ s.periodFrom | date: 'mediumDate' }} — {{ s.periodTo | date: 'mediumDate' }}
+          (máx. 366 dias)
+        </p>
+      </section>
+
+      @if (milestoneText(); as mt) {
+        <p class="milestone-banner glass">{{ mt }}</p>
+      }
+
+      <section class="summary-grid" aria-label="Resumo">
+        <div class="stat-card glass">
+          <span class="stat-label">Progresso do plano</span>
+          <span class="stat-value">{{ s.annualProgressPercent }}%</span>
+          <span class="stat-detail"
+            >{{ s.completedDaysInPlan }} / {{ s.totalPlanDays }} dias</span
+          >
+        </div>
+        <div class="stat-card glass">
+          <span class="stat-label">Sequência atual</span>
+          <span class="stat-value">{{ s.currentStreakDays }}</span>
+          <span class="stat-detail">dias seguidos</span>
+        </div>
+        <div class="stat-card glass">
+          <span class="stat-label">Melhor sequência</span>
+          <span class="stat-value">{{ s.longestStreakDays }}</span>
+          <span class="stat-detail">dias (desde o início)</span>
+        </div>
+        <div class="stat-card glass">
+          <span class="stat-label">No período</span>
+          <span class="stat-value">{{ s.daysReadInPeriod }}</span>
+          <span class="stat-detail"
+            >dias com leitura · {{ s.daysMissedInPeriod }} sem leitura (esperados)</span
+          >
+        </div>
+      </section>
+
+      <section class="heatmap-section" aria-labelledby="heatmap-heading">
+        <h2 id="heatmap-heading" class="section-title">Leituras no período</h2>
+        <p class="muted small heatmap-legend">
+          <span class="legend-swatch read" aria-hidden="true"></span> Lida
+          <span class="legend-swatch miss" aria-hidden="true"></span> Não lida
+        </p>
+        <div class="heatmap-grid" role="list">
+          @for (cell of heatmapDays(); track cell.date) {
+            <div
+              role="listitem"
+              class="heatmap-cell"
+              [class.read]="cell.read"
+              [attr.title]="cell.date + (cell.read ? ' — lida' : ' — não lida')"
+            ></div>
+          }
+        </div>
+      </section>
+
+      <section class="plan-meta glass">
+        <h2 class="section-title">Plano</h2>
+        <p class="plan-filename">{{ s.planFilename }}</p>
+        <p class="muted small">Início do plano (dia 1): {{ s.planStartDate | date: 'mediumDate' }}</p>
+      </section>
+    }
+  }
+}

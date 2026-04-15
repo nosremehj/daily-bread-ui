@@ -3,7 +3,7 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { BiblePageComponent } from './components/bible-page/bible-page.component';
-import { PlaceholderPageComponent } from './components/placeholder-page/placeholder-page.component';
+import { StatisticsPageComponent } from './components/statistics-page/statistics-page.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 import { ReadingPlansPageComponent } from './components/reading-plans-page/reading-plans-page.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -39,7 +39,7 @@ export const routes: Routes = [
       },
       {
         path: 'statistics',
-        component: PlaceholderPageComponent,
+        component: StatisticsPageComponent,
         data: { title: 'Estatísticas' }
       },
       {
