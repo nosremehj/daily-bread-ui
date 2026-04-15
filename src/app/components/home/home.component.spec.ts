@@ -5,6 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { BiblePreferencesService } from '../../services/bible-preferences.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
 import { HomeComponent } from './home.component';
 
@@ -32,7 +33,17 @@ describe('HomeComponent', () => {
           provide: ReadingProgressService,
           useValue: {
             getDashboardOrNull: () => of(null),
+            getTodayBibleOrNull: () => of(null),
             loadEnrollmentSummary: () => {
+              /* noop */
+            }
+          }
+        },
+        {
+          provide: BiblePreferencesService,
+          useValue: {
+            version: signal('nvi'),
+            setVersion: () => {
               /* noop */
             }
           }

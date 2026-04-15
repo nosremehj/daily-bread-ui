@@ -40,7 +40,9 @@
                   <th scope="col">Leitura</th>
                   <th scope="col" class="hide-narrow">Livro</th>
                   <th scope="col" class="hide-narrow">Capítulos</th>
-                  <th scope="col">Feito</th>
+                  @if (followingThisPlan()) {
+                    <th scope="col">Feito</th>
+                  }
                 </tr>
               </thead>
               <tbody>
@@ -52,13 +54,15 @@
                     <td class="hide-narrow nowrap">
                       {{ day.startChapter }}–{{ day.endChapter }}
                     </td>
-                    <td>
-                      @if (day.completed) {
-                        <span class="badge done">Sim</span>
-                      } @else {
-                        <span class="badge">Não</span>
-                      }
-                    </td>
+                    @if (followingThisPlan()) {
+                      <td>
+                        @if (dayDone(day)) {
+                          <span class="badge done">Sim</span>
+                        } @else {
+                          <span class="badge">Não</span>
+                        }
+                      </td>
+                    }
                   </tr>
                 }
               </tbody>
@@ -66,9 +70,13 @@
           </div>
           <div class="footer-actions">
             <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
-            <button type="button" class="btn-primary inline" (click)="requestEnroll()">
-              Seguir este plano
-            </button>
+            @if (followingThisPlan()) {
+              <span class="following-pill" aria-live="polite">Seguindo este plano</span>
+            } @else {
+              <button type="button" class="btn-primary inline" (click)="requestEnroll()">
+                Seguir este plano
+              </button>
+            }
           </div>
         }
       }

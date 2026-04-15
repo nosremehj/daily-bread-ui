@@ -1,0 +1,90 @@
+<header class="page-header">
+  <h1>Bíblia</h1>
+  <div class="toolbar glass">
+    <label class="version-label">
+      <span class="visually-hidden">Versão da tradução</span>
+      <select
+        class="select-themed version-select"
+        [value]="currentVersion()"
+        (change)="onVersionSelect($event)"
+        aria-label="Versão da tradução"
+      >
+        <option value="nvi">NVI</option>
+        <option value="ara">ARA</option>
+        <option value="ntlh">NTLH</option>
+      </select>
+    </label>
+  </div>
+</header>
+
+@if (errorMessage(); as err) {
+  <p class="banner-error" role="alert">{{ err }}</p>
+}
+
+@if (loading()) {
+  <p class="muted">Carregando…</p>
+}
+
+@if (chapter(); as ch) {
+  <nav class="breadcrumb glass-pill" aria-label="Navegação">
+    <a [routerLink]="['/bible', currentVersion()]" class="crumb">Livros</a>
+    <span class="sep" aria-hidden="true">/</span>
+    <span class="crumb-current">{{ ch.bookName }} {{ ch.chapter }}</span>
+  </nav>
+
+  <div class="chapter-nav glass">
+    <button type="button" class="btn-ghost-sm" (click)="goPrevChapter()" [disabled]="ch.chapter <= 1">
+      <i class="uil uil-arrow-left" aria-hidden="true"></i>
+      Anterior
+    </button>
+    <button type="button" class="btn-ghost-sm" (click)="goNextChapter()">
+      Próximo
+      <i class="uil uil-arrow-right" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <article class="chapter-body glass" [attr.aria-label]="ch.bookName + ' capítulo ' + ch.chapter">
+    @for (v of ch.verses; track v.verse) {
+      <p class="verse-line" [id]="'v-' + v.verse">
+        <button
+          type="button"
+          class="verse-num"
+          (click)="openCompare(ch.bookNumber, ch.chapter, v.verse)"
+          [attr.aria-label]="'Comparar versículo ' + v.verse"
+        >
+          {{ v.verse }}
+        </button>
+        <span class="verse-text">{{ v.text }}</span>
+      </p>
+    }
+  </article>
+
+  @if (attributionForVersion(ch.versionId); as attr) {
+    @if (attr.length > 0) {
+      <p class="attribution muted small">{{ attr }}</p>
+    }
+  }
+} @else {
+  @if (books(); as list) {
+    <p class="subtitle">Escolha um livro para ler o capítulo 1, ou abra um capítulo a partir do início.</p>
+    <ul class="book-grid">
+      @for (b of list; track b.number) {
+        <li>
+          <a [routerLink]="['/bible', currentVersion(), b.number, 1]" class="book-card glass">
+            <span class="book-num">{{ b.number }}</span>
+            <span class="book-name">{{ b.name }}</span>
+            <span class="book-abbrev">{{ b.abbrev }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+}
+
+<app-verse-compare-modal
+  [open]="compareOpen()"
+  [book]="compareBook()"
+  [chapter]="compareChapter()"
+  [verse]="compareVerse()"
+  (openChange)="onCompareOpenChange($event)"
+/>

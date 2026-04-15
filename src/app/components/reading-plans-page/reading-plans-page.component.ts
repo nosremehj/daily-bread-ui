@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, inject, NgZone, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { ReadingPlanService, ReadingPlanSummary } from '../../services/reading-plan.service';
+import { ReadingProgressService } from '../../services/reading-progress.service';
 import { EnrollPlanModalComponent } from '../enroll-plan-modal/enroll-plan-modal.component';
 import { PlanDetailModalComponent } from '../plan-detail-modal/plan-detail-modal.component';
 import { UploadPlanModalComponent } from '../upload-plan-modal/upload-plan-modal.component';
@@ -15,6 +16,7 @@ import { UploadPlanModalComponent } from '../upload-plan-modal/upload-plan-modal
 })
 export class ReadingPlansPageComponent {
   private readonly readingPlanService = inject(ReadingPlanService);
+  private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
 
   readonly plans = signal<ReadingPlanSummary[] | null>(null);
@@ -28,7 +30,15 @@ export class ReadingPlansPageComponent {
   readonly enrollPlanName = signal('');
 
   constructor() {
-    afterNextRender(() => this.refreshPlans());
+    afterNextRender(() => {
+      this.readingProgress.loadEnrollmentSummary();
+      this.refreshPlans();
+    });
+  }
+
+  isFollowingPlan(planId: number): boolean {
+    const e = this.readingProgress.enrollmentSummary();
+    return e != null && e.planId === planId;
   }
 
   refreshPlans(): void {

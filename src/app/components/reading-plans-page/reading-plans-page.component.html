@@ -38,7 +38,12 @@
           @for (p of list; track p.id) {
             <li class="plan-card glass">
               <div class="plan-card-main">
-                <span class="plan-name">{{ p.originalFilename }}</span>
+                <span class="plan-name-row">
+                  <span class="plan-name">{{ p.originalFilename }}</span>
+                  @if (isFollowingPlan(p.id)) {
+                    <span class="plan-following-badge">Seguindo</span>
+                  }
+                </span>
                 <span class="plan-meta">
                   {{ p.dayCount }} dias · importado em
                   {{ p.importedAt | date: 'short' }}
@@ -48,9 +53,13 @@
                 <button type="button" class="btn-outline" (click)="openPlanDetail(p.id)">
                   Ver plano
                 </button>
-                <button type="button" class="btn-primary inline" (click)="openEnrollFromSummary(p)">
-                  Seguir
-                </button>
+                @if (isFollowingPlan(p.id)) {
+                  <button type="button" class="btn-following" disabled>Seguindo</button>
+                } @else {
+                  <button type="button" class="btn-primary inline" (click)="openEnrollFromSummary(p)">
+                    Seguir
+                  </button>
+                }
               </div>
             </li>
           }

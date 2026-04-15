@@ -1,0 +1,266 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1130;
+}
+
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(640px, calc(100vw - 24px));
+  max-height: min(88vh, 720px);
+  overflow: auto;
+  z-index: 1131;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.modal-titles h2 {
+  font-size: 1.15rem;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.btn-icon {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.version-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.version-wrap .label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.version-select {
+  padding: 8px 12px;
+  font: inherit;
+  min-width: 140px;
+}
+
+.chapter-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.glass-inner {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ch-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0;
+}
+
+.btn-ghost:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.state-msg {
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+.state-msg.error {
+  color: #fecaca;
+}
+
+.chapter-body {
+  padding: 16px;
+  border-radius: 14px;
+  max-height: 42vh;
+  overflow: auto;
+}
+
+.chapter-title {
+  font-size: 1rem;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.verse-line {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  font-size: 0.92rem;
+}
+
+.verse-num {
+  flex-shrink: 0;
+  min-width: 2rem;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(139, 92, 246, 0.2);
+  color: var(--accent-purple);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.verse-num:hover {
+  background: rgba(139, 92, 246, 0.35);
+}
+
+.verse-text {
+  color: var(--text-primary);
+}
+
+.plan-hint {
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.confirm-reading {
+  padding: 16px;
+  border-radius: 14px;
+  margin-top: 4px;
+}
+
+.confirm-text {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.confirm-done {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #a7f3d0;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.confirm-done i {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 1.1rem;
+}
+
+.confirm-warn {
+  margin-bottom: 8px;
+}
+
+.confirm-err {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #fecaca;
+}
+
+.btn-confirm-reading {
+  width: 100%;
+  margin-top: 0;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 14px;
+  background: var(--gradient-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--accent-purple-glow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-confirm-reading:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-confirm-reading:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.btn-secondary {
+  margin-top: 0;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}

@@ -3,6 +3,8 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import type { BibleChapter } from './bible.service';
+import type { BibleVersionCode } from './bible-preferences.service';
 
 export type WeekDayStatus = 'COMPLETED' | 'ACTIVE' | 'UPCOMING' | 'MISSED';
 
@@ -35,6 +37,19 @@ export interface TodayReadingBlock {
   endChapter: number;
   readingText: string;
   completed: boolean;
+  bookNumber?: number | null;
+  bookAbbrev?: string | null;
+  /** Preenchido em `GET today/bible` com o texto integral dos capítulos na versão pedida. */
+  chapters?: BibleChapter[];
+}
+
+export interface TodayBibleReading {
+  referenceDate: string;
+  scheduledDayNumber: number | null;
+  scheduledDate: string | null;
+  versionId: string;
+  dayCompleted: boolean;
+  blocks: TodayReadingBlock[];
 }
 
 export interface TodayReadingSection {
@@ -144,6 +159,35 @@ export class ReadingProgressService {
             return of(null);
           }
           return throwError(() => this.toError(err, 'Não foi possível carregar o painel de leitura.'));
+        })
+      );
+  }
+
+  getTodayBible(version: BibleVersionCode, date: string): Observable<TodayBibleReading> {
+    return this.http
+      .get<TodayBibleReading>(`${this.baseUrl}/today/bible`, {
+        params: { version, date }
+      })
+      .pipe(
+        catchError((err) =>
+          throwError(() => this.toError(err, 'Não foi possível carregar a leitura bíblica do dia.'))
+        )
+      );
+  }
+
+  getTodayBibleOrNull(version: BibleVersionCode, date: string): Observable<TodayBibleReading | null> {
+    return this.http
+      .get<TodayBibleReading>(`${this.baseUrl}/today/bible`, {
+        params: { version, date }
+      })
+      .pipe(
+        catchError((err: HttpErrorResponse) => {
+          if (err.status === 404) {
+            return of(null);
+          }
+          return throwError(() =>
+            this.toError(err, 'Não foi possível carregar a leitura bíblica do dia.')
+          );
         })
       );
   }

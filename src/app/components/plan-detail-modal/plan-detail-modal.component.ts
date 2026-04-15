@@ -1,18 +1,32 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  computed,
+  effect,
   EventEmitter,
   HostListener,
+  inject,
   Input,
+  NgZone,
   OnChanges,
   Output,
+  signal,
   SimpleChanges,
-  inject,
-  NgZone,
-  signal
+  untracked
 } from '@angular/core';
 import { finalize } from 'rxjs/operators';
-import { ReadingPlanDetail, ReadingPlanService } from '../../services/reading-plan.service';
+import { ReadingPlanDetail, ReadingDay, ReadingPlanService } from '../../services/reading-plan.service';
+import { ReadingProgressService } from '../../services/reading-progress.service';
+
+function addDaysToIsoDate(iso: string, daysToAdd: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + daysToAdd);
+  const yy = dt.getFullYear();
+  const mm = dt.getMonth() + 1;
+  const dd = dt.getDate();
+  return `${yy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`;
+}
 
 @Component({
   selector: 'app-plan-detail-modal',
@@ -23,6 +37,7 @@ import { ReadingPlanDetail, ReadingPlanService } from '../../services/reading-pl
 })
 export class PlanDetailModalComponent implements OnChanges {
   private readonly readingPlanService = inject(ReadingPlanService);
+  private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
 
   @Input() open = false;
@@ -34,17 +49,67 @@ export class PlanDetailModalComponent implements OnChanges {
   readonly detail = signal<ReadingPlanDetail | null>(null);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly calendarReadByDate = signal<Map<string, boolean> | null>(null);
+  private calendarFetchKey = '';
+  /** Espelha `open` para o `effect` reagir a abrir/fechar. */
+  private readonly openState = signal(false);
+
+  readonly followingThisPlan = computed(() => {
+    const d = this.detail();
+    const e = this.readingProgress.enrollmentSummary();
+    if (d == null || e == null) {
+      return false;
+    }
+    return e.planId === d.id;
+  });
+
+  constructor() {
+    effect(() => {
+      const open = this.openState();
+      const d = this.detail();
+      const e = this.readingProgress.enrollmentSummary();
+      if (!open || d == null) {
+        return;
+      }
+      if (e == null || e.planId !== d.id || d.days.length === 0) {
+        untracked(() => this.calendarReadByDate.set(null));
+        return;
+      }
+      const key = `${d.id}|${e.planStartDate}|${d.days.length}`;
+      untracked(() => {
+        if (this.calendarFetchKey === key) {
+          return;
+        }
+        this.calendarFetchKey = key;
+        this.loadCalendarForPlan(e.planStartDate, d.days.length);
+      });
+    });
+  }
 
   ngOnChanges(_changes: SimpleChanges): void {
+    this.openState.set(this.open);
     if (!this.open) {
       this.detail.set(null);
       this.errorMessage.set(null);
       this.loading.set(false);
+      this.calendarReadByDate.set(null);
+      this.calendarFetchKey = '';
       return;
     }
     if (this.planId != null) {
       this.fetchPlan(this.planId);
     }
+  }
+
+  dayDone(day: ReadingDay): boolean {
+    const map = this.calendarReadByDate();
+    const e = this.readingProgress.enrollmentSummary();
+    const d = this.detail();
+    if (map != null && e != null && d != null && e.planId === d.id) {
+      const iso = addDaysToIsoDate(e.planStartDate, day.dayNumber - 1);
+      return map.get(iso) ?? false;
+    }
+    return day.completed;
   }
 
   @HostListener('document:keydown.escape')
@@ -58,10 +123,40 @@ export class PlanDetailModalComponent implements OnChanges {
     this.close();
   }
 
+  private loadCalendarForPlan(planStartDate: string, dayCount: number): void {
+    const from = planStartDate;
+    const to = addDaysToIsoDate(planStartDate, dayCount - 1);
+    const expectedKey = this.calendarFetchKey;
+    this.readingProgress.getCalendar(from, to).subscribe({
+      next: (rows) => {
+        this.ngZone.run(() => {
+          if (!this.openState() || this.calendarFetchKey !== expectedKey) {
+            return;
+          }
+          const map = new Map<string, boolean>();
+          for (const r of rows) {
+            map.set(r.date, r.read);
+          }
+          this.calendarReadByDate.set(map);
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          if (!this.openState() || this.calendarFetchKey !== expectedKey) {
+            return;
+          }
+          this.calendarReadByDate.set(new Map());
+        });
+      }
+    });
+  }
+
   private fetchPlan(id: number): void {
     this.loading.set(true);
     this.errorMessage.set(null);
     this.detail.set(null);
+    this.calendarReadByDate.set(null);
+    this.calendarFetchKey = '';
     this.readingPlanService
       .getById(id)
       .pipe(

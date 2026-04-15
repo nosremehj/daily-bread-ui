@@ -1,0 +1,144 @@
+@if (open && block) {
+  <div class="overlay" (click)="onOverlayClick()" aria-hidden="true"></div>
+  <div
+    class="modal glass"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="plan-passage-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <div class="modal-titles">
+        <h2 id="plan-passage-title">Leitura do plano</h2>
+        <p class="subtitle">
+          Dia {{ block.dayNumber }} · {{ block.bookName }} {{ chapterStart() }}–{{ chapterEnd() }}
+        </p>
+      </div>
+      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+        <i class="uil uil-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <label class="version-wrap">
+        <span class="label">Versão</span>
+        <select
+          class="select-themed version-select"
+          [value]="version()"
+          (change)="onVersionSelect($event)"
+          aria-label="Versão da tradução"
+        >
+          <option value="nvi">NVI</option>
+          <option value="ara">ARA</option>
+          <option value="ntlh">NTLH</option>
+        </select>
+      </label>
+    </div>
+
+    @if (bookNumber() != null && !errorMessage()) {
+      <div class="chapter-nav glass-inner">
+        <button
+          type="button"
+          class="btn-ghost"
+          (click)="goPrev()"
+          [disabled]="currentChapter() <= chapterStart()"
+        >
+          <i class="uil uil-arrow-left" aria-hidden="true"></i>
+          Cap. anterior
+        </button>
+        <span class="ch-label">
+          Capítulo {{ currentChapter() }} de {{ chapterStart() }}–{{ chapterEnd() }}
+        </span>
+        <button
+          type="button"
+          class="btn-ghost"
+          (click)="goNext()"
+          [disabled]="currentChapter() >= chapterEnd()"
+        >
+          Próximo cap.
+          <i class="uil uil-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="state-msg">Carregando capítulo…</p>
+    } @else {
+      @if (errorMessage(); as err) {
+        <p class="state-msg error" role="alert">{{ err }}</p>
+      } @else {
+        @if (chapter(); as ch) {
+          <article class="chapter-body glass-inner" [attr.aria-label]="ch.bookName + ' ' + ch.chapter">
+            <h3 class="chapter-title">{{ ch.bookName }} {{ ch.chapter }}</h3>
+            @for (v of ch.verses; track v.verse) {
+              <p class="verse-line">
+                <button
+                  type="button"
+                  class="verse-num"
+                  (click)="openCompare(ch.bookNumber, ch.chapter, v.verse)"
+                  [attr.aria-label]="'Comparar versículo ' + v.verse"
+                >
+                  {{ v.verse }}
+                </button>
+                <span class="verse-text">{{ v.text }}</span>
+              </p>
+            }
+          </article>
+
+          @if (isLastChapterFooter()) {
+            <div class="confirm-reading glass-inner">
+              @if (block.completed || confirmSuccess()) {
+                <p class="confirm-done">
+                  <i class="uil uil-check-circle" aria-hidden="true"></i>
+                  Leitura deste dia já está registrada no seu plano. Continue assim!
+                </p>
+              } @else {
+                <p class="confirm-text">
+                  Você chegou ao último capítulo desta leitura. Se já leu o trecho do dia, confirme para
+                  atualizar seu progresso, os dias seguidos e o calendário.
+                </p>
+                @if (!referenceDate?.trim()) {
+                  <p class="confirm-warn muted small">
+                    Não foi possível obter a data de referência do plano. Tente fechar e abrir de novo.
+                  </p>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn-confirm-reading"
+                    (click)="confirmDailyReading()"
+                    [disabled]="confirmLoading()"
+                  >
+                    @if (confirmLoading()) {
+                      Registrando…
+                    } @else {
+                      Marcar leitura de hoje como concluída
+                    }
+                  </button>
+                }
+              }
+              @if (confirmError(); as cerr) {
+                <p class="confirm-err" role="alert">{{ cerr }}</p>
+              }
+            </div>
+          }
+        }
+      }
+    }
+
+    @if (block.readingText) {
+      <p class="plan-hint muted small">Resumo do plano: {{ block.readingText }}</p>
+    }
+
+    <div class="footer-actions">
+      <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+    </div>
+  </div>
+
+  <app-verse-compare-modal
+    [open]="compareOpen()"
+    [book]="compareBook()"
+    [chapter]="compareChapter()"
+    [verse]="compareVerse()"
+    (openChange)="onCompareOpenChange($event)"
+  />
+}

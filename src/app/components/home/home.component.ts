@@ -5,16 +5,19 @@ import {
   computed,
   inject,
   NgZone,
-  signal
+  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { BiblePreferencesService } from '../../services/bible-preferences.service';
 import {
   ReadingProgressDashboard,
   ReadingProgressService,
-  TodayReadingBlock
+  TodayBibleReading,
+  TodayReadingBlock,
 } from '../../services/reading-progress.service';
+import { PlanPassageModalComponent } from '../plan-passage-modal/plan-passage-modal.component';
 import { ReadingCalendarModalComponent } from '../reading-calendar-modal/reading-calendar-modal.component';
 
 function toIsoLocal(d: Date): string {
@@ -24,30 +27,70 @@ function toIsoLocal(d: Date): string {
   return `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
+interface TodayReadingNav {
+  commands: (string | number)[];
+  queryParams: { verse: string };
+}
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReadingCalendarModalComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ReadingCalendarModalComponent,
+    PlanPassageModalComponent,
+  ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   private readonly auth = inject(AuthService);
   private readonly readingProgress = inject(ReadingProgressService);
+  private readonly biblePrefs = inject(BiblePreferencesService);
   private readonly ngZone = inject(NgZone);
 
   readonly userName = computed(() => this.auth.getFirstName());
 
   readonly dashboard = signal<ReadingProgressDashboard | null>(null);
+  readonly todayBible = signal<TodayBibleReading | null>(null);
+  readonly bibleTodayLoading = signal(false);
+  readonly bibleTodayError = signal<string | null>(null);
   readonly loadError = signal<string | null>(null);
   readonly loading = signal(true);
   readonly calendarOpen = signal(false);
-  readonly markBusy = signal(false);
+
+  readonly planPassageOpen = signal(false);
+  readonly planPassageBlock = signal<TodayReadingBlock | null>(null);
 
   readonly ringCircumference = 2 * Math.PI * 48;
 
+  readonly displayBlocks = computed(
+    () => this.todayBible()?.blocks ?? this.dashboard()?.today.blocks ?? [],
+  );
+
+  /** Primeiro bloco do dia: usado para o dia “ativo” na semana. */
+  readonly todayReadingNav = computed((): TodayReadingNav | null => {
+    const blocks = this.displayBlocks();
+    const b = blocks[0];
+    if (b == null || b.bookNumber == null) {
+      return null;
+    }
+    return {
+      commands: [
+        '/bible',
+        this.biblePrefs.version(),
+        b.bookNumber,
+        b.startChapter,
+      ],
+      queryParams: { verse: String(this.firstVerseForBlock(b)) },
+    };
+  });
+
   readonly headerDate = computed(() => {
-    const raw = this.dashboard()?.today?.referenceDate;
+    const raw =
+      this.todayBible()?.referenceDate ??
+      this.dashboard()?.today?.referenceDate;
     if (raw) {
       const [y, m, day] = raw.split('-').map(Number);
       const dt = new Date(y, m - 1, day);
@@ -56,6 +99,14 @@ export class HomeComponent {
     return formatDate(new Date(), "d 'de' MMMM, EEEE", 'pt-BR');
   });
 
+  /** Data civil usada pelo plano (para registrar leitura no modal). */
+  readonly readingReferenceDate = computed(
+    () =>
+      this.todayBible()?.referenceDate ??
+      this.dashboard()?.today.referenceDate ??
+      null,
+  );
+
   readonly ringDashOffset = computed(() => {
     const p = this.dashboard()?.annualProgressPercent ?? 0;
     const clamped = Math.min(100, Math.max(0, p));
@@ -63,7 +114,7 @@ export class HomeComponent {
   });
 
   readonly progressPercentRounded = computed(() =>
-    Math.round(this.dashboard()?.annualProgressPercent ?? 0)
+    Math.round(this.dashboard()?.annualProgressPercent ?? 0),
   );
 
   constructor() {
@@ -71,6 +122,14 @@ export class HomeComponent {
       this.refreshDashboard();
       this.readingProgress.loadEnrollmentSummary();
     });
+  }
+
+  firstVerseForBlock(block: TodayReadingBlock): number {
+    const chs = block.chapters;
+    if (chs?.length && chs[0].verses?.length) {
+      return chs[0].verses[0].verse;
+    }
+    return 1;
   }
 
   refreshDashboard(): void {
@@ -83,22 +142,63 @@ export class HomeComponent {
         finalize(() =>
           this.ngZone.run(() => {
             this.loading.set(false);
-          })
-        )
+          }),
+        ),
       )
       .subscribe({
         next: (row) => {
           this.ngZone.run(() => {
             this.dashboard.set(row);
             this.loadError.set(null);
+            if (row) {
+              this.refreshTodayBible();
+            } else {
+              this.todayBible.set(null);
+              this.bibleTodayError.set(null);
+            }
           });
         },
         error: (err: Error) => {
           this.ngZone.run(() => {
             this.loadError.set(err.message);
             this.dashboard.set(null);
+            this.todayBible.set(null);
           });
-        }
+        },
+      });
+  }
+
+  refreshTodayBible(): void {
+    const dash = this.dashboard();
+    if (!dash) {
+      return;
+    }
+    const date = dash.today.referenceDate;
+    const version = this.biblePrefs.version();
+    this.bibleTodayLoading.set(true);
+    this.bibleTodayError.set(null);
+    this.readingProgress
+      .getTodayBibleOrNull(version, date)
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.bibleTodayLoading.set(false);
+          }),
+        ),
+      )
+      .subscribe({
+        next: (row) => {
+          this.ngZone.run(() => {
+            this.todayBible.set(row);
+            this.bibleTodayError.set(null);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.bibleTodayError.set(err.message);
+            this.todayBible.set(null);
+          });
+        },
       });
   }
 
@@ -113,36 +213,19 @@ export class HomeComponent {
     }
   }
 
-  onReadCheckbox(block: TodayReadingBlock, ev: Event): void {
-    const input = ev.target as HTMLInputElement;
-    if (block.completed) {
-      input.checked = true;
-      return;
+  openPlanPassageModal(block: TodayReadingBlock): void {
+    this.planPassageBlock.set(block);
+    this.planPassageOpen.set(true);
+  }
+
+  onPlanPassageOpenChange(open: boolean): void {
+    this.planPassageOpen.set(open);
+    if (!open) {
+      this.planPassageBlock.set(null);
     }
-    if (!input.checked) {
-      return;
-    }
-    const ref = this.dashboard()?.today.referenceDate ?? toIsoLocal(new Date());
-    this.markBusy.set(true);
-    this.readingProgress
-      .markDayRead({ dayNumber: block.dayNumber, readDate: ref })
-      .pipe(
-        finalize(() =>
-          this.ngZone.run(() => {
-            this.markBusy.set(false);
-          })
-        )
-      )
-      .subscribe({
-        next: () => {
-          this.ngZone.run(() => this.refreshDashboard());
-        },
-        error: (err: Error) => {
-          this.ngZone.run(() => {
-            this.loadError.set(err.message);
-            input.checked = false;
-          });
-        }
-      });
+  }
+
+  onPlanReadingConfirmed(): void {
+    this.refreshDashboard();
   }
 }

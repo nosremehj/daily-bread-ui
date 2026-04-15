@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
+import { BiblePageComponent } from './components/bible-page/bible-page.component';
 import { PlaceholderPageComponent } from './components/placeholder-page/placeholder-page.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 import { ReadingPlansPageComponent } from './components/reading-plans-page/reading-plans-page.component';
@@ -30,8 +31,11 @@ export const routes: Routes = [
       { path: 'reading-plans', component: ReadingPlansPageComponent },
       {
         path: 'bible',
-        component: PlaceholderPageComponent,
-        data: { title: 'Bíblia' }
+        children: [
+          { path: '', pathMatch: 'full', redirectTo: 'nvi' },
+          { path: ':version/:book/:chapter', component: BiblePageComponent },
+          { path: ':version', component: BiblePageComponent }
+        ]
       },
       {
         path: 'statistics',

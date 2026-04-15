@@ -21,7 +21,8 @@
               <h2>Seu progresso</h2>
               <p class="plan-filename">{{ dash.planFilename }}</p>
               <p class="progress-blurb">
-                Você concluiu {{ dash.completedDays }} de {{ dash.totalPlanDays }} dias do plano. Continue firme no ritmo.
+                Você concluiu {{ dash.completedDays }} de
+                {{ dash.totalPlanDays }} dias do plano. Continue firme no ritmo.
               </p>
               <div class="stats">
                 <span class="streak">
@@ -35,8 +36,20 @@
               </div>
             </div>
             <div class="progress-ring-container" aria-hidden="true">
-              <svg class="progress-ring" width="120" height="120" viewBox="0 0 120 120">
-                <circle class="ring-track" stroke-width="12" fill="transparent" r="48" cx="60" cy="60" />
+              <svg
+                class="progress-ring"
+                width="120"
+                height="120"
+                viewBox="0 0 120 120"
+              >
+                <circle
+                  class="ring-track"
+                  stroke-width="12"
+                  fill="transparent"
+                  r="48"
+                  cx="60"
+                  cy="60"
+                />
                 <circle
                   class="ring-progress"
                   stroke-width="12"
@@ -56,34 +69,66 @@
         <section class="calendar-section">
           <div class="section-header">
             <h3>Esta semana</h3>
-            <button type="button" class="view-all desktop-only" (click)="openCalendar()">
+            <button
+              type="button"
+              class="view-all desktop-only"
+              (click)="openCalendar()"
+            >
               Ver calendário completo
             </button>
           </div>
-          <button type="button" class="view-all mobile-only week-mobile-link" (click)="openCalendar()">
+          <button
+            type="button"
+            class="view-all mobile-only week-mobile-link"
+            (click)="openCalendar()"
+          >
             Ver calendário completo
           </button>
           <div class="days-row" role="list">
             @for (d of dash.weekStrip; track d.date) {
-              <div
-                role="listitem"
-                class="day-item"
-                [class.completed]="d.status === 'COMPLETED'"
-                [class.active]="d.status === 'ACTIVE'"
-                [class.missed]="d.status === 'MISSED'"
-                [class.upcoming]="d.status === 'UPCOMING'"
-                [attr.aria-label]="d.weekdayLabel + ' ' + d.dayOfMonth + ', ' + d.status"
-              >
-                <span class="day-name">{{ d.weekdayLabel }}</span>
-                <span class="day-num">{{ d.dayOfMonth }}</span>
-                <div class="indicator" aria-hidden="true">
-                  @if (d.status === 'COMPLETED') {
-                    <i class="uil uil-check"></i>
-                  } @else if (d.status === 'ACTIVE') {
+              @if (d.status === "ACTIVE" && todayReadingNav(); as nav) {
+                <a
+                  role="listitem"
+                  class="day-item active week-day-link"
+                  [routerLink]="nav.commands"
+                  [queryParams]="nav.queryParams"
+                  [attr.aria-label]="
+                    'Hoje: ' +
+                    d.weekdayLabel +
+                    ' ' +
+                    d.dayOfMonth +
+                    '. Abrir leitura do dia na Bíblia.'
+                  "
+                >
+                  <span class="day-name">{{ d.weekdayLabel }}</span>
+                  <span class="day-num">{{ d.dayOfMonth }}</span>
+                  <div class="indicator" aria-hidden="true">
                     <span class="dot"></span>
-                  }
+                  </div>
+                </a>
+              } @else {
+                <div
+                  role="listitem"
+                  class="day-item"
+                  [class.completed]="d.status === 'COMPLETED'"
+                  [class.active]="d.status === 'ACTIVE'"
+                  [class.missed]="d.status === 'MISSED'"
+                  [class.upcoming]="d.status === 'UPCOMING'"
+                  [attr.aria-label]="
+                    d.weekdayLabel + ' ' + d.dayOfMonth + ', ' + d.status
+                  "
+                >
+                  <span class="day-name">{{ d.weekdayLabel }}</span>
+                  <span class="day-num">{{ d.dayOfMonth }}</span>
+                  <div class="indicator" aria-hidden="true">
+                    @if (d.status === "COMPLETED") {
+                      <i class="uil uil-check"></i>
+                    } @else if (d.status === "ACTIVE") {
+                      <span class="dot"></span>
+                    }
+                  </div>
                 </div>
-              </div>
+              }
             }
           </div>
         </section>
@@ -91,37 +136,70 @@
 
       <div class="dashboard-right">
         <section class="today-section">
-          <div class="section-header">
+          <div class="section-header today-section-header">
             <h3>Leitura de hoje</h3>
-            @if (dash.today.scheduledDayNumber != null) {
-              <span class="time-est glass-pill">Dia {{ dash.today.scheduledDayNumber }}</span>
-            }
           </div>
 
-          @if (dash.today.blocks.length === 0) {
+          @if (bibleTodayLoading()) {
+            <p class="muted bible-loading-hint">Carregando capítulos…</p>
+          }
+          @if (bibleTodayError(); as ber) {
+            <p class="bible-inline-error" role="alert">{{ ber }}</p>
+          }
+
+          @if (displayBlocks().length === 0) {
             <p class="muted">Não há leituras agendadas para esta data.</p>
           } @else {
-            @for (block of dash.today.blocks; track block.planDayId; let i = $index) {
+            @for (
+              block of displayBlocks();
+              track block.planDayId;
+              let i = $index
+            ) {
               <div class="reading-card glass" [class.accent]="i === 0">
                 @if (i === 0) {
                   <div class="reading-bg-pattern" aria-hidden="true"></div>
                 }
-                <div class="reading-content">
-                  <div class="book-info">
-                    <span class="testament">Dia {{ block.dayNumber }}</span>
-                    <h2>{{ block.bookName }} {{ block.startChapter }}–{{ block.endChapter }}</h2>
-                    <p>{{ block.readingText }}</p>
+                <button
+                  type="button"
+                  class="reading-head-nav reading-passage-trigger"
+                  (click)="openPlanPassageModal(block)"
+                  [attr.aria-label]="
+                    'Abrir leitura na Bíblia: ' +
+                    block.bookName +
+                    ' capítulos ' +
+                    block.startChapter +
+                    ' a ' +
+                    block.endChapter
+                  "
+                >
+                  <div class="reading-content">
+                    <div class="book-info">
+                      <span class="testament">Dia {{ block.dayNumber }}</span>
+                      <h2>
+                        {{ block.bookName }} {{ block.startChapter }}–{{
+                          block.endChapter
+                        }}
+                      </h2>
+                      @if (block.bookNumber != null) {
+                        <p class="reading-hint">
+                          <i class="uil uil-book-open" aria-hidden="true"></i>
+                          Toque para abrir na Bíblia (cap.
+                          {{ block.startChapter }}, versículo
+                          {{ firstVerseForBlock(block) }})
+                        </p>
+                      } @else {
+                        <p class="reading-hint">
+                          <i class="uil uil-book-open" aria-hidden="true"></i>
+                          Toque para ler na Bíblia (caps.
+                          {{ block.startChapter }}–{{ block.endChapter }})
+                        </p>
+                      }
+                    </div>
+                    <span class="reading-chevron" aria-hidden="true">
+                      <i class="uil uil-angle-right-b"></i>
+                    </span>
                   </div>
-                  <label class="custom-checkbox" [attr.aria-busy]="markBusy()">
-                    <input
-                      type="checkbox"
-                      [checked]="block.completed"
-                      [disabled]="block.completed || markBusy()"
-                      (change)="onReadCheckbox(block, $event)"
-                    />
-                    <span class="checkmark"><i class="uil uil-check" aria-hidden="true"></i></span>
-                  </label>
-                </div>
+                </button>
               </div>
             }
           }
@@ -129,15 +207,31 @@
       </div>
     </div>
 
-    <app-reading-calendar-modal [open]="calendarOpen()" (openChange)="onCalendarOpenChange($event)" />
+    <app-reading-calendar-modal
+      [open]="calendarOpen()"
+      (openChange)="onCalendarOpenChange($event)"
+    />
+
+    <app-plan-passage-modal
+      [open]="planPassageOpen()"
+      [block]="planPassageBlock()"
+      [referenceDate]="readingReferenceDate()"
+      (openChange)="onPlanPassageOpenChange($event)"
+      (readingConfirmed)="onPlanReadingConfirmed()"
+    />
   } @else {
     <section class="home-empty glass" aria-labelledby="home-empty-heading">
       <h2 id="home-empty-heading">Bem-vindo</h2>
       <p class="home-empty-text">
-        Escolha um plano de leitura e defina quando você começou para acompanhar seu progresso aqui.
+        Escolha um plano de leitura e defina quando você começou para acompanhar
+        seu progresso aqui.
       </p>
-      <p class="home-empty-hint">Importe um PDF ou use um plano já disponível.</p>
-      <a routerLink="/reading-plans" class="btn-primary home-cta">Plano de leitura</a>
+      <p class="home-empty-hint">
+        Importe um PDF ou use um plano já disponível.
+      </p>
+      <a routerLink="/reading-plans" class="btn-primary home-cta"
+        >Plano de leitura</a
+      >
     </section>
   }
 }

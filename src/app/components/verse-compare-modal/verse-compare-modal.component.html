@@ -1,0 +1,43 @@
+@if (open) {
+  <div class="overlay" (click)="onOverlayClick()" aria-hidden="true"></div>
+  <div
+    class="modal glass"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="compare-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header">
+      <h2 id="compare-title">Comparar versículo</h2>
+      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+        <i class="uil uil-times" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    @if (loading()) {
+      <p class="state-msg">Carregando traduções…</p>
+    } @else {
+      @if (errorMessage(); as err) {
+        <p class="state-msg error" role="alert">{{ err }}</p>
+      } @else {
+        @if (data(); as d) {
+          <p class="ref">
+            {{ d.bookName }} {{ d.chapter }}:{{ d.verse }} <span class="abbrev">({{ d.abbrev }})</span>
+          </p>
+          <div class="columns">
+            @for (v of d.versions; track v.versionId) {
+              <div class="col glass-inner">
+                <h3 class="ver-title">{{ v.title }}</h3>
+                <p class="ver-text">{{ v.text }}</p>
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+
+    <div class="footer-actions">
+      <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+    </div>
+  </div>
+}

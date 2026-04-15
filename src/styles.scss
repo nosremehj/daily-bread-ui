@@ -51,6 +51,9 @@ $daily-theme: mat.define-light-theme((
   );
   --glass-border: 1px solid rgba(255, 255, 255, 0.08);
   --shadow-subtle: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --select-surface: #161b26;
+  --select-option-bg: #1e2433;
+  --select-option-text: #e2e8f0;
 }
 
 *,
@@ -95,6 +98,25 @@ p {
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.4;
+}
+
+/* Native <select> no tema escuro (evita options brancas no Windows/Chrome). */
+.select-themed {
+  color-scheme: dark;
+  background-color: var(--select-surface);
+  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.select-themed option {
+  background-color: var(--select-option-bg);
+  color: var(--select-option-text);
+}
+
+.select-themed:focus {
+  outline: 2px solid rgba(139, 92, 246, 0.45);
+  outline-offset: 2px;
 }
 
 .glass {

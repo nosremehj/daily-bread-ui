@@ -99,6 +99,95 @@
   border-radius: 14px;
 }
 
+.today-section-header h3 {
+  margin: 0;
+}
+
+.bible-loading-hint {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.bible-inline-error {
+  font-size: 0.85rem;
+  color: #fecaca;
+  margin-bottom: 12px;
+}
+
+.week-day-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.week-day-link:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.6);
+  outline-offset: 2px;
+}
+
+.reading-head-nav {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: inherit;
+  transition: background 0.2s ease;
+}
+
+.reading-head-nav:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.reading-passage-trigger {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  border-radius: inherit;
+}
+
+.reading-passage-trigger:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.65);
+  outline-offset: 2px;
+}
+
+.reading-head-nav:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.65);
+  outline-offset: 2px;
+}
+
+.reading-head-nav .reading-content {
+  width: 100%;
+}
+
+.reading-content-static {
+  width: 100%;
+  padding-right: 8px;
+}
+
+.reading-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--accent-purple);
+}
+
+.reading-chevron {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-purple);
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
