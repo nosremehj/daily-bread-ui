@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   afterNextRender,
   Component,
+  computed,
   inject,
   NgZone,
   signal,
@@ -23,6 +24,14 @@ import {
 } from '../../services/bible-preferences.service';
 import { VerseCompareModalComponent } from '../verse-compare-modal/verse-compare-modal.component';
 
+function normalizeForSearch(s: string): string {
+  return s
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '');
+}
+
 @Component({
   selector: 'app-bible-page',
   standalone: true,
@@ -40,6 +49,24 @@ export class BiblePageComponent {
 
   readonly versions = signal<BibleVersionMeta[]>([]);
   readonly books = signal<BibleBookMeta[] | null>(null);
+  /** Texto do filtro na listagem de livros (só UI; não vai para a API). */
+  readonly bookFilterText = signal('');
+  readonly filteredBooks = computed(() => {
+    const list = this.books();
+    if (!list) {
+      return [];
+    }
+    const q = normalizeForSearch(this.bookFilterText());
+    if (!q) {
+      return list;
+    }
+    return list.filter((b) => {
+      const name = normalizeForSearch(b.name);
+      const abbrev = normalizeForSearch(b.abbrev);
+      const num = String(b.number);
+      return name.includes(q) || abbrev.includes(q) || num.includes(q.trim());
+    });
+  });
   readonly chapter = signal<BibleChapter | null>(null);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
@@ -91,6 +118,11 @@ export class BiblePageComponent {
       });
 
     });
+  }
+
+  onBookFilterInput(event: Event): void {
+    const v = (event.target as HTMLInputElement).value;
+    this.bookFilterText.set(v);
   }
 
   onVersionSelect(event: Event): void {

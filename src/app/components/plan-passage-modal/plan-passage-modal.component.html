@@ -84,55 +84,81 @@
               </p>
             }
           </article>
-
-          @if (isLastChapterFooter()) {
-            <div class="confirm-reading glass-inner">
-              @if (block.completed || confirmSuccess()) {
-                <p class="confirm-done">
-                  <i class="uil uil-check-circle" aria-hidden="true"></i>
-                  Leitura deste dia já está registrada no seu plano. Continue assim!
-                </p>
-              } @else {
-                <p class="confirm-text">
-                  Você chegou ao último capítulo desta leitura. Se já leu o trecho do dia, confirme para
-                  atualizar seu progresso, os dias seguidos e o calendário.
-                </p>
-                @if (!referenceDate?.trim()) {
-                  <p class="confirm-warn muted small">
-                    Não foi possível obter a data de referência do plano. Tente fechar e abrir de novo.
-                  </p>
-                } @else {
-                  <button
-                    type="button"
-                    class="btn-confirm-reading"
-                    (click)="confirmDailyReading()"
-                    [disabled]="confirmLoading()"
-                  >
-                    @if (confirmLoading()) {
-                      Registrando…
-                    } @else {
-                      Marcar leitura de hoje como concluída
-                    }
-                  </button>
-                }
-              }
-              @if (confirmError(); as cerr) {
-                <p class="confirm-err" role="alert">{{ cerr }}</p>
-              }
-            </div>
-          }
         }
       }
     }
 
-    @if (block.readingText) {
-      <p class="plan-hint muted small">Resumo do plano: {{ block.readingText }}</p>
-    }
-
     <div class="footer-actions">
+      @if (showConfirmReadingEntry()) {
+        <button type="button" class="btn-footer-primary" (click)="openConfirmModal()">
+          Confirmar leitura
+        </button>
+      }
       <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
     </div>
   </div>
+
+  @if (confirmModalOpen()) {
+    <div class="confirm-overlay" (click)="closeConfirmModal()" aria-hidden="true"></div>
+    <div
+      class="confirm-modal glass"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-reading-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="confirm-modal-header">
+        <h2 id="confirm-reading-title">Registrar leitura do dia</h2>
+        <button type="button" class="btn-icon" (click)="closeConfirmModal()" aria-label="Fechar">
+          <i class="uil uil-times" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="confirm-modal-body">
+        @if (block.completed || confirmSuccess()) {
+          <p class="confirm-done">
+            <i class="uil uil-check-circle" aria-hidden="true"></i>
+            Leitura deste dia já está registrada no seu plano. Continue assim!
+          </p>
+        } @else {
+          <p class="confirm-text">
+            Você chegou ao último capítulo desta leitura. Se já leu o trecho do dia, confirme para
+            atualizar seu progresso, os dias seguidos e o calendário.
+          </p>
+          @if (!referenceDate?.trim()) {
+            <p class="confirm-warn muted small">
+              Não foi possível obter a data de referência do plano. Tente fechar e abrir de novo.
+            </p>
+          }
+        }
+        @if (confirmError(); as cerr) {
+          <p class="confirm-err" role="alert">{{ cerr }}</p>
+        }
+      </div>
+
+      <div class="confirm-modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeConfirmModal()">Voltar</button>
+        @if (!block.completed && !confirmSuccess()) {
+          <button
+            type="button"
+            class="btn-confirm-reading"
+            (click)="confirmDailyReading()"
+            [disabled]="confirmLoading() || !referenceDate?.trim()"
+          >
+            @if (confirmLoading()) {
+              Registrando…
+            } @else {
+              Marcar leitura de hoje como concluída
+            }
+          </button>
+        } @else if (confirmSuccess()) {
+          <button type="button" class="btn-confirm-reading" (click)="closeConfirmModal()">
+            Concluir
+          </button>
+        }
+      </div>
+    </div>
+  }
 
   <app-verse-compare-modal
     [open]="compareOpen()"

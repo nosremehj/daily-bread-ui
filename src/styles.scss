@@ -665,25 +665,6 @@ p {
     width: 100%;
   }
 
-  .sidebar .profile-block {
-    min-width: 0;
-  }
-
-  .profile-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .profile-info .name {
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .profile-info .plan {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-  }
-
   .main-content {
     flex: 1;
     padding: 0;

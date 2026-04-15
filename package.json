@@ -7,6 +7,7 @@
     "start:local": "ng serve --configuration development",
     "start:remote-api": "ng serve --configuration remote-api",
     "build": "ng build",
+    "build:vps": "ng build --configuration=vps",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:daily": "node dist/daily/server/server.mjs"

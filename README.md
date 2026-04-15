@@ -16,6 +16,7 @@ O backend é uma API REST **Spring Boot** (repositório separado). O frontend **
 |----------|-----------------|
 | Produção | `https://api-daily-bread.onrender.com` |
 | Desenvolvimento local | `http://localhost:9090` |
+| VPS / Docker (Nginx proxy) | `''` (vazio) — chamadas relativas a `/api/v1/...`; ver `environment.vps.ts` e `deploy/` |
 
 Prefixo REST: `/api/v1` (ex.: `/api/v1/auth/login`, `/api/v1/reading-plans`).
 
@@ -37,6 +38,7 @@ O build de produção usa `environment.prod.ts` e aponta para a API no Render. S
 | `npm start` ou `npm run start:local` | Dev server (`ng serve`) com API em **localhost:9090** |
 | `npm run start:remote-api` | Mesmo dev server, mas chamadas para a API no **Render** (útil para testar o back deployado) |
 | `npm run build` | Build de produção (saída em `dist/daily`) |
+| `npm run build:vps` | Build para VPS: mesmo host que a API via proxy `/api` (`environment.vps.ts`) |
 | `npm run watch` | Build em modo desenvolvimento com watch |
 | `npm test` | Testes unitários (Karma/Jasmine) |
 | `npm run serve:ssr:daily` | Servir o bundle SSR após `npm run build` (Node em `dist/daily/server`) |
@@ -47,6 +49,7 @@ Após `npm start`, abra [http://localhost:4200](http://localhost:4200) (porta pa
 
 - **Desenvolvimento:** `src/environments/environment.ts` → API local.
 - **Produção (Vercel):** `src/environments/environment.prod.ts` → API Render (substituição via `angular.json` no build).
+- **VPS / Docker:** `src/environments/environment.vps.ts` — `apiUrl` vazio + `npm run build:vps`; imagem: `Dockerfile` e `deploy/nginx.conf`.
 - **Dev contra API remota:** `src/environments/environment.remote.ts`, usado pelo script `start:remote-api`.
 
 Há um `.env.example` na raiz com referência às URLs; o Angular não carrega `.env` automaticamente — os valores ficam nos arquivos de environment acima.

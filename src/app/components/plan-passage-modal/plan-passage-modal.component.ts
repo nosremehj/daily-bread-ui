@@ -61,12 +61,14 @@ export class PlanPassageModalComponent implements OnChanges {
   readonly confirmLoading = signal(false);
   readonly confirmError = signal<string | null>(null);
   readonly confirmSuccess = signal(false);
+  readonly confirmModalOpen = signal(false);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && !this.open) {
       this.chapter.set(null);
       this.errorMessage.set(null);
       this.bookNumber.set(null);
+      this.confirmModalOpen.set(false);
       this.resetConfirmState();
       return;
     }
@@ -97,6 +99,24 @@ export class PlanPassageModalComponent implements OnChanges {
       return false;
     }
     return this.currentChapter() === this.chapterEnd();
+  }
+
+  /** Botão “Confirmar leitura” ao lado de Fechar: último capítulo e ainda não registrado nesta sessão/plano. */
+  showConfirmReadingEntry(): boolean {
+    const b = this.block;
+    if (!b || !this.isLastChapterFooter()) {
+      return false;
+    }
+    return !b.completed && !this.confirmSuccess();
+  }
+
+  openConfirmModal(): void {
+    this.confirmError.set(null);
+    this.confirmModalOpen.set(true);
+  }
+
+  closeConfirmModal(): void {
+    this.confirmModalOpen.set(false);
   }
 
   confirmDailyReading(): void {
@@ -134,18 +154,31 @@ export class PlanPassageModalComponent implements OnChanges {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (this.open && !this.compareOpen()) {
-      this.close();
+    if (!this.open) {
+      return;
     }
+    if (this.compareOpen()) {
+      return;
+    }
+    if (this.confirmModalOpen()) {
+      this.closeConfirmModal();
+      return;
+    }
+    this.close();
   }
 
   onOverlayClick(): void {
-    if (!this.compareOpen()) {
-      this.close();
+    if (this.compareOpen()) {
+      return;
     }
+    if (this.confirmModalOpen()) {
+      return;
+    }
+    this.close();
   }
 
   close(): void {
+    this.confirmModalOpen.set(false);
     this.openChange.emit(false);
   }
 
@@ -173,6 +206,7 @@ export class PlanPassageModalComponent implements OnChanges {
     }
     this.confirmSuccess.set(false);
     this.confirmError.set(null);
+    this.confirmModalOpen.set(false);
     this.currentChapter.set(ch - 1);
     this.loadChapter(n, ch - 1);
   }
@@ -186,6 +220,7 @@ export class PlanPassageModalComponent implements OnChanges {
     }
     this.confirmSuccess.set(false);
     this.confirmError.set(null);
+    this.confirmModalOpen.set(false);
     this.currentChapter.set(ch + 1);
     this.loadChapter(n, ch + 1);
   }

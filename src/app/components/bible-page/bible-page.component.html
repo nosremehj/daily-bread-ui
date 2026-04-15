@@ -67,8 +67,31 @@
 } @else {
   @if (books(); as list) {
     <p class="subtitle">Escolha um livro para ler o capítulo 1, ou abra um capítulo a partir do início.</p>
+
+    <div class="book-filter-row glass">
+      <label class="book-filter-label">
+        <span class="book-filter-label-text">Filtrar livros</span>
+        <input
+          type="search"
+          class="book-filter-input select-themed"
+          placeholder="Nome, abreviação ou número…"
+          [value]="bookFilterText()"
+          (input)="onBookFilterInput($event)"
+          autocomplete="off"
+          aria-describedby="book-filter-hint"
+        />
+      </label>
+    </div>
+    <p id="book-filter-hint" class="filter-hint muted small">
+      Busca local: {{ list.length }} livros nesta versão.
+    </p>
+
+    @if (filteredBooks().length === 0 && bookFilterText().trim()) {
+      <p class="filter-empty muted">Nenhum livro combina com “{{ bookFilterText().trim() }}”.</p>
+    }
+
     <ul class="book-grid">
-      @for (b of list; track b.number) {
+      @for (b of filteredBooks(); track b.number) {
         <li>
           <a [routerLink]="['/bible', currentVersion(), b.number, 1]" class="book-card glass">
             <span class="book-num">{{ b.number }}</span>
