@@ -23,13 +23,28 @@
 
       <label class="field">
         <span class="label">Senha</span>
-        <input
-          type="password"
-          formControlName="password"
-          autocomplete="current-password"
-          class="input"
-          [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
-        />
+        <div class="input-password-wrap">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            class="input input--password-toggle"
+            [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
+          />
+          <button
+            type="button"
+            class="btn-password-toggle"
+            (click)="toggleShowPassword()"
+            [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+            [attr.aria-pressed]="showPassword()"
+          >
+            @if (showPassword()) {
+              <i class="uil uil-eye-slash" aria-hidden="true"></i>
+            } @else {
+              <i class="uil uil-eye" aria-hidden="true"></i>
+            }
+          </button>
+        </div>
         @if (form.controls.password.invalid && form.controls.password.touched) {
           <span class="hint">Informe a senha.</span>
         }

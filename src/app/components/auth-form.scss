@@ -72,6 +72,42 @@
   }
 }
 
+.input-password-wrap {
+  position: relative;
+}
+
+.input--password-toggle {
+  padding-right: 48px;
+}
+
+.btn-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+
+  i {
+    font-size: 1.25rem;
+    color: #000;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(139, 92, 246, 0.55);
+    outline-offset: 2px;
+  }
+}
+
 .hint {
   font-size: 0.8rem;
   color: rgba(248, 113, 113, 0.95);

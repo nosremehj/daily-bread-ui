@@ -23,11 +23,16 @@ export class LoginComponent {
 
   readonly submitting = signal(false);
   readonly serverError = signal<string | null>(null);
+  readonly showPassword = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]]
   });
+
+  toggleShowPassword(): void {
+    this.showPassword.update((v) => !v);
+  }
 
   submit(): void {
     this.serverError.set(null);
