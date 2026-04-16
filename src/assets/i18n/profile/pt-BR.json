@@ -1,0 +1,25 @@
+{
+  "title": "Perfil e conta",
+  "subtitle": "Atualize nome, e-mail e usuário de login. A troca de senha é feita em um passo à parte, por segurança.",
+  "accountSection": "Dados da conta",
+  "name": "Nome",
+  "email": "E-mail",
+  "username": "Usuário (login)",
+  "nameError": "Informe seu nome.",
+  "emailError": "Informe um e-mail válido.",
+  "usernameError": "Mínimo 3 caracteres, máximo 64.",
+  "usernameHint": "Se alterar o usuário, a sessão será renovada automaticamente após salvar.",
+  "save": "Salvar alterações",
+  "saving": "Salvando…",
+  "changePassword": "Alterar senha…",
+  "successPassword": "Senha alterada com sucesso.",
+  "successRenamed": "Dados salvos. O nome de usuário foi alterado e sua sessão foi renovada.",
+  "successProfile": "Dados salvos com sucesso.",
+  "language": {
+    "title": "Idioma da interface",
+    "hint": "Afeta textos do aplicativo, datas e títulos. O texto bíblico continua na versão escolhida na Bíblia.",
+    "pt": "Português (Brasil)",
+    "en": "English",
+    "es": "Español"
+  }
+}

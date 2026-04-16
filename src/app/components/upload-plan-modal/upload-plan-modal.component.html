@@ -8,16 +8,16 @@
     (click)="$event.stopPropagation()"
   >
     <div class="modal-header">
-      <h2 id="upload-dialog-title">Importar plano em PDF</h2>
-      <button type="button" class="btn-icon" (click)="close()" [disabled]="uploading()" aria-label="Fechar">
+      <h2 id="upload-dialog-title">{{ 'modals.upload.title' | transloco }}</h2>
+      <button type="button" class="btn-icon" (click)="close()" [disabled]="uploading()" [attr.aria-label]="'common.actions.close' | transloco">
         <i class="uil uil-times" aria-hidden="true"></i>
       </button>
     </div>
     <p class="hint">
-      Envie um PDF com texto selecionável. PDFs apenas com imagem não podem ser importados.
+      {{ 'modals.upload.hint' | transloco }}
     </p>
     <div class="field">
-      <label for="plan-pdf-file" class="file-label">Arquivo</label>
+      <label for="plan-pdf-file" class="file-label">{{ 'modals.upload.file' | transloco }}</label>
       <input
         #fileInput
         id="plan-pdf-file"
@@ -34,7 +34,9 @@
       <p class="error" role="alert">{{ err }}</p>
     }
     <div class="actions">
-      <button type="button" class="btn-secondary" (click)="close()" [disabled]="uploading()">Cancelar</button>
+      <button type="button" class="btn-secondary" (click)="close()" [disabled]="uploading()">
+        {{ 'modals.upload.cancel' | transloco }}
+      </button>
       <button
         type="button"
         class="btn-primary inline"
@@ -42,9 +44,9 @@
         [disabled]="!selectedFile() || uploading()"
       >
         @if (uploading()) {
-          <span>Enviando…</span>
+          <span>{{ 'modals.upload.uploading' | transloco }}</span>
         } @else {
-          <span>Importar</span>
+          <span>{{ 'modals.upload.import' | transloco }}</span>
         }
       </button>
     </div>

@@ -8,7 +8,12 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
+import {
+  longWeekdayDateFormat,
+  translocoToAngularLocale,
+} from '../../core/i18n/angular-locale';
 import { AuthService } from '../../services/auth.service';
 import { BiblePreferencesService } from '../../services/bible-preferences.service';
 import {
@@ -17,6 +22,7 @@ import {
   TodayBibleReading,
   TodayReadingBlock,
 } from '../../services/reading-progress.service';
+import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import { PlanPassageModalComponent } from '../plan-passage-modal/plan-passage-modal.component';
 import { ReadingCalendarModalComponent } from '../reading-calendar-modal/reading-calendar-modal.component';
 
@@ -38,8 +44,10 @@ interface TodayReadingNav {
   imports: [
     CommonModule,
     RouterLink,
+    LanguageMenuComponent,
     ReadingCalendarModalComponent,
     PlanPassageModalComponent,
+    TranslocoPipe,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -49,6 +57,7 @@ export class HomeComponent {
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly biblePrefs = inject(BiblePreferencesService);
   private readonly ngZone = inject(NgZone);
+  private readonly transloco = inject(TranslocoService);
 
   readonly userName = computed(() => this.auth.getFirstName());
 
@@ -88,15 +97,18 @@ export class HomeComponent {
   });
 
   readonly headerDate = computed(() => {
+    this.transloco.activeLang();
+    const locale = translocoToAngularLocale(this.transloco.getActiveLang());
+    const pattern = longWeekdayDateFormat(this.transloco.getActiveLang());
     const raw =
       this.todayBible()?.referenceDate ??
       this.dashboard()?.today?.referenceDate;
     if (raw) {
       const [y, m, day] = raw.split('-').map(Number);
       const dt = new Date(y, m - 1, day);
-      return formatDate(dt, "d 'de' MMMM, EEEE", 'pt-BR');
+      return formatDate(dt, pattern, locale);
     }
-    return formatDate(new Date(), "d 'de' MMMM, EEEE", 'pt-BR');
+    return formatDate(new Date(), pattern, locale);
   });
 
   /** Data civil usada pelo plano (para registrar leitura no modal). */

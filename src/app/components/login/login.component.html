@@ -2,13 +2,13 @@
   <div class="auth-card glass">
     <div class="auth-brand">
       <i class="uil uil-book-reader" aria-hidden="true"></i>
-      <h1>Pão diário</h1>
-      <p>Entre com seu usuário e senha</p>
+      <h1>{{ 'common.brand' | transloco }}</h1>
+      <p>{{ 'auth.login.subtitle' | transloco }}</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <label class="field">
-        <span class="label">Usuário</span>
+        <span class="label">{{ 'auth.login.username' | transloco }}</span>
         <input
           type="text"
           formControlName="username"
@@ -17,12 +17,12 @@
           [class.invalid]="form.controls.username.invalid && form.controls.username.touched"
         />
         @if (form.controls.username.invalid && form.controls.username.touched) {
-          <span class="hint">Informe o usuário.</span>
+          <span class="hint">{{ 'auth.login.usernameHint' | transloco }}</span>
         }
       </label>
 
       <label class="field">
-        <span class="label">Senha</span>
+        <span class="label">{{ 'auth.login.password' | transloco }}</span>
         <div class="input-password-wrap">
           <input
             [type]="showPassword() ? 'text' : 'password'"
@@ -35,7 +35,7 @@
             type="button"
             class="btn-password-toggle"
             (click)="toggleShowPassword()"
-            [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+            [attr.aria-label]="(showPassword() ? 'auth.login.hidePassword' : 'auth.login.showPassword') | transloco"
             [attr.aria-pressed]="showPassword()"
           >
             @if (showPassword()) {
@@ -46,22 +46,22 @@
           </button>
         </div>
         @if (form.controls.password.invalid && form.controls.password.touched) {
-          <span class="hint">Informe a senha.</span>
+          <span class="hint">{{ 'auth.login.passwordHint' | transloco }}</span>
         }
       </label>
 
-      @if (serverError()) {
-        <p class="error-banner" role="alert">{{ serverError() }}</p>
+      @if (serverError(); as err) {
+        <p class="error-banner" role="alert">{{ err }}</p>
       }
 
       <button type="submit" class="btn-primary" [disabled]="submitting()">
-        {{ submitting() ? 'Entrando…' : 'Entrar' }}
+        {{ submitting() ? ('auth.login.submitting' | transloco) : ('auth.login.submit' | transloco) }}
       </button>
     </form>
 
     <p class="auth-footer">
-      Não tem conta?
-      <a routerLink="/register">Cadastre-se</a>
+      {{ 'auth.login.noAccount' | transloco }}
+      <a routerLink="/register">{{ 'auth.login.registerLink' | transloco }}</a>
     </p>
   </div>
 </div>

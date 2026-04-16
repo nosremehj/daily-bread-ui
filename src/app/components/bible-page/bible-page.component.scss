@@ -7,9 +7,22 @@
   margin-bottom: 20px;
 }
 
-.page-header h1 {
+.bible-title-lang-row {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.page-header .bible-heading-title {
   font-size: 1.75rem;
-  margin-bottom: 12px;
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 4px;
+  line-height: 1.2;
+}
+
+.bible-version-toolbar {
+  margin-top: 12px;
 }
 
 .toolbar {

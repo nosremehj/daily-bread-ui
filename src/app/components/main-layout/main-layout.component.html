@@ -1,8 +1,8 @@
 <div class="layout-wrapper">
-  <nav class="sidebar glass" aria-label="Navegação principal">
+  <nav class="sidebar glass main-layout-nav" [attr.aria-label]="'common.nav.aria' | transloco">
     <div class="brand desktop-only">
       <i class="uil uil-book-reader" aria-hidden="true"></i>
-      <span>Pão diário</span>
+      <span>{{ 'common.brand' | transloco }}</span>
     </div>
 
     <div class="nav-links">
@@ -13,32 +13,32 @@
         class="nav-item"
       >
         <i class="uil uil-home-alt" aria-hidden="true"></i>
-        <span>Início</span>
+        <span>{{ 'common.nav.home' | transloco }}</span>
       </a>
       <a routerLink="/reading-plans" routerLinkActive="active" class="nav-item">
         <i class="uil uil-file-upload-alt" aria-hidden="true"></i>
-        <span>Plano de leitura</span>
+        <span>{{ 'common.nav.readingPlans' | transloco }}</span>
       </a>
       <a routerLink="/bible" routerLinkActive="active" class="nav-item">
         <i class="uil uil-book-open" aria-hidden="true"></i>
-        <span>Bíblia</span>
+        <span>{{ 'common.nav.bible' | transloco }}</span>
       </a>
       <a routerLink="/statistics" routerLinkActive="active" class="nav-item">
         <i class="uil uil-chart-pie-alt" aria-hidden="true"></i>
-        <span>Estatísticas</span>
+        <span>{{ 'common.nav.statistics' | transloco }}</span>
       </a>
       <a routerLink="/settings" routerLinkActive="active" class="nav-item">
         <i class="uil uil-setting" aria-hidden="true"></i>
-        <span>Ajustes</span>
+        <span>{{ 'common.nav.settings' | transloco }}</span>
       </a>
-      <button type="button" class="nav-item mobile-only nav-logout" (click)="logout()">
+      <button type="button" class="nav-item nav-logout mobile-only" (click)="logout()">
         <i class="uil uil-sign-out-alt" aria-hidden="true"></i>
-        <span>Sair</span>
+        <span>{{ 'common.nav.logout' | transloco }}</span>
       </button>
     </div>
 
     <div class="sidebar-footer desktop-only">
-      <button type="button" class="btn-logout" (click)="logout()">Sair</button>
+      <button type="button" class="btn-logout" (click)="logout()">{{ 'common.nav.logout' | transloco }}</button>
     </div>
   </nav>
 

@@ -5,6 +5,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
@@ -12,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslocoPipe],
   templateUrl: './login.component.html',
   styleUrl: '../auth-form.scss'
 })
@@ -20,6 +21,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
   readonly submitting = signal(false);
   readonly serverError = signal<string | null>(null);
@@ -48,7 +50,7 @@ export class LoginComponent {
       .subscribe({
         next: () => void this.router.navigateByUrl('/home'),
         error: () =>
-          this.serverError.set('Usuário ou senha inválidos.')
+          this.serverError.set(this.transloco.translate('auth.login.invalidCredentials'))
       });
   }
 }

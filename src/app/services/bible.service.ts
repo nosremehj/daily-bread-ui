@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -58,18 +59,19 @@ interface ApiErrorBody {
 @Injectable({ providedIn: 'root' })
 export class BibleService {
   private readonly http = inject(HttpClient);
+  private readonly transloco = inject(TranslocoService);
   private readonly baseUrl = `${environment.apiUrl}/api/v1/bible`;
 
   getVersions(): Observable<BibleVersionMeta[]> {
     return this.http.get<BibleVersionMeta[] | { versions: BibleVersionMeta[] }>(`${this.baseUrl}/versions`).pipe(
       map((raw) => (Array.isArray(raw) ? raw : raw.versions ?? [])),
-      catchError((err) => throwError(() => this.toError(err, 'Não foi possível carregar as versões.')))
+      catchError((err) => throwError(() => this.toError(err, 'common.errors.loadVersions')))
     );
   }
 
   getBooks(version: BibleVersionCode): Observable<BibleBookMeta[]> {
     return this.http.get<BibleBookMeta[]>(`${this.baseUrl}/${version}/books`).pipe(
-      catchError((err) => throwError(() => this.toError(err, 'Não foi possível carregar os livros.')))
+      catchError((err) => throwError(() => this.toError(err, 'common.errors.loadBooks')))
     );
   }
 
@@ -77,7 +79,7 @@ export class BibleService {
     return this.http
       .get<BibleChapter>(`${this.baseUrl}/${version}/books/${book}/chapters/${chapter}`)
       .pipe(
-        catchError((err) => throwError(() => this.toError(err, 'Não foi possível carregar o capítulo.')))
+        catchError((err) => throwError(() => this.toError(err, 'common.errors.loadChapter')))
       );
   }
 
@@ -92,7 +94,7 @@ export class BibleService {
         `${this.baseUrl}/${version}/books/${book}/chapters/${chapter}/verses/${verse}`
       )
       .pipe(
-        catchError((err) => throwError(() => this.toError(err, 'Não foi possível carregar o versículo.')))
+        catchError((err) => throwError(() => this.toError(err, 'common.errors.loadVerse')))
       );
   }
 
@@ -107,12 +109,12 @@ export class BibleService {
       })
       .pipe(
         catchError((err) =>
-          throwError(() => this.toError(err, 'Não foi possível comparar o versículo.'))
+          throwError(() => this.toError(err, 'common.errors.compareVerse'))
         )
       );
   }
 
-  private toError(err: unknown, fallback: string): Error {
+  private toError(err: unknown, fallbackKey: string): Error {
     const httpErr = err as HttpErrorResponse;
     const body = httpErr?.error as ApiErrorBody | undefined;
     const message =
@@ -120,7 +122,7 @@ export class BibleService {
         ? body.error
         : typeof httpErr?.message === 'string'
           ? httpErr.message
-          : fallback;
+          : this.transloco.translate(fallbackKey);
     return new Error(message);
   }
 }

@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -42,12 +43,19 @@ interface ApiErrorBody {
 @Injectable({ providedIn: 'root' })
 export class ReadingPlanService {
   private readonly http = inject(HttpClient);
+  private readonly transloco = inject(TranslocoService);
   private readonly baseUrl = `${environment.apiUrl}/api/v1/reading-plans`;
 
   list(): Observable<ReadingPlanSummary[]> {
     return this.http.get<ReadingPlanSummary[]>(this.baseUrl).pipe(
-      catchError((err) => {
-        const message = err?.message ?? 'Não foi possível carregar os planos.';
+      catchError((err: HttpErrorResponse) => {
+        const body = err?.error as ApiErrorBody | undefined;
+        const message =
+          typeof body?.error === 'string'
+            ? body.error
+            : typeof err?.message === 'string'
+              ? err.message
+              : this.transloco.translate('common.errors.loadPlans');
         return throwError(() => new Error(message));
       })
     );
@@ -55,12 +63,14 @@ export class ReadingPlanService {
 
   getById(id: number): Observable<ReadingPlanDetail> {
     return this.http.get<ReadingPlanDetail>(`${this.baseUrl}/${id}`).pipe(
-      catchError((err) => {
+      catchError((err: HttpErrorResponse) => {
         const body = err?.error as ApiErrorBody | undefined;
         const message =
           typeof body?.error === 'string'
             ? body.error
-            : err?.message ?? 'Não foi possível carregar o plano.';
+            : typeof err?.message === 'string'
+              ? err.message
+              : this.transloco.translate('common.errors.loadPlan');
         return throwError(() => new Error(message));
       })
     );
@@ -70,12 +80,14 @@ export class ReadingPlanService {
     const formData = new FormData();
     formData.append('file', file, file.name);
     return this.http.post<ReadingPlanCreated>(this.baseUrl, formData).pipe(
-      catchError((err) => {
+      catchError((err: HttpErrorResponse) => {
         const body = err?.error as ApiErrorBody | undefined;
         const message =
           typeof body?.error === 'string'
             ? body.error
-            : err?.message ?? 'Não foi possível importar o PDF.';
+            : typeof err?.message === 'string'
+              ? err.message
+              : this.transloco.translate('common.errors.importPdf');
         return throwError(() => new Error(message));
       })
     );

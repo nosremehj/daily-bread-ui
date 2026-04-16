@@ -1,0 +1,25 @@
+{
+  "title": "Profile & account",
+  "subtitle": "Update your name, email, and login username. Password changes are a separate step for security.",
+  "accountSection": "Account details",
+  "name": "Name",
+  "email": "Email",
+  "username": "Username (login)",
+  "nameError": "Enter your name.",
+  "emailError": "Enter a valid email.",
+  "usernameError": "Minimum 3 characters, maximum 64.",
+  "usernameHint": "If you change your username, your session will be renewed automatically after saving.",
+  "save": "Save changes",
+  "saving": "Saving…",
+  "changePassword": "Change password…",
+  "successPassword": "Password changed successfully.",
+  "successRenamed": "Saved. Your username was changed and your session was renewed.",
+  "successProfile": "Saved successfully.",
+  "language": {
+    "title": "Interface language",
+    "hint": "Affects app copy, dates, and titles. Bible text still follows the version you pick in the Bible section.",
+    "pt": "Portuguese (Brazil)",
+    "en": "English",
+    "es": "Spanish"
+  }
+}

@@ -3,7 +3,9 @@ import localePt from '@angular/common/locales/pt';
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 import { of } from 'rxjs';
+import { TRANSLATIONS_BY_LANG } from '../../core/i18n/translations-bundled';
 import { AuthService } from '../../services/auth.service';
 import { BiblePreferencesService } from '../../services/bible-preferences.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
@@ -14,7 +16,21 @@ registerLocaleData(localePt, 'pt-BR');
 describe('HomeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomeComponent],
+      imports: [
+        HomeComponent,
+        TranslocoTestingModule.forRoot({
+          langs: {
+            'pt-BR': TRANSLATIONS_BY_LANG['pt-BR'],
+            en: TRANSLATIONS_BY_LANG['en'],
+            es: TRANSLATIONS_BY_LANG['es'],
+          },
+          translocoConfig: {
+            availableLangs: ['pt-BR', 'en', 'es'],
+            defaultLang: 'pt-BR',
+          },
+          preloadLangs: true,
+        }),
+      ],
       providers: [
         provideRouter([]),
         {

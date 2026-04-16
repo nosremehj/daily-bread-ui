@@ -11,13 +11,14 @@ import {
   NgZone,
   signal
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { BibleService, VerseCompareResult } from '../../services/bible.service';
 
 @Component({
   selector: 'app-verse-compare-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoPipe],
   templateUrl: './verse-compare-modal.component.html',
   styleUrl: './verse-compare-modal.component.scss'
 })

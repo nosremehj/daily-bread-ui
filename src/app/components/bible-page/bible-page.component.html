@@ -1,19 +1,24 @@
 <header class="page-header">
-  <h1>Bíblia</h1>
-  <div class="toolbar glass">
-    <label class="version-label">
-      <span class="visually-hidden">Versão da tradução</span>
-      <select
-        class="select-themed version-select"
-        [value]="currentVersion()"
-        (change)="onVersionSelect($event)"
-        aria-label="Versão da tradução"
-      >
-        <option value="nvi">NVI</option>
-        <option value="ara">ARA</option>
-        <option value="ntlh">NTLH</option>
-      </select>
-    </label>
+  <div class="page-heading-row bible-title-lang-row">
+    <h1 class="bible-heading-title">{{ 'bible.title' | transloco }}</h1>
+    <app-language-menu class="page-heading-row__actions" />
+  </div>
+  <div class="bible-version-toolbar">
+    <div class="toolbar glass">
+      <label class="version-label">
+        <span class="visually-hidden">{{ 'bible.versionLabel' | transloco }}</span>
+        <select
+          class="select-themed version-select"
+          [value]="currentVersion()"
+          (change)="onVersionSelect($event)"
+          [attr.aria-label]="'bible.versionLabel' | transloco"
+        >
+          <option value="nvi">NVI</option>
+          <option value="ara">ARA</option>
+          <option value="ntlh">NTLH</option>
+        </select>
+      </label>
+    </div>
   </div>
 </header>
 
@@ -22,12 +27,12 @@
 }
 
 @if (loading()) {
-  <p class="muted">Carregando…</p>
+  <p class="muted">{{ 'bible.loading' | transloco }}</p>
 }
 
 @if (chapter(); as ch) {
-  <nav class="breadcrumb glass-pill" aria-label="Navegação">
-    <a [routerLink]="['/bible', currentVersion()]" class="crumb">Livros</a>
+  <nav class="breadcrumb glass-pill" aria-label="Navigation">
+    <a [routerLink]="['/bible', currentVersion()]" class="crumb">{{ 'bible.breadcrumb.books' | transloco }}</a>
     <span class="sep" aria-hidden="true">/</span>
     <span class="crumb-current">{{ ch.bookName }} {{ ch.chapter }}</span>
   </nav>
@@ -35,22 +40,25 @@
   <div class="chapter-nav glass">
     <button type="button" class="btn-ghost-sm" (click)="goPrevChapter()" [disabled]="ch.chapter <= 1">
       <i class="uil uil-arrow-left" aria-hidden="true"></i>
-      Anterior
+      {{ 'bible.chapterNav.prev' | transloco }}
     </button>
     <button type="button" class="btn-ghost-sm" (click)="goNextChapter()">
-      Próximo
+      {{ 'bible.chapterNav.next' | transloco }}
       <i class="uil uil-arrow-right" aria-hidden="true"></i>
     </button>
   </div>
 
-  <article class="chapter-body glass" [attr.aria-label]="ch.bookName + ' capítulo ' + ch.chapter">
+  <article
+    class="chapter-body glass"
+    [attr.aria-label]="'bible.chapterAria' | transloco: { book: ch.bookName, chapter: ch.chapter }"
+  >
     @for (v of ch.verses; track v.verse) {
       <p class="verse-line" [id]="'v-' + v.verse">
         <button
           type="button"
           class="verse-num"
           (click)="openCompare(ch.bookNumber, ch.chapter, v.verse)"
-          [attr.aria-label]="'Comparar versículo ' + v.verse"
+          [attr.aria-label]="'common.compareVerse' | transloco: { verse: v.verse }"
         >
           {{ v.verse }}
         </button>
@@ -66,15 +74,15 @@
   }
 } @else {
   @if (books(); as list) {
-    <p class="subtitle">Escolha um livro para ler o capítulo 1, ou abra um capítulo a partir do início.</p>
+    <p class="subtitle">{{ 'bible.booksIntro' | transloco }}</p>
 
     <div class="book-filter-row glass">
       <label class="book-filter-label">
-        <span class="book-filter-label-text">Filtrar livros</span>
+        <span class="book-filter-label-text">{{ 'bible.filter.label' | transloco }}</span>
         <input
           type="search"
           class="book-filter-input select-themed"
-          placeholder="Nome, abreviação ou número…"
+          [placeholder]="'bible.filter.placeholder' | transloco"
           [value]="bookFilterText()"
           (input)="onBookFilterInput($event)"
           autocomplete="off"
@@ -83,11 +91,13 @@
       </label>
     </div>
     <p id="book-filter-hint" class="filter-hint muted small">
-      Busca local: {{ list.length }} livros nesta versão.
+      {{ 'bible.filter.hint' | transloco: { count: list.length } }}
     </p>
 
     @if (filteredBooks().length === 0 && bookFilterText().trim()) {
-      <p class="filter-empty muted">Nenhum livro combina com “{{ bookFilterText().trim() }}”.</p>
+      <p class="filter-empty muted">
+        {{ 'bible.filter.empty' | transloco: { query: bookFilterText().trim() } }}
+      </p>
     }
 
     <ul class="book-grid">

@@ -1,0 +1,52 @@
+<div class="lang-menu-host" #langMenuHost>
+  <button
+    type="button"
+    class="lang-menu-trigger"
+    (click)="toggleLangMenu()"
+    [attr.aria-expanded]="langMenuOpen()"
+    aria-haspopup="true"
+    [attr.aria-controls]="langMenuPanelId"
+  >
+    <i class="uil uil-globe" aria-hidden="true"></i>
+    <span class="visually-hidden">{{ 'common.nav.languageAria' | transloco }}</span>
+  </button>
+  @if (langMenuOpen()) {
+    <div
+      class="lang-menu-popover glass"
+      role="menu"
+      [id]="langMenuPanelId"
+      [attr.aria-label]="'common.nav.languageAria' | transloco"
+    >
+      <button
+        type="button"
+        class="lang-menu-item"
+        role="menuitemradio"
+        [attr.aria-checked]="activeLang() === 'pt-BR'"
+        [class.active]="activeLang() === 'pt-BR'"
+        (click)="pickLang('pt-BR')"
+      >
+        {{ 'common.nav.langOptionPt' | transloco }}
+      </button>
+      <button
+        type="button"
+        class="lang-menu-item"
+        role="menuitemradio"
+        [attr.aria-checked]="activeLang() === 'en'"
+        [class.active]="activeLang() === 'en'"
+        (click)="pickLang('en')"
+      >
+        {{ 'common.nav.langOptionEn' | transloco }}
+      </button>
+      <button
+        type="button"
+        class="lang-menu-item"
+        role="menuitemradio"
+        [attr.aria-checked]="activeLang() === 'es'"
+        [class.active]="activeLang() === 'es'"
+        (click)="pickLang('es')"
+      >
+        {{ 'common.nav.langOptionEs' | transloco }}
+      </button>
+    </div>
+  }
+</div>

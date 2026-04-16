@@ -9,24 +9,33 @@
   >
     <div class="modal-header">
       <div class="modal-titles">
-        <h2 id="plan-passage-title">Leitura do plano</h2>
+        <h2 id="plan-passage-title">{{ 'modals.planPassage.title' | transloco }}</h2>
         <p class="subtitle">
-          Dia {{ block.dayNumber }} · {{ block.bookName }} {{ chapterStart() }}–{{ chapterEnd() }}
+          {{
+            'modals.planPassage.subtitle'
+              | transloco
+                : {
+                    day: block.dayNumber,
+                    book: block.bookName,
+                    from: chapterStart(),
+                    to: chapterEnd(),
+                  }
+          }}
         </p>
       </div>
-      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+      <button type="button" class="btn-icon" (click)="close()" [attr.aria-label]="'common.actions.close' | transloco">
         <i class="uil uil-times" aria-hidden="true"></i>
       </button>
     </div>
 
     <div class="toolbar">
       <label class="version-wrap">
-        <span class="label">Versão</span>
+        <span class="label">{{ 'modals.planPassage.version' | transloco }}</span>
         <select
           class="select-themed version-select"
           [value]="version()"
           (change)="onVersionSelect($event)"
-          aria-label="Versão da tradução"
+          [attr.aria-label]="'modals.planPassage.versionAria' | transloco"
         >
           <option value="nvi">NVI</option>
           <option value="ara">ARA</option>
@@ -44,10 +53,18 @@
           [disabled]="currentChapter() <= chapterStart()"
         >
           <i class="uil uil-arrow-left" aria-hidden="true"></i>
-          Cap. anterior
+          {{ 'modals.planPassage.prevChapter' | transloco }}
         </button>
         <span class="ch-label">
-          Capítulo {{ currentChapter() }} de {{ chapterStart() }}–{{ chapterEnd() }}
+          {{
+            'modals.planPassage.chapterOf'
+              | transloco
+                : {
+                    current: currentChapter(),
+                    from: chapterStart(),
+                    to: chapterEnd(),
+                  }
+          }}
         </span>
         <button
           type="button"
@@ -55,20 +72,23 @@
           (click)="goNext()"
           [disabled]="currentChapter() >= chapterEnd()"
         >
-          Próximo cap.
+          {{ 'modals.planPassage.nextChapter' | transloco }}
           <i class="uil uil-arrow-right" aria-hidden="true"></i>
         </button>
       </div>
     }
 
     @if (loading()) {
-      <p class="state-msg">Carregando capítulo…</p>
+      <p class="state-msg">{{ 'modals.planPassage.loadingChapter' | transloco }}</p>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>
       } @else {
         @if (chapter(); as ch) {
-          <article class="chapter-body glass-inner" [attr.aria-label]="ch.bookName + ' ' + ch.chapter">
+          <article
+            class="chapter-body glass-inner"
+            [attr.aria-label]="'modals.planPassage.chapterTitle' | transloco: { book: ch.bookName, chapter: ch.chapter }"
+          >
             <h3 class="chapter-title">{{ ch.bookName }} {{ ch.chapter }}</h3>
             @for (v of ch.verses; track v.verse) {
               <p class="verse-line">
@@ -76,7 +96,7 @@
                   type="button"
                   class="verse-num"
                   (click)="openCompare(ch.bookNumber, ch.chapter, v.verse)"
-                  [attr.aria-label]="'Comparar versículo ' + v.verse"
+                  [attr.aria-label]="'common.compareVerse' | transloco: { verse: v.verse }"
                 >
                   {{ v.verse }}
                 </button>
@@ -91,10 +111,10 @@
     <div class="footer-actions">
       @if (showConfirmReadingEntry()) {
         <button type="button" class="btn-footer-primary" (click)="openConfirmModal()">
-          Confirmar leitura
+          {{ 'modals.planPassage.confirmReading' | transloco }}
         </button>
       }
-      <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+      <button type="button" class="btn-secondary" (click)="close()">{{ 'modals.planDetail.close' | transloco }}</button>
     </div>
   </div>
 
@@ -108,8 +128,8 @@
       (click)="$event.stopPropagation()"
     >
       <div class="confirm-modal-header">
-        <h2 id="confirm-reading-title">Registrar leitura do dia</h2>
-        <button type="button" class="btn-icon" (click)="closeConfirmModal()" aria-label="Fechar">
+        <h2 id="confirm-reading-title">{{ 'modals.planPassage.confirmTitle' | transloco }}</h2>
+        <button type="button" class="btn-icon" (click)="closeConfirmModal()" [attr.aria-label]="'common.actions.close' | transloco">
           <i class="uil uil-times" aria-hidden="true"></i>
         </button>
       </div>
@@ -118,16 +138,15 @@
         @if (block.completed || confirmSuccess()) {
           <p class="confirm-done">
             <i class="uil uil-check-circle" aria-hidden="true"></i>
-            Leitura deste dia já está registrada no seu plano. Continue assim!
+            {{ 'modals.planPassage.alreadyDone' | transloco }}
           </p>
         } @else {
           <p class="confirm-text">
-            Você chegou ao último capítulo desta leitura. Se já leu o trecho do dia, confirme para
-            atualizar seu progresso, os dias seguidos e o calendário.
+            {{ 'modals.planPassage.confirmBody' | transloco }}
           </p>
           @if (!referenceDate?.trim()) {
             <p class="confirm-warn muted small">
-              Não foi possível obter a data de referência do plano. Tente fechar e abrir de novo.
+              {{ 'modals.planPassage.noReferenceDate' | transloco }}
             </p>
           }
         }
@@ -137,7 +156,9 @@
       </div>
 
       <div class="confirm-modal-footer">
-        <button type="button" class="btn-secondary" (click)="closeConfirmModal()">Voltar</button>
+        <button type="button" class="btn-secondary" (click)="closeConfirmModal()">
+          {{ 'modals.planPassage.back' | transloco }}
+        </button>
         @if (!block.completed && !confirmSuccess()) {
           <button
             type="button"
@@ -146,14 +167,14 @@
             [disabled]="confirmLoading() || !referenceDate?.trim()"
           >
             @if (confirmLoading()) {
-              Registrando…
+              {{ 'modals.planPassage.registering' | transloco }}
             } @else {
-              Marcar leitura de hoje como concluída
+              {{ 'modals.planPassage.markComplete' | transloco }}
             }
           </button>
         } @else if (confirmSuccess()) {
           <button type="button" class="btn-confirm-reading" (click)="closeConfirmModal()">
-            Concluir
+            {{ 'modals.planPassage.done' | transloco }}
           </button>
         }
       </div>

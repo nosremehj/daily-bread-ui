@@ -1,0 +1,36 @@
+{
+  "login": {
+    "subtitle": "Entre com seu usuário e senha",
+    "username": "Usuário",
+    "password": "Senha",
+    "usernameHint": "Informe o usuário.",
+    "passwordHint": "Informe a senha.",
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Ocultar senha",
+    "submit": "Entrar",
+    "submitting": "Entrando…",
+    "invalidCredentials": "Usuário ou senha inválidos.",
+    "noAccount": "Não tem conta?",
+    "registerLink": "Cadastre-se"
+  },
+  "register": {
+    "title": "Criar conta",
+    "tagline": "Pão diário — seu plano de leitura",
+    "name": "Nome",
+    "email": "E-mail",
+    "username": "Usuário",
+    "password": "Senha",
+    "confirmPassword": "Confirmar senha",
+    "nameHint": "Informe seu nome (máx. 256 caracteres).",
+    "emailHint": "Informe um e-mail válido.",
+    "usernameHint": "Mínimo 3 caracteres, máximo 64.",
+    "passwordHint": "Mínimo 8 caracteres, máximo 128.",
+    "passwordMismatch": "As senhas não coincidem.",
+    "confirmRequired": "Confirme a senha.",
+    "submit": "Cadastrar",
+    "submitting": "Cadastrando…",
+    "genericError": "Não foi possível concluir o cadastro. Tente novamente.",
+    "hasAccount": "Já tem conta?",
+    "loginLink": "Entrar"
+  }
+}

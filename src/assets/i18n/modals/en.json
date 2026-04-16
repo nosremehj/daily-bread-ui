@@ -1,0 +1,96 @@
+{
+  "enroll": {
+    "title": "Follow this plan",
+    "hint": "Day 1 of the PDF will match the start date you choose. Optionally, you can mark readings already done by date (aligned with the calendar and the plan’s day sequence).",
+    "startLabel": "Plan start (day 1)",
+    "catchUpLabel": "Read through date (optional)",
+    "catchUpFieldHint": "Marks from day 1 through the plan day that matches this date, in a continuous rhythm.",
+    "hideAdvanced": "Hide extra date range",
+    "showAdvanced": "Extra date range…",
+    "advancedIntro": "Use when you want to mark a range of calendar days as read (helpful if you didn’t start on day 1 or read in jumps). Only fill this if you know the exact range.",
+    "from": "From",
+    "to": "To",
+    "cancel": "Cancel",
+    "submit": "Confirm and go to home",
+    "submitting": "Saving…",
+    "errors": {
+      "startRequired": "Enter the plan start date.",
+      "advancedPartial": "Fill both start and end of the extra range, or leave both empty."
+    }
+  },
+  "upload": {
+    "title": "Import PDF plan",
+    "hint": "Upload a PDF with selectable text. Image-only PDFs cannot be imported.",
+    "file": "File",
+    "cancel": "Cancel",
+    "import": "Import",
+    "uploading": "Uploading…",
+    "errorNoFile": "Select a PDF file."
+  },
+  "planDetail": {
+    "title": "Plan contents",
+    "meta": "Imported on {{date}} · {{days}} days",
+    "loading": "Loading readings…",
+    "close": "Close",
+    "colDay": "Day",
+    "colReading": "Reading",
+    "colBook": "Book",
+    "colChapters": "Chapters",
+    "colDone": "Done",
+    "doneYes": "Yes",
+    "doneNo": "No",
+    "followingPill": "Following this plan",
+    "followCta": "Follow this plan"
+  },
+  "planPassage": {
+    "title": "Plan reading",
+    "subtitle": "Day {{day}} · {{book}} {{from}}–{{to}}",
+    "version": "Version",
+    "versionAria": "Translation version",
+    "prevChapter": "Prev. ch.",
+    "nextChapter": "Next ch.",
+    "chapterOf": "Chapter {{current}} of {{from}}–{{to}}",
+    "loadingChapter": "Loading chapter…",
+    "chapterTitle": "{{book}} {{chapter}}",
+    "confirmReading": "Confirm reading",
+    "confirmTitle": "Log today’s reading",
+    "alreadyDone": "This day’s reading is already logged on your plan. Well done!",
+    "confirmBody": "You reached the last chapter of this reading. If you’ve already read today’s passage, confirm to update your progress, streak, and calendar.",
+    "noReferenceDate": "Could not get the plan reference date. Try closing and opening again.",
+    "back": "Back",
+    "markComplete": "Mark today’s reading as done",
+    "registering": "Saving…",
+    "done": "Done",
+    "errors": {
+      "noReference": "Reference date unavailable. Close and open again from the start."
+    }
+  },
+  "calendar": {
+    "title": "Reading calendar",
+    "loading": "Loading…",
+    "monthGridAria": "Days of {{month}}",
+    "cellRead": "{{date}}, read",
+    "cellUnread": "{{date}}, not read",
+    "legendRead": "Day with logged reading",
+    "legendMiss": "Day without reading (current month)",
+    "close": "Close"
+  },
+  "verseCompare": {
+    "title": "Compare verse",
+    "loading": "Loading translations…",
+    "close": "Close"
+  },
+  "changePassword": {
+    "title": "Change password",
+    "hint": "Enter your current password and a new password (minimum 8 characters).",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "currentError": "Enter your current password.",
+    "newError": "Minimum 8 characters.",
+    "mismatch": "Passwords do not match.",
+    "cancel": "Cancel",
+    "submit": "Confirm",
+    "submitting": "Saving…"
+  }
+}

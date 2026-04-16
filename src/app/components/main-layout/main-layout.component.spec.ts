@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 import { of } from 'rxjs';
+import { TRANSLATIONS_BY_LANG } from '../../core/i18n/translations-bundled';
 import { routes } from '../../app.routes';
 import { AuthService } from '../../services/auth.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
@@ -10,7 +12,21 @@ import { MainLayoutComponent } from './main-layout.component';
 describe('MainLayoutComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MainLayoutComponent],
+      imports: [
+        MainLayoutComponent,
+        TranslocoTestingModule.forRoot({
+          langs: {
+            'pt-BR': TRANSLATIONS_BY_LANG['pt-BR'],
+            en: TRANSLATIONS_BY_LANG['en'],
+            es: TRANSLATIONS_BY_LANG['es'],
+          },
+          translocoConfig: {
+            availableLangs: ['pt-BR', 'en', 'es'],
+            defaultLang: 'pt-BR',
+          },
+          preloadLangs: true,
+        }),
+      ],
       providers: [
         provideRouter(routes),
         {

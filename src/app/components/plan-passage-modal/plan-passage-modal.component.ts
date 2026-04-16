@@ -11,6 +11,7 @@ import {
   signal,
   SimpleChanges
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { BibleService, BibleChapter } from '../../services/bible.service';
 import {
@@ -26,7 +27,7 @@ import { VerseCompareModalComponent } from '../verse-compare-modal/verse-compare
 @Component({
   selector: 'app-plan-passage-modal',
   standalone: true,
-  imports: [CommonModule, VerseCompareModalComponent],
+  imports: [CommonModule, VerseCompareModalComponent, TranslocoPipe],
   templateUrl: './plan-passage-modal.component.html',
   styleUrl: './plan-passage-modal.component.scss'
 })
@@ -35,6 +36,7 @@ export class PlanPassageModalComponent implements OnChanges {
   private readonly prefs = inject(BiblePreferencesService);
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
+  private readonly transloco = inject(TranslocoService);
 
   @Input() open = false;
   @Input() block: TodayReadingBlock | null = null;
@@ -123,7 +125,7 @@ export class PlanPassageModalComponent implements OnChanges {
     const b = this.block;
     const ref = this.referenceDate?.trim() ?? '';
     if (!b || !ref) {
-      this.confirmError.set('Data de referência indisponível. Feche e abra de novo a partir do início.');
+      this.confirmError.set(this.transloco.translate('modals.planPassage.errors.noReference'));
       return;
     }
     this.confirmLoading.set(true);

@@ -1,0 +1,55 @@
+{
+  "title": "Estadísticas",
+  "subtitle": "Sigue tu ritmo de lectura, rachas y lecturas registradas en el período.",
+  "loading": "Cargando estadísticas…",
+  "empty": {
+    "title": "Sin plan activo",
+    "text": "Para ver estadísticas, elige un plan de lectura y define cuándo empezaste.",
+    "cta": "Plan de lectura"
+  },
+  "filtersAria": "Período",
+  "period": "Período",
+  "preset": {
+    "apiDefault": "Predeterminado (API)",
+    "last30": "Últimos 30 días",
+    "thisMonth": "Este mes",
+    "civilYear": "Año civil"
+  },
+  "custom": {
+    "from": "Desde",
+    "to": "Hasta",
+    "apply": "Aplicar"
+  },
+  "rangeErrors": {
+    "bothRequired": "Indica la fecha inicial y final.",
+    "order": "La fecha inicial no puede ser posterior a la final.",
+    "maxDays": "El período no puede superar {{max}} días (regla de la API)."
+  },
+  "periodHint": "Período efectivo: {{from}} — {{to}} (máx. {{max}} días)",
+  "summaryAria": "Resumen",
+  "stats": {
+    "planProgress": "Progreso del plan",
+    "planProgressDetail": "{{done}} / {{total}} días",
+    "currentStreak": "Racha actual",
+    "daysStreak": "días seguidos",
+    "bestStreak": "Mejor racha",
+    "bestStreakDetail": "días (desde el inicio)",
+    "inPeriod": "En el período",
+    "inPeriodDetail": "días con lectura · {{missed}} sin lectura (esperados)"
+  },
+  "heatmap": {
+    "title": "Lecturas en el período",
+    "read": "Leída",
+    "miss": "No leída",
+    "cellRead": "{{date}} — leída",
+    "cellMiss": "{{date}} — no leída"
+  },
+  "planSection": {
+    "title": "Plan",
+    "startHint": "Inicio del plan (día 1): {{date}}"
+  },
+  "milestone": {
+    "atMark": "Estás en el hito del {{pct}}% del plan. Sigue hacia el siguiente objetivo.",
+    "remaining": "Faltan {{days}} día(s) de plan para alcanzar el {{pct}}% de la lectura."
+  }
+}

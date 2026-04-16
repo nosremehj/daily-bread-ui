@@ -1,16 +1,27 @@
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, inject, NgZone, signal } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
+import { LocaleDatePipe } from '../../core/i18n/locale-date.pipe';
 import { ReadingPlanService, ReadingPlanSummary } from '../../services/reading-plan.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
 import { EnrollPlanModalComponent } from '../enroll-plan-modal/enroll-plan-modal.component';
+import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import { PlanDetailModalComponent } from '../plan-detail-modal/plan-detail-modal.component';
 import { UploadPlanModalComponent } from '../upload-plan-modal/upload-plan-modal.component';
 
 @Component({
   selector: 'app-reading-plans-page',
   standalone: true,
-  imports: [CommonModule, UploadPlanModalComponent, PlanDetailModalComponent, EnrollPlanModalComponent],
+  imports: [
+    CommonModule,
+    TranslocoPipe,
+    LocaleDatePipe,
+    LanguageMenuComponent,
+    UploadPlanModalComponent,
+    PlanDetailModalComponent,
+    EnrollPlanModalComponent,
+  ],
   templateUrl: './reading-plans-page.component.html',
   styleUrl: './reading-plans-page.component.scss'
 })

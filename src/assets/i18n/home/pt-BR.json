@@ -1,0 +1,37 @@
+{
+  "greeting": "Olá, {{name}}!",
+  "loadingDashboard": "Carregando seu painel…",
+  "progress": {
+    "title": "Seu progresso",
+    "blurb": "Você concluiu {{completed}} de {{total}} dias do plano. Continue firme no ritmo.",
+    "streak": "{{days}} dias seguidos",
+    "daysLeftYear": "{{days}} dias restantes no ano"
+  },
+  "week": {
+    "title": "Esta semana",
+    "viewFullCalendar": "Ver calendário completo",
+    "todayAria": "Hoje: {{weekday}} {{day}}. Abrir leitura do dia na Bíblia.",
+    "dayStatusAria": "{{weekday}} {{day}}, {{status}}"
+  },
+  "weekStatus": {
+    "COMPLETED": "concluído",
+    "ACTIVE": "hoje",
+    "MISSED": "perdido",
+    "UPCOMING": "futuro"
+  },
+  "today": {
+    "title": "Leitura de hoje",
+    "loadingChapters": "Carregando capítulos…",
+    "noReadings": "Não há leituras agendadas para esta data.",
+    "day": "Dia {{day}}",
+    "openBibleHint": "Toque para abrir na Bíblia (cap. {{chapter}}, versículo {{verse}})",
+    "openBibleHintRange": "Toque para ler na Bíblia (caps. {{from}}–{{to}})",
+    "openReadingAria": "Abrir leitura na Bíblia: {{book}} capítulos {{from}} a {{to}}"
+  },
+  "empty": {
+    "title": "Bem-vindo",
+    "text": "Escolha um plano de leitura e defina quando você começou para acompanhar seu progresso aqui.",
+    "hint": "Importe um PDF ou use um plano já disponível.",
+    "cta": "Plano de leitura"
+  }
+}

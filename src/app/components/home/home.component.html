@@ -1,8 +1,9 @@
-<header class="header">
+<header class="header header-with-lang">
   <div class="user-info">
-    <h1>Olá, {{ userName() }} 👋</h1>
+    <h1>{{ 'home.greeting' | transloco: { name: userName() } }}</h1>
     <p>{{ headerDate() }}</p>
   </div>
+  <app-language-menu class="header-lang" />
 </header>
 
 @if (loadError(); as err) {
@@ -10,7 +11,7 @@
 }
 
 @if (loading()) {
-  <p class="muted state-loading">Carregando seu painel…</p>
+  <p class="muted state-loading">{{ 'home.loadingDashboard' | transloco }}</p>
 } @else {
   @if (dashboard(); as dash) {
     <div class="dashboard-grid">
@@ -18,20 +19,26 @@
         <section class="progress-section">
           <div class="progress-card glass">
             <div class="progress-info">
-              <h2>Seu progresso</h2>
+              <h2>{{ 'home.progress.title' | transloco }}</h2>
               <p class="plan-filename">{{ dash.planFilename }}</p>
               <p class="progress-blurb">
-                Você concluiu {{ dash.completedDays }} de
-                {{ dash.totalPlanDays }} dias do plano. Continue firme no ritmo.
+                {{
+                  'home.progress.blurb'
+                    | transloco
+                      : {
+                          completed: dash.completedDays,
+                          total: dash.totalPlanDays,
+                        }
+                }}
               </p>
               <div class="stats">
                 <span class="streak">
                   <i class="uil uil-fire" aria-hidden="true"></i>
-                  {{ dash.currentStreakDays }} dias seguidos
+                  {{ 'home.progress.streak' | transloco: { days: dash.currentStreakDays } }}
                 </span>
                 <span class="days-left">
                   <i class="uil uil-calendar-alt" aria-hidden="true"></i>
-                  {{ dash.daysRemainingInYear }} dias restantes no ano
+                  {{ 'home.progress.daysLeftYear' | transloco: { days: dash.daysRemainingInYear } }}
                 </span>
               </div>
             </div>
@@ -68,13 +75,13 @@
 
         <section class="calendar-section">
           <div class="section-header">
-            <h3>Esta semana</h3>
+            <h3>{{ 'home.week.title' | transloco }}</h3>
             <button
               type="button"
               class="view-all desktop-only"
               (click)="openCalendar()"
             >
-              Ver calendário completo
+              {{ 'home.week.viewFullCalendar' | transloco }}
             </button>
           </div>
           <button
@@ -82,7 +89,7 @@
             class="view-all mobile-only week-mobile-link"
             (click)="openCalendar()"
           >
-            Ver calendário completo
+            {{ 'home.week.viewFullCalendar' | transloco }}
           </button>
           <div class="days-row" role="list">
             @for (d of dash.weekStrip; track d.date) {
@@ -93,11 +100,12 @@
                   [routerLink]="nav.commands"
                   [queryParams]="nav.queryParams"
                   [attr.aria-label]="
-                    'Hoje: ' +
-                    d.weekdayLabel +
-                    ' ' +
-                    d.dayOfMonth +
-                    '. Abrir leitura do dia na Bíblia.'
+                    ('home.week.todayAria'
+                      | transloco
+                        : {
+                            weekday: d.weekdayLabel,
+                            day: d.dayOfMonth,
+                          })
                   "
                 >
                   <span class="day-name">{{ d.weekdayLabel }}</span>
@@ -115,7 +123,13 @@
                   [class.missed]="d.status === 'MISSED'"
                   [class.upcoming]="d.status === 'UPCOMING'"
                   [attr.aria-label]="
-                    d.weekdayLabel + ' ' + d.dayOfMonth + ', ' + d.status
+                    ('home.week.dayStatusAria'
+                      | transloco
+                        : {
+                            weekday: d.weekdayLabel,
+                            day: d.dayOfMonth,
+                            status: ('home.weekStatus.' + d.status | transloco),
+                          })
                   "
                 >
                   <span class="day-name">{{ d.weekdayLabel }}</span>
@@ -137,18 +151,18 @@
       <div class="dashboard-right">
         <section class="today-section">
           <div class="section-header today-section-header">
-            <h3>Leitura de hoje</h3>
+            <h3>{{ 'home.today.title' | transloco }}</h3>
           </div>
 
           @if (bibleTodayLoading()) {
-            <p class="muted bible-loading-hint">Carregando capítulos…</p>
+            <p class="muted bible-loading-hint">{{ 'home.today.loadingChapters' | transloco }}</p>
           }
           @if (bibleTodayError(); as ber) {
             <p class="bible-inline-error" role="alert">{{ ber }}</p>
           }
 
           @if (displayBlocks().length === 0) {
-            <p class="muted">Não há leituras agendadas para esta data.</p>
+            <p class="muted">{{ 'home.today.noReadings' | transloco }}</p>
           } @else {
             @for (
               block of displayBlocks();
@@ -164,17 +178,18 @@
                   class="reading-head-nav reading-passage-trigger"
                   (click)="openPlanPassageModal(block)"
                   [attr.aria-label]="
-                    'Abrir leitura na Bíblia: ' +
-                    block.bookName +
-                    ' capítulos ' +
-                    block.startChapter +
-                    ' a ' +
-                    block.endChapter
+                    ('home.today.openReadingAria'
+                      | transloco
+                        : {
+                            book: block.bookName,
+                            from: block.startChapter,
+                            to: block.endChapter,
+                          })
                   "
                 >
                   <div class="reading-content">
                     <div class="book-info">
-                      <span class="testament">Dia {{ block.dayNumber }}</span>
+                      <span class="testament">{{ 'home.today.day' | transloco: { day: block.dayNumber } }}</span>
                       <h2>
                         {{ block.bookName }} {{ block.startChapter }}–{{
                           block.endChapter
@@ -183,15 +198,26 @@
                       @if (block.bookNumber != null) {
                         <p class="reading-hint">
                           <i class="uil uil-book-open" aria-hidden="true"></i>
-                          Toque para abrir na Bíblia (cap.
-                          {{ block.startChapter }}, versículo
-                          {{ firstVerseForBlock(block) }})
+                          {{
+                            'home.today.openBibleHint'
+                              | transloco
+                                : {
+                                    chapter: block.startChapter,
+                                    verse: firstVerseForBlock(block),
+                                  }
+                          }}
                         </p>
                       } @else {
                         <p class="reading-hint">
                           <i class="uil uil-book-open" aria-hidden="true"></i>
-                          Toque para ler na Bíblia (caps.
-                          {{ block.startChapter }}–{{ block.endChapter }})
+                          {{
+                            'home.today.openBibleHintRange'
+                              | transloco
+                                : {
+                                    from: block.startChapter,
+                                    to: block.endChapter,
+                                  }
+                          }}
                         </p>
                       }
                     </div>
@@ -221,17 +247,14 @@
     />
   } @else {
     <section class="home-empty glass" aria-labelledby="home-empty-heading">
-      <h2 id="home-empty-heading">Bem-vindo</h2>
+      <h2 id="home-empty-heading">{{ 'home.empty.title' | transloco }}</h2>
       <p class="home-empty-text">
-        Escolha um plano de leitura e defina quando você começou para acompanhar
-        seu progresso aqui.
+        {{ 'home.empty.text' | transloco }}
       </p>
       <p class="home-empty-hint">
-        Importe um PDF ou use um plano já disponível.
+        {{ 'home.empty.hint' | transloco }}
       </p>
-      <a routerLink="/reading-plans" class="btn-primary home-cta"
-        >Plano de leitura</a
-      >
+      <a routerLink="/reading-plans" class="btn-primary home-cta">{{ 'home.empty.cta' | transloco }}</a>
     </section>
   }
 }

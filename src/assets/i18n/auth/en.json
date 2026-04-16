@@ -1,0 +1,36 @@
+{
+  "login": {
+    "subtitle": "Sign in with your username and password",
+    "username": "Username",
+    "password": "Password",
+    "usernameHint": "Enter your username.",
+    "passwordHint": "Enter your password.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "invalidCredentials": "Invalid username or password.",
+    "noAccount": "Don’t have an account?",
+    "registerLink": "Sign up"
+  },
+  "register": {
+    "title": "Create account",
+    "tagline": "Daily Bread — your reading plan",
+    "name": "Name",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "nameHint": "Enter your name (max. 256 characters).",
+    "emailHint": "Enter a valid email.",
+    "usernameHint": "Minimum 3 characters, maximum 64.",
+    "passwordHint": "Minimum 8 characters, maximum 128.",
+    "passwordMismatch": "Passwords do not match.",
+    "confirmRequired": "Confirm your password.",
+    "submit": "Sign up",
+    "submitting": "Signing up…",
+    "genericError": "Could not complete registration. Please try again.",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Sign in"
+  }
+}

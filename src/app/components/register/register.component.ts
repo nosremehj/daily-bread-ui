@@ -8,6 +8,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
@@ -23,7 +24,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslocoPipe],
   templateUrl: './register.component.html',
   styleUrl: '../auth-form.scss'
 })
@@ -31,6 +32,7 @@ export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
   readonly submitting = signal(false);
   readonly serverError = signal<string | null>(null);
@@ -89,6 +91,6 @@ export class RegisterComponent {
         return body.error;
       }
     }
-    return 'Não foi possível concluir o cadastro. Tente novamente.';
+    return this.transloco.translate('auth.register.genericError');
   }
 }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   HostListener,
   Input,
@@ -9,9 +10,12 @@ import {
   SimpleChanges,
   inject,
   NgZone,
-  signal
+  signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
+import { translocoToAngularLocale } from '../../core/i18n/angular-locale';
 import { ReadingProgressService } from '../../services/reading-progress.service';
 
 export interface CalendarCell {
@@ -31,13 +35,25 @@ function toIsoLocal(d: Date): string {
 @Component({
   selector: 'app-reading-calendar-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoPipe],
   templateUrl: './reading-calendar-modal.component.html',
   styleUrl: './reading-calendar-modal.component.scss'
 })
 export class ReadingCalendarModalComponent implements OnChanges {
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
+  private readonly transloco = inject(TranslocoService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly weekdayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+
+  constructor() {
+    this.transloco.langChanges$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (this.open) {
+        this.fetchMonth();
+      }
+    });
+  }
 
   @Input() open = false;
 
@@ -49,8 +65,6 @@ export class ReadingCalendarModalComponent implements OnChanges {
   readonly viewMonth = signal(new Date().getMonth());
   readonly cells = signal<CalendarCell[]>([]);
   readonly monthTitle = signal('');
-
-  readonly weekdayLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && this.open) {
@@ -109,8 +123,9 @@ export class ReadingCalendarModalComponent implements OnChanges {
     const from = toIsoLocal(fromD);
     const to = toIsoLocal(toD);
 
+    const loc = translocoToAngularLocale(this.transloco.getActiveLang());
     this.monthTitle.set(
-      new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(fromD)
+      new Intl.DateTimeFormat(loc, { month: 'long', year: 'numeric' }).format(fromD),
     );
 
     this.loading.set(true);

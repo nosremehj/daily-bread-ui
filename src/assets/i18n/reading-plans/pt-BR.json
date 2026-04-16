@@ -1,0 +1,15 @@
+{
+  "title": "Plano de leitura",
+  "subtitle": "Importe um PDF ou veja os planos já disponíveis neste dispositivo.",
+  "actionsAria": "Ações",
+  "uploadPdf": "Enviar plano (PDF)",
+  "refreshList": "Atualizar lista",
+  "sectionTitle": "Planos disponíveis",
+  "loading": "Carregando…",
+  "emptyTitle": "Nenhum plano importado ainda.",
+  "emptyHint": "Use “Enviar plano” para importar um PDF.",
+  "following": "Seguindo",
+  "meta": "{{days}} dias · importado em {{date}}",
+  "viewPlan": "Ver plano",
+  "follow": "Seguir"
+}

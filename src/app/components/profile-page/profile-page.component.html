@@ -1,8 +1,13 @@
 <header class="page-header">
-  <h1>Perfil e conta</h1>
-  <p class="subtitle">
-    Atualize nome, e-mail e usuário de login. A troca de senha é feita em um passo à parte, por segurança.
-  </p>
+  <div class="page-heading-row">
+    <div class="page-heading-row__titles">
+      <h1>{{ 'profile.title' | transloco }}</h1>
+      <p class="subtitle">
+        {{ 'profile.subtitle' | transloco }}
+      </p>
+    </div>
+    <app-language-menu class="page-heading-row__actions" />
+  </div>
 </header>
 
 @if (successMessage(); as msg) {
@@ -14,11 +19,11 @@
 }
 
 <section class="card glass" aria-labelledby="profile-form-heading">
-  <h2 id="profile-form-heading" class="section-title">Dados da conta</h2>
+  <h2 id="profile-form-heading" class="section-title">{{ 'profile.accountSection' | transloco }}</h2>
 
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
     <label class="field">
-      <span class="field-label">Nome</span>
+      <span class="field-label">{{ 'profile.name' | transloco }}</span>
       <input
         type="text"
         formControlName="name"
@@ -27,12 +32,12 @@
         [class.invalid]="form.controls.name.invalid && form.controls.name.touched"
       />
       @if (form.controls.name.invalid && form.controls.name.touched) {
-        <span class="field-error">Informe seu nome.</span>
+        <span class="field-error">{{ 'profile.nameError' | transloco }}</span>
       }
     </label>
 
     <label class="field">
-      <span class="field-label">E-mail</span>
+      <span class="field-label">{{ 'profile.email' | transloco }}</span>
       <input
         type="email"
         formControlName="email"
@@ -41,12 +46,12 @@
         [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
       />
       @if (form.controls.email.invalid && form.controls.email.touched) {
-        <span class="field-error">Informe um e-mail válido.</span>
+        <span class="field-error">{{ 'profile.emailError' | transloco }}</span>
       }
     </label>
 
     <label class="field">
-      <span class="field-label">Usuário (login)</span>
+      <span class="field-label">{{ 'profile.username' | transloco }}</span>
       <input
         type="text"
         formControlName="username"
@@ -55,23 +60,21 @@
         [class.invalid]="form.controls.username.invalid && form.controls.username.touched"
       />
       @if (form.controls.username.invalid && form.controls.username.touched) {
-        <span class="field-error">Mínimo 3 caracteres, máximo 64.</span>
+        <span class="field-error">{{ 'profile.usernameError' | transloco }}</span>
       }
-      <span class="field-hint"
-        >Se alterar o usuário, a sessão será renovada automaticamente após salvar.</span
-      >
+      <span class="field-hint">{{ 'profile.usernameHint' | transloco }}</span>
     </label>
 
     <div class="form-actions">
       <button type="submit" class="btn-primary inline" [disabled]="saving()">
         @if (saving()) {
-          <span>Salvando…</span>
+          <span>{{ 'profile.saving' | transloco }}</span>
         } @else {
-          <span>Salvar alterações</span>
+          <span>{{ 'profile.save' | transloco }}</span>
         }
       </button>
       <button type="button" class="btn-outline" (click)="openPasswordModal()">
-        Alterar senha…
+        {{ 'profile.changePassword' | transloco }}
       </button>
     </div>
   </form>

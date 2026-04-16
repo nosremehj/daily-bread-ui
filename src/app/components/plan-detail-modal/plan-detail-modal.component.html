@@ -9,26 +9,28 @@
   >
     <div class="modal-header">
       <div class="modal-titles">
-        <h2 id="plan-detail-title">Conteúdo do plano</h2>
+        <h2 id="plan-detail-title">{{ 'modals.planDetail.title' | transloco }}</h2>
         @if (detail(); as d) {
           <p class="filename">{{ d.originalFilename }}</p>
           <p class="meta">
-            Importado em {{ d.importedAt | date: 'short' }} · {{ d.days.length }} dias
+            {{
+              'modals.planDetail.meta' | transloco: { date: d.importedAt | localeDate: 'short', days: d.days.length }
+            }}
           </p>
         }
       </div>
-      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+      <button type="button" class="btn-icon" (click)="close()" [attr.aria-label]="'common.actions.close' | transloco">
         <i class="uil uil-times" aria-hidden="true"></i>
       </button>
     </div>
 
     @if (loading()) {
-      <p class="state-msg">Carregando leituras…</p>
+      <p class="state-msg">{{ 'modals.planDetail.loading' | transloco }}</p>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>
         <div class="footer-actions">
-          <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+          <button type="button" class="btn-secondary" (click)="close()">{{ 'modals.planDetail.close' | transloco }}</button>
         </div>
       } @else {
         @if (detail(); as plan) {
@@ -36,12 +38,12 @@
             <table class="days-table">
               <thead>
                 <tr>
-                  <th scope="col">Dia</th>
-                  <th scope="col">Leitura</th>
-                  <th scope="col" class="hide-narrow">Livro</th>
-                  <th scope="col" class="hide-narrow">Capítulos</th>
+                  <th scope="col">{{ 'modals.planDetail.colDay' | transloco }}</th>
+                  <th scope="col">{{ 'modals.planDetail.colReading' | transloco }}</th>
+                  <th scope="col" class="hide-narrow">{{ 'modals.planDetail.colBook' | transloco }}</th>
+                  <th scope="col" class="hide-narrow">{{ 'modals.planDetail.colChapters' | transloco }}</th>
                   @if (followingThisPlan()) {
-                    <th scope="col">Feito</th>
+                    <th scope="col">{{ 'modals.planDetail.colDone' | transloco }}</th>
                   }
                 </tr>
               </thead>
@@ -57,9 +59,9 @@
                     @if (followingThisPlan()) {
                       <td>
                         @if (dayDone(day)) {
-                          <span class="badge done">Sim</span>
+                          <span class="badge done">{{ 'modals.planDetail.doneYes' | transloco }}</span>
                         } @else {
-                          <span class="badge">Não</span>
+                          <span class="badge">{{ 'modals.planDetail.doneNo' | transloco }}</span>
                         }
                       </td>
                     }
@@ -69,12 +71,12 @@
             </table>
           </div>
           <div class="footer-actions">
-            <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+            <button type="button" class="btn-secondary" (click)="close()">{{ 'modals.planDetail.close' | transloco }}</button>
             @if (followingThisPlan()) {
-              <span class="following-pill" aria-live="polite">Seguindo este plano</span>
+              <span class="following-pill" aria-live="polite">{{ 'modals.planDetail.followingPill' | transloco }}</span>
             } @else {
               <button type="button" class="btn-primary inline" (click)="requestEnroll()">
-                Seguir este plano
+                {{ 'modals.planDetail.followCta' | transloco }}
               </button>
             }
           </div>

@@ -8,34 +8,34 @@
     (click)="$event.stopPropagation()"
   >
     <div class="modal-header">
-      <h2 id="cal-title">Calendário de leituras</h2>
-      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+      <h2 id="cal-title">{{ 'modals.calendar.title' | transloco }}</h2>
+      <button type="button" class="btn-icon" (click)="close()" [attr.aria-label]="'common.actions.close' | transloco">
         <i class="uil uil-times" aria-hidden="true"></i>
       </button>
     </div>
 
     <div class="toolbar">
-      <button type="button" class="btn-ghost-sm" (click)="prevMonth()" aria-label="Mês anterior">
+      <button type="button" class="btn-ghost-sm" (click)="prevMonth()" [attr.aria-label]="'common.calendar.prevMonth' | transloco">
         <i class="uil uil-angle-left-b" aria-hidden="true"></i>
       </button>
       <span class="month-label">{{ monthTitle() }}</span>
-      <button type="button" class="btn-ghost-sm" (click)="nextMonth()" aria-label="Próximo mês">
+      <button type="button" class="btn-ghost-sm" (click)="nextMonth()" [attr.aria-label]="'common.calendar.nextMonth' | transloco">
         <i class="uil uil-angle-right-b" aria-hidden="true"></i>
       </button>
     </div>
 
     @if (loading()) {
-      <p class="state-msg">Carregando…</p>
+      <p class="state-msg">{{ 'modals.calendar.loading' | transloco }}</p>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>
       } @else {
         <div class="weekday-row" aria-hidden="true">
-          @for (w of weekdayLabels; track w) {
-            <span class="weekday">{{ w }}</span>
+          @for (d of weekdayKeys; track d) {
+            <span class="weekday">{{ ('common.calendar.weekday.' + d) | transloco }}</span>
           }
         </div>
-        <div class="cells" role="grid" [attr.aria-label]="'Dias de ' + monthTitle()">
+        <div class="cells" role="grid" [attr.aria-label]="'modals.calendar.monthGridAria' | transloco: { month: monthTitle() }">
           @for (c of cells(); track c.date) {
             <div
               role="gridcell"
@@ -43,21 +43,27 @@
               [class.out-month]="!c.inMonth"
               [class.read]="c.read === true"
               [class.no-read]="c.inMonth && c.read === false"
-              [attr.aria-label]="c.date + (c.read === true ? ', lido' : c.read === false ? ', não lido' : '')"
+              [attr.aria-label]="
+                c.read === true
+                  ? ('modals.calendar.cellRead' | transloco: { date: c.date })
+                  : c.read === false
+                    ? ('modals.calendar.cellUnread' | transloco: { date: c.date })
+                    : c.date
+              "
             >
               <span class="num">{{ c.dayNum }}</span>
             </div>
           }
         </div>
         <p class="legend">
-          <span class="dot read"></span> Dia com leitura registrada
-          <span class="dot missed"></span> Dia sem leitura (no mês atual)
+          <span class="dot read"></span> {{ 'modals.calendar.legendRead' | transloco }}
+          <span class="dot missed"></span> {{ 'modals.calendar.legendMiss' | transloco }}
         </p>
       }
     }
 
     <div class="footer-actions">
-      <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+      <button type="button" class="btn-secondary" (click)="close()">{{ 'modals.calendar.close' | transloco }}</button>
     </div>
   </div>
 }

@@ -2,6 +2,15 @@
   display: block;
 }
 
+.header-with-lang {
+  align-items: flex-start;
+}
+
+.header-lang {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
 .banner-error {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.35);

@@ -14,7 +14,9 @@ import {
   SimpleChanges,
   untracked
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
+import { LocaleDatePipe } from '../../core/i18n/locale-date.pipe';
 import { ReadingPlanDetail, ReadingDay, ReadingPlanService } from '../../services/reading-plan.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
 
@@ -31,7 +33,7 @@ function addDaysToIsoDate(iso: string, daysToAdd: number): string {
 @Component({
   selector: 'app-plan-detail-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoPipe, LocaleDatePipe],
   templateUrl: './plan-detail-modal.component.html',
   styleUrl: './plan-detail-modal.component.scss'
 })

@@ -11,6 +11,7 @@ import {
   NgZone,
   signal
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Router } from '@angular/router';
 import { finalize, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -22,7 +23,7 @@ import {
 @Component({
   selector: 'app-enroll-plan-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoPipe],
   templateUrl: './enroll-plan-modal.component.html',
   styleUrl: './enroll-plan-modal.component.scss'
 })
@@ -30,6 +31,7 @@ export class EnrollPlanModalComponent implements OnChanges {
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
   @Input() open = false;
   @Input() planId: number | null = null;
@@ -82,7 +84,7 @@ export class EnrollPlanModalComponent implements OnChanges {
     const id = this.planId;
     const start = this.planStartDate().trim();
     if (id == null || !start) {
-      this.errorMessage.set('Informe a data de início do plano.');
+      this.errorMessage.set(this.transloco.translate('modals.enroll.errors.startRequired'));
       return;
     }
 
@@ -91,7 +93,7 @@ export class EnrollPlanModalComponent implements OnChanges {
     const to = this.catchUpTo().trim();
 
     if (this.showAdvanced() && (from || to) && (!from || !to)) {
-      this.errorMessage.set('Preencha início e fim do período adicional, ou deixe os dois vazios.');
+      this.errorMessage.set(this.transloco.translate('modals.enroll.errors.advancedPartial'));
       return;
     }
 

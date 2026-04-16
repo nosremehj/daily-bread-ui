@@ -1,12 +1,17 @@
 <header class="page-header">
-  <h1>Estatísticas</h1>
-  <p class="subtitle">
-    Acompanhe seu ritmo de leitura, sequências e leituras registradas no período.
-  </p>
+  <div class="page-heading-row">
+    <div class="page-heading-row__titles">
+      <h1>{{ 'statistics.title' | transloco }}</h1>
+      <p class="subtitle">
+        {{ 'statistics.subtitle' | transloco }}
+      </p>
+    </div>
+    <app-language-menu class="page-heading-row__actions" />
+  </div>
 </header>
 
 @if (loading()) {
-  <p class="muted state-loading">Carregando estatísticas…</p>
+  <p class="muted state-loading">{{ 'statistics.loading' | transloco }}</p>
 } @else {
   @if (errorMessage(); as err) {
     <p class="banner-error" role="alert">{{ err }}</p>
@@ -14,16 +19,16 @@
 
   @if (stats() === null && !errorMessage()) {
     <section class="empty-state glass" aria-labelledby="stats-empty-heading">
-      <h2 id="stats-empty-heading">Nenhum plano ativo</h2>
+      <h2 id="stats-empty-heading">{{ 'statistics.empty.title' | transloco }}</h2>
       <p class="empty-text">
-        Para ver estatísticas, escolha um plano de leitura e defina quando você começou.
+        {{ 'statistics.empty.text' | transloco }}
       </p>
-      <a routerLink="/reading-plans" class="btn-primary stats-cta">Plano de leitura</a>
+      <a routerLink="/reading-plans" class="btn-primary stats-cta">{{ 'statistics.empty.cta' | transloco }}</a>
     </section>
   } @else {
     @if (stats(); as s) {
-      <section class="filters glass" aria-label="Período">
-        <span class="filters-label">Período</span>
+      <section class="filters glass" [attr.aria-label]="'statistics.filtersAria' | transloco">
+        <span class="filters-label">{{ 'statistics.period' | transloco }}</span>
         <div class="preset-row">
           <button
             type="button"
@@ -31,7 +36,7 @@
             [class.active]="preset() === 'default'"
             (click)="applyPreset('default')"
           >
-            Padrão (API)
+            {{ 'statistics.preset.apiDefault' | transloco }}
           </button>
           <button
             type="button"
@@ -39,7 +44,7 @@
             [class.active]="preset() === 'last30'"
             (click)="applyPreset('last30')"
           >
-            Ultimos 30 dias
+            {{ 'statistics.preset.last30' | transloco }}
           </button>
           <button
             type="button"
@@ -47,7 +52,7 @@
             [class.active]="preset() === 'month'"
             (click)="applyPreset('month')"
           >
-            Este mês
+            {{ 'statistics.preset.thisMonth' | transloco }}
           </button>
           <button
             type="button"
@@ -55,70 +60,101 @@
             [class.active]="preset() === 'year'"
             (click)="applyPreset('year')"
           >
-            Ano civil
+            {{ 'statistics.preset.civilYear' | transloco }}
           </button>
         </div>
         <div class="custom-range">
           <label class="date-field">
-            <span class="visually-hidden">De</span>
-            <span class="field-label">De</span>
+            <span class="visually-hidden">{{ 'statistics.custom.from' | transloco }}</span>
+            <span class="field-label">{{ 'statistics.custom.from' | transloco }}</span>
             <input type="date" [value]="customFrom()" (change)="customFrom.set($any($event.target).value)" />
           </label>
           <label class="date-field">
-            <span class="visually-hidden">Até</span>
-            <span class="field-label">Até</span>
+            <span class="visually-hidden">{{ 'statistics.custom.to' | transloco }}</span>
+            <span class="field-label">{{ 'statistics.custom.to' | transloco }}</span>
             <input type="date" [value]="customTo()" (change)="customTo.set($any($event.target).value)" />
           </label>
           <button type="button" class="btn-secondary-inline" (click)="applyCustomRange()">
-            Aplicar
+            {{ 'statistics.custom.apply' | transloco }}
           </button>
         </div>
         @if (clientRangeError(); as cre) {
-          <p class="field-error" role="alert">{{ cre }}</p>
+          <p class="field-error" role="alert">
+            @switch (cre) {
+              @case ('bothRequired') {
+                {{ 'statistics.rangeErrors.bothRequired' | transloco }}
+              }
+              @case ('order') {
+                {{ 'statistics.rangeErrors.order' | transloco }}
+              }
+              @case ('maxDays') {
+                {{ 'statistics.rangeErrors.maxDays' | transloco: { max: maxRangeDays } }}
+              }
+            }
+          </p>
         }
         <p class="period-hint muted small">
-          Período efetivo:
-          {{ s.periodFrom | date: 'mediumDate' }} — {{ s.periodTo | date: 'mediumDate' }}
-          (máx. 366 dias)
+          {{
+            'statistics.periodHint'
+              | transloco
+                : {
+                    from: s.periodFrom | localeDate: 'mediumDate',
+                    to: s.periodTo | localeDate: 'mediumDate',
+                    max: maxRangeDays,
+                  }
+          }}
         </p>
       </section>
 
-      @if (milestoneText(); as mt) {
-        <p class="milestone-banner glass">{{ mt }}</p>
+      @if (s.nextMilestonePercent != null && s.daysUntilNextMilestone != null) {
+        <p class="milestone-banner glass">
+          @if (s.daysUntilNextMilestone === 0) {
+            {{ 'statistics.milestone.atMark' | transloco: { pct: s.nextMilestonePercent } }}
+          } @else {
+            {{
+              'statistics.milestone.remaining'
+                | transloco
+                  : {
+                      days: s.daysUntilNextMilestone,
+                      pct: s.nextMilestonePercent,
+                    }
+            }}
+          }
+        </p>
       }
 
-      <section class="summary-grid" aria-label="Resumo">
+      <section class="summary-grid" [attr.aria-label]="'statistics.summaryAria' | transloco">
         <div class="stat-card glass">
-          <span class="stat-label">Progresso do plano</span>
+          <span class="stat-label">{{ 'statistics.stats.planProgress' | transloco }}</span>
           <span class="stat-value">{{ s.annualProgressPercent }}%</span>
-          <span class="stat-detail"
-            >{{ s.completedDaysInPlan }} / {{ s.totalPlanDays }} dias</span
-          >
+          <span class="stat-detail">{{
+            'statistics.stats.planProgressDetail' | transloco: { done: s.completedDaysInPlan, total: s.totalPlanDays }
+          }}</span>
         </div>
         <div class="stat-card glass">
-          <span class="stat-label">Sequência atual</span>
+          <span class="stat-label">{{ 'statistics.stats.currentStreak' | transloco }}</span>
           <span class="stat-value">{{ s.currentStreakDays }}</span>
-          <span class="stat-detail">dias seguidos</span>
+          <span class="stat-detail">{{ 'statistics.stats.daysStreak' | transloco }}</span>
         </div>
         <div class="stat-card glass">
-          <span class="stat-label">Melhor sequência</span>
+          <span class="stat-label">{{ 'statistics.stats.bestStreak' | transloco }}</span>
           <span class="stat-value">{{ s.longestStreakDays }}</span>
-          <span class="stat-detail">dias (desde o início)</span>
+          <span class="stat-detail">{{ 'statistics.stats.bestStreakDetail' | transloco }}</span>
         </div>
         <div class="stat-card glass">
-          <span class="stat-label">No período</span>
+          <span class="stat-label">{{ 'statistics.stats.inPeriod' | transloco }}</span>
           <span class="stat-value">{{ s.daysReadInPeriod }}</span>
-          <span class="stat-detail"
-            >dias com leitura · {{ s.daysMissedInPeriod }} sem leitura (esperados)</span
-          >
+          <span class="stat-detail">{{
+            'statistics.stats.inPeriodDetail' | transloco: { missed: s.daysMissedInPeriod }
+          }}</span>
         </div>
       </section>
 
       <section class="heatmap-section" aria-labelledby="heatmap-heading">
-        <h2 id="heatmap-heading" class="section-title">Leituras no período</h2>
+        <h2 id="heatmap-heading" class="section-title">{{ 'statistics.heatmap.title' | transloco }}</h2>
         <p class="muted small heatmap-legend">
-          <span class="legend-swatch read" aria-hidden="true"></span> Lida
-          <span class="legend-swatch miss" aria-hidden="true"></span> Não lida
+          <span class="legend-swatch read" aria-hidden="true"></span> {{ 'statistics.heatmap.read' | transloco }}
+          <span class="legend-swatch miss" aria-hidden="true"></span> {{ 'statistics.heatmap.miss' | transloco }}
         </p>
         <div class="heatmap-grid" role="list">
           @for (cell of heatmapDays(); track cell.date) {
@@ -126,16 +162,22 @@
               role="listitem"
               class="heatmap-cell"
               [class.read]="cell.read"
-              [attr.title]="cell.date + (cell.read ? ' — lida' : ' — não lida')"
+              [attr.title]="
+                cell.read
+                  ? ('statistics.heatmap.cellRead' | transloco: { date: cell.date })
+                  : ('statistics.heatmap.cellMiss' | transloco: { date: cell.date })
+              "
             ></div>
           }
         </div>
       </section>
 
       <section class="plan-meta glass">
-        <h2 class="section-title">Plano</h2>
+        <h2 class="section-title">{{ 'statistics.planSection.title' | transloco }}</h2>
         <p class="plan-filename">{{ s.planFilename }}</p>
-        <p class="muted small">Início do plano (dia 1): {{ s.planStartDate | date: 'mediumDate' }}</p>
+        <p class="muted small">
+          {{ 'statistics.planSection.startHint' | transloco: { date: s.planStartDate | localeDate: 'mediumDate' } }}
+        </p>
       </section>
     }
   }

@@ -9,54 +9,58 @@
   >
     <div class="modal-header">
       <div class="modal-titles">
-        <h2 id="enroll-title">Seguir este plano</h2>
+        <h2 id="enroll-title">{{ 'modals.enroll.title' | transloco }}</h2>
         <p class="filename">{{ planFilename }}</p>
         <p class="hint">
-          O dia 1 do PDF passa a coincidir com a data de início que você escolher. Opcionalmente, você pode
-          marcar leituras já feitas por data (alinhado ao calendário e à sequência de dias do plano).
+          {{ 'modals.enroll.hint' | transloco }}
         </p>
       </div>
-      <button type="button" class="btn-icon" (click)="close()" [disabled]="submitting()" aria-label="Fechar">
+      <button
+        type="button"
+        class="btn-icon"
+        (click)="close()"
+        [disabled]="submitting()"
+        [attr.aria-label]="'common.actions.close' | transloco"
+      >
         <i class="uil uil-times" aria-hidden="true"></i>
       </button>
     </div>
 
     <div class="form-fields">
       <label class="field">
-        <span class="label">Início do plano (dia 1)</span>
+        <span class="label">{{ 'modals.enroll.startLabel' | transloco }}</span>
         <input type="date" [value]="planStartDate()" (input)="planStartDate.set($any($event.target).value)" />
       </label>
 
       <label class="field">
-        <span class="label">Já li em dia até (opcional)</span>
+        <span class="label">{{ 'modals.enroll.catchUpLabel' | transloco }}</span>
         <input
           type="date"
           [value]="catchUpThroughDate()"
           (input)="catchUpThroughDate.set($any($event.target).value)"
         />
-        <span class="field-hint">Marca do dia 1 até o dia do plano correspondente a esta data, em ritmo contínuo.</span>
+        <span class="field-hint">{{ 'modals.enroll.catchUpFieldHint' | transloco }}</span>
       </label>
 
       <button type="button" class="btn-link" (click)="toggleAdvanced()">
         @if (showAdvanced()) {
-          Ocultar período adicional
+          {{ 'modals.enroll.hideAdvanced' | transloco }}
         } @else {
-          Período adicional por datas…
+          {{ 'modals.enroll.showAdvanced' | transloco }}
         }
       </button>
 
       @if (showAdvanced()) {
         <div class="advanced glass-inner">
           <p class="advanced-intro">
-            Use quando quiser marcar um intervalo de dias civis como lidos (útil se não começou do dia 1 ou
-            leu em saltos). Só preencha se souber o intervalo exato.
+            {{ 'modals.enroll.advancedIntro' | transloco }}
           </p>
           <label class="field">
-            <span class="label">De</span>
+            <span class="label">{{ 'modals.enroll.from' | transloco }}</span>
             <input type="date" [value]="catchUpFrom()" (input)="catchUpFrom.set($any($event.target).value)" />
           </label>
           <label class="field">
-            <span class="label">Até</span>
+            <span class="label">{{ 'modals.enroll.to' | transloco }}</span>
             <input type="date" [value]="catchUpTo()" (input)="catchUpTo.set($any($event.target).value)" />
           </label>
         </div>
@@ -68,12 +72,14 @@
     }
 
     <div class="footer-actions">
-      <button type="button" class="btn-secondary" (click)="close()" [disabled]="submitting()">Cancelar</button>
+      <button type="button" class="btn-secondary" (click)="close()" [disabled]="submitting()">
+        {{ 'modals.enroll.cancel' | transloco }}
+      </button>
       <button type="button" class="btn-primary inline" (click)="submit()" [disabled]="submitting()">
         @if (submitting()) {
-          Salvando…
+          {{ 'modals.enroll.submitting' | transloco }}
         } @else {
-          Confirmar e ir ao início
+          {{ 'modals.enroll.submit' | transloco }}
         }
       </button>
     </div>

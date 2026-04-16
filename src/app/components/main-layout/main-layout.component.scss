@@ -8,13 +8,30 @@ button.nav-item {
   border: none;
   background: transparent;
   font: inherit;
-  color: inherit;
   cursor: pointer;
   text-align: center;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+
+  &.active {
+    color: var(--accent-purple);
+  }
+
+  &.active i {
+    filter: drop-shadow(0 0 8px var(--accent-purple-glow));
+  }
 }
 
 .nav-logout {
   color: var(--text-secondary);
+}
+
+.sidebar-footer {
+  width: 100%;
 }
 
 .btn-logout {

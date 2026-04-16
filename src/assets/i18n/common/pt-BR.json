@@ -1,0 +1,64 @@
+{
+  "site": {
+    "title": "Pão diário - Plano de Leitura"
+  },
+  "brand": "Pão diário",
+  "nav": {
+    "aria": "Navegação principal",
+    "home": "Início",
+    "readingPlans": "Plano de leitura",
+    "bible": "Bíblia",
+    "statistics": "Estatísticas",
+    "settings": "Ajustes",
+    "logout": "Sair",
+    "languageAria": "Selecionar idioma da interface",
+    "langOptionPt": "Português (BR)",
+    "langOptionEn": "English",
+    "langOptionEs": "Español"
+  },
+  "actions": {
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "loading": "Carregando…",
+    "saving": "Salvando…",
+    "confirm": "Confirmar",
+    "done": "Concluir",
+    "refreshing": "Atualizando…"
+  },
+  "calendar": {
+    "weekday": {
+      "sun": "Dom",
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb"
+    },
+    "prevMonth": "Mês anterior",
+    "nextMonth": "Próximo mês"
+  },
+  "compareVerse": "Comparar versículo {{verse}}",
+  "errors": {
+    "generic": "Não foi possível completar a operação.",
+    "loadEnrollment": "Não foi possível carregar a matrícula.",
+    "completeEnrollment": "Não foi possível concluir a matrícula.",
+    "endEnrollment": "Não foi possível encerrar a matrícula.",
+    "loadDashboard": "Não foi possível carregar o painel de leitura.",
+    "loadTodayReading": "Não foi possível carregar a leitura bíblica do dia.",
+    "loadCalendar": "Não foi possível carregar o calendário.",
+    "loadYearCalendar": "Não foi possível carregar o calendário do ano.",
+    "loadStatistics": "Não foi possível carregar as estatísticas.",
+    "recordReading": "Não foi possível registrar a leitura.",
+    "applyReadingPeriod": "Não foi possível aplicar o período de leituras.",
+    "loadVersions": "Não foi possível carregar as versões.",
+    "loadBooks": "Não foi possível carregar os livros.",
+    "loadChapter": "Não foi possível carregar o capítulo.",
+    "loadVerse": "Não foi possível carregar o versículo.",
+    "compareVerse": "Não foi possível comparar o versículo.",
+    "loadPlans": "Não foi possível carregar os planos.",
+    "loadPlan": "Não foi possível carregar o plano.",
+    "importPdf": "Não foi possível importar o PDF."
+  }
+}

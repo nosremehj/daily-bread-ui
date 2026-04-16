@@ -11,18 +11,20 @@ import {
   NgZone,
   signal
 } from '@angular/core';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ReadingPlanService } from '../../services/reading-plan.service';
 
 @Component({
   selector: 'app-upload-plan-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslocoPipe],
   templateUrl: './upload-plan-modal.component.html',
   styleUrl: './upload-plan-modal.component.scss'
 })
 export class UploadPlanModalComponent {
   private readonly readingPlanService = inject(ReadingPlanService);
   private readonly ngZone = inject(NgZone);
+  private readonly transloco = inject(TranslocoService);
 
   @Input() set open(value: boolean) {
     this._open = value;
@@ -71,7 +73,7 @@ export class UploadPlanModalComponent {
     const name = file.name.toLowerCase();
     if (!name.endsWith('.pdf')) {
       this.selectedFile.set(null);
-      this.errorMessage.set('Selecione um arquivo PDF.');
+      this.errorMessage.set(this.transloco.translate('modals.upload.errorNoFile'));
       input.value = '';
       return;
     }

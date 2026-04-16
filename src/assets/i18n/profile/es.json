@@ -1,0 +1,25 @@
+{
+  "title": "Perfil y cuenta",
+  "subtitle": "Actualiza nombre, correo y usuario de acceso. El cambio de contraseña es un paso aparte, por seguridad.",
+  "accountSection": "Datos de la cuenta",
+  "name": "Nombre",
+  "email": "Correo",
+  "username": "Usuario (acceso)",
+  "nameError": "Indica tu nombre.",
+  "emailError": "Indica un correo válido.",
+  "usernameError": "Mínimo 3 caracteres, máximo 64.",
+  "usernameHint": "Si cambias el usuario, la sesión se renovará automáticamente al guardar.",
+  "save": "Guardar cambios",
+  "saving": "Guardando…",
+  "changePassword": "Cambiar contraseña…",
+  "successPassword": "Contraseña cambiada con éxito.",
+  "successRenamed": "Datos guardados. El usuario cambió y tu sesión se renovó.",
+  "successProfile": "Datos guardados con éxito.",
+  "language": {
+    "title": "Idioma de la interfaz",
+    "hint": "Afecta textos de la app, fechas y títulos. El texto bíblico sigue la versión que elijas en la Biblia.",
+    "pt": "Portugués (Brasil)",
+    "en": "Inglés",
+    "es": "Español"
+  }
+}

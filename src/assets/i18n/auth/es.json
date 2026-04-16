@@ -1,0 +1,36 @@
+{
+  "login": {
+    "subtitle": "Ingresa con tu usuario y contraseña",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "usernameHint": "Indica el usuario.",
+    "passwordHint": "Indica la contraseña.",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "submit": "Entrar",
+    "submitting": "Entrando…",
+    "invalidCredentials": "Usuario o contraseña no válidos.",
+    "noAccount": "¿No tienes cuenta?",
+    "registerLink": "Regístrate"
+  },
+  "register": {
+    "title": "Crear cuenta",
+    "tagline": "Pan del día — tu plan de lectura",
+    "name": "Nombre",
+    "email": "Correo",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "nameHint": "Indica tu nombre (máx. 256 caracteres).",
+    "emailHint": "Indica un correo válido.",
+    "usernameHint": "Mínimo 3 caracteres, máximo 64.",
+    "passwordHint": "Mínimo 8 caracteres, máximo 128.",
+    "passwordMismatch": "Las contraseñas no coinciden.",
+    "confirmRequired": "Confirma la contraseña.",
+    "submit": "Registrarse",
+    "submitting": "Registrando…",
+    "genericError": "No se pudo completar el registro. Inténtalo de nuevo.",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "loginLink": "Entrar"
+  }
+}

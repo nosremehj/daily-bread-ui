@@ -1,0 +1,55 @@
+{
+  "title": "Statistics",
+  "subtitle": "Track your reading pace, streaks, and readings logged in the period.",
+  "loading": "Loading statistics…",
+  "empty": {
+    "title": "No active plan",
+    "text": "To see statistics, choose a reading plan and set when you started.",
+    "cta": "Reading plan"
+  },
+  "filtersAria": "Period",
+  "period": "Period",
+  "preset": {
+    "apiDefault": "Default (API)",
+    "last30": "Last 30 days",
+    "thisMonth": "This month",
+    "civilYear": "Calendar year"
+  },
+  "custom": {
+    "from": "From",
+    "to": "To",
+    "apply": "Apply"
+  },
+  "rangeErrors": {
+    "bothRequired": "Enter start and end dates.",
+    "order": "Start date cannot be after end date.",
+    "maxDays": "The period cannot exceed {{max}} days (API rule)."
+  },
+  "periodHint": "Effective period: {{from}} — {{to}} (max. {{max}} days)",
+  "summaryAria": "Summary",
+  "stats": {
+    "planProgress": "Plan progress",
+    "planProgressDetail": "{{done}} / {{total}} days",
+    "currentStreak": "Current streak",
+    "daysStreak": "days in a row",
+    "bestStreak": "Best streak",
+    "bestStreakDetail": "days (since the start)",
+    "inPeriod": "In period",
+    "inPeriodDetail": "days with reading · {{missed}} without reading (expected)"
+  },
+  "heatmap": {
+    "title": "Readings in period",
+    "read": "Read",
+    "miss": "Not read",
+    "cellRead": "{{date}} — read",
+    "cellMiss": "{{date}} — not read"
+  },
+  "planSection": {
+    "title": "Plan",
+    "startHint": "Plan start (day 1): {{date}}"
+  },
+  "milestone": {
+    "atMark": "You’re at the {{pct}}% milestone of the plan. Keep going toward the next goal.",
+    "remaining": "{{days}} more plan day(s) to reach {{pct}}% of the reading."
+  }
+}

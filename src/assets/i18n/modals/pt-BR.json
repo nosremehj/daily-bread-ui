@@ -1,0 +1,96 @@
+{
+  "enroll": {
+    "title": "Seguir este plano",
+    "hint": "O dia 1 do PDF passa a coincidir com a data de início que você escolher. Opcionalmente, você pode marcar leituras já feitas por data (alinhado ao calendário e à sequência de dias do plano).",
+    "startLabel": "Início do plano (dia 1)",
+    "catchUpLabel": "Já li em dia até (opcional)",
+    "catchUpFieldHint": "Marca do dia 1 até o dia do plano correspondente a esta data, em ritmo contínuo.",
+    "hideAdvanced": "Ocultar período adicional",
+    "showAdvanced": "Período adicional por datas…",
+    "advancedIntro": "Use quando quiser marcar um intervalo de dias civis como lidos (útil se não começou do dia 1 ou leu em saltos). Só preencha se souber o intervalo exato.",
+    "from": "De",
+    "to": "Até",
+    "cancel": "Cancelar",
+    "submit": "Confirmar e ir ao início",
+    "submitting": "Salvando…",
+    "errors": {
+      "startRequired": "Informe a data de início do plano.",
+      "advancedPartial": "Preencha início e fim do período adicional, ou deixe os dois vazios."
+    }
+  },
+  "upload": {
+    "title": "Importar plano em PDF",
+    "hint": "Envie um PDF com texto selecionável. PDFs apenas com imagem não podem ser importados.",
+    "file": "Arquivo",
+    "cancel": "Cancelar",
+    "import": "Importar",
+    "uploading": "Enviando…",
+    "errorNoFile": "Selecione um arquivo PDF."
+  },
+  "planDetail": {
+    "title": "Conteúdo do plano",
+    "meta": "Importado em {{date}} · {{days}} dias",
+    "loading": "Carregando leituras…",
+    "close": "Fechar",
+    "colDay": "Dia",
+    "colReading": "Leitura",
+    "colBook": "Livro",
+    "colChapters": "Capítulos",
+    "colDone": "Feito",
+    "doneYes": "Sim",
+    "doneNo": "Não",
+    "followingPill": "Seguindo este plano",
+    "followCta": "Seguir este plano"
+  },
+  "planPassage": {
+    "title": "Leitura do plano",
+    "subtitle": "Dia {{day}} · {{book}} {{from}}–{{to}}",
+    "version": "Versão",
+    "versionAria": "Versão da tradução",
+    "prevChapter": "Cap. anterior",
+    "nextChapter": "Próximo cap.",
+    "chapterOf": "Capítulo {{current}} de {{from}}–{{to}}",
+    "loadingChapter": "Carregando capítulo…",
+    "chapterTitle": "{{book}} {{chapter}}",
+    "confirmReading": "Confirmar leitura",
+    "confirmTitle": "Registrar leitura do dia",
+    "alreadyDone": "Leitura deste dia já está registrada no seu plano. Continue assim!",
+    "confirmBody": "Você chegou ao último capítulo desta leitura. Se já leu o trecho do dia, confirme para atualizar seu progresso, os dias seguidos e o calendário.",
+    "noReferenceDate": "Não foi possível obter a data de referência do plano. Tente fechar e abrir de novo.",
+    "back": "Voltar",
+    "markComplete": "Marcar leitura de hoje como concluída",
+    "registering": "Registrando…",
+    "done": "Concluir",
+    "errors": {
+      "noReference": "Data de referência indisponível. Feche e abra de novo a partir do início."
+    }
+  },
+  "calendar": {
+    "title": "Calendário de leituras",
+    "loading": "Carregando…",
+    "monthGridAria": "Dias de {{month}}",
+    "cellRead": "{{date}}, lido",
+    "cellUnread": "{{date}}, não lido",
+    "legendRead": "Dia com leitura registrada",
+    "legendMiss": "Dia sem leitura (no mês atual)",
+    "close": "Fechar"
+  },
+  "verseCompare": {
+    "title": "Comparar versículo",
+    "loading": "Carregando traduções…",
+    "close": "Fechar"
+  },
+  "changePassword": {
+    "title": "Alterar senha",
+    "hint": "Informe a senha atual e a nova senha (mínimo 8 caracteres).",
+    "current": "Senha atual",
+    "new": "Nova senha",
+    "confirm": "Confirmar nova senha",
+    "currentError": "Informe a senha atual.",
+    "newError": "Mínimo 8 caracteres.",
+    "mismatch": "As senhas não coincidem.",
+    "cancel": "Cancelar",
+    "submit": "Confirmar",
+    "submitting": "Salvando…"
+  }
+}

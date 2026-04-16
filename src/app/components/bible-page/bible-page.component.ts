@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import {
   BibleBookMeta,
@@ -22,6 +23,7 @@ import {
   normalizeBibleVersion,
   type BibleVersionCode
 } from '../../services/bible-preferences.service';
+import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import { VerseCompareModalComponent } from '../verse-compare-modal/verse-compare-modal.component';
 
 function normalizeForSearch(s: string): string {
@@ -35,7 +37,7 @@ function normalizeForSearch(s: string): string {
 @Component({
   selector: 'app-bible-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, VerseCompareModalComponent],
+  imports: [CommonModule, RouterLink, LanguageMenuComponent, VerseCompareModalComponent, TranslocoPipe],
   templateUrl: './bible-page.component.html',
   styleUrl: './bible-page.component.scss'
 })

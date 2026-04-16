@@ -3,6 +3,7 @@ import { HttpBackend, HttpClient, HttpErrorResponse } from '@angular/common/http
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
+import { TranslocoService } from '@jsverse/transloco';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import {
@@ -23,6 +24,7 @@ export class AuthService {
   private readonly rawHttp = new HttpClient(inject(HttpBackend));
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
+  private readonly transloco = inject(TranslocoService);
 
   private readonly baseUrl = `${environment.apiUrl}/api/v1`;
 
@@ -178,7 +180,7 @@ export class AuthService {
     const message =
       typeof body?.error === 'string' && body.error.length > 0
         ? body.error
-        : 'Não foi possível completar a operação.';
+        : this.transloco.translate('common.errors.generic');
     return throwError(() => new Error(message));
   }
 

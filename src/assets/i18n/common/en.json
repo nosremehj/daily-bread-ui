@@ -1,0 +1,64 @@
+{
+  "site": {
+    "title": "Daily Bread - Reading Plan"
+  },
+  "brand": "Daily Bread",
+  "nav": {
+    "aria": "Main navigation",
+    "home": "Home",
+    "readingPlans": "Reading plan",
+    "bible": "Bible",
+    "statistics": "Statistics",
+    "settings": "Settings",
+    "logout": "Log out",
+    "languageAria": "Choose interface language",
+    "langOptionPt": "Portuguese (Brazil)",
+    "langOptionEn": "English",
+    "langOptionEs": "Spanish"
+  },
+  "actions": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "back": "Back",
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "confirm": "Confirm",
+    "done": "Done",
+    "refreshing": "Refreshing…"
+  },
+  "calendar": {
+    "weekday": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month"
+  },
+  "compareVerse": "Compare verse {{verse}}",
+  "errors": {
+    "generic": "Could not complete the operation.",
+    "loadEnrollment": "Could not load enrollment.",
+    "completeEnrollment": "Could not complete enrollment.",
+    "endEnrollment": "Could not end enrollment.",
+    "loadDashboard": "Could not load the reading dashboard.",
+    "loadTodayReading": "Could not load today’s Bible reading.",
+    "loadCalendar": "Could not load the calendar.",
+    "loadYearCalendar": "Could not load the year calendar.",
+    "loadStatistics": "Could not load statistics.",
+    "recordReading": "Could not record the reading.",
+    "applyReadingPeriod": "Could not apply the reading period.",
+    "loadVersions": "Could not load versions.",
+    "loadBooks": "Could not load books.",
+    "loadChapter": "Could not load the chapter.",
+    "loadVerse": "Could not load the verse.",
+    "compareVerse": "Could not compare the verse.",
+    "loadPlans": "Could not load plans.",
+    "loadPlan": "Could not load the plan.",
+    "importPdf": "Could not import the PDF."
+  }
+}

@@ -5,20 +5,29 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { ChangePasswordModalComponent } from '../change-password-modal/change-password-modal.component';
+import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ChangePasswordModalComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslocoPipe,
+    LanguageMenuComponent,
+    ChangePasswordModalComponent,
+  ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss'
 })
 export class ProfilePageComponent {
   private readonly fb = inject(FormBuilder);
   readonly auth = inject(AuthService);
+  private readonly transloco = inject(TranslocoService);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(256)]],
@@ -70,7 +79,7 @@ export class ProfilePageComponent {
   }
 
   onPasswordChanged(): void {
-    this.successMessage.set('Senha alterada com sucesso.');
+    this.successMessage.set(this.transloco.translate('profile.successPassword'));
   }
 
   submit(): void {
@@ -90,13 +99,11 @@ export class ProfilePageComponent {
       })
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
-        next: (res) => {
+               next: (res) => {
           if (res.newSession) {
-            this.successMessage.set(
-              'Dados salvos. O nome de usuário foi alterado e sua sessão foi renovada.'
-            );
+            this.successMessage.set(this.transloco.translate('profile.successRenamed'));
           } else {
-            this.successMessage.set('Dados salvos com sucesso.');
+            this.successMessage.set(this.transloco.translate('profile.successProfile'));
           }
         },
         error: (err: Error) => this.serverError.set(err.message)

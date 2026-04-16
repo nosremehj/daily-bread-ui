@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -112,6 +113,7 @@ interface ApiErrorBody {
 @Injectable({ providedIn: 'root' })
 export class ReadingProgressService {
   private readonly http = inject(HttpClient);
+  private readonly transloco = inject(TranslocoService);
   private readonly baseUrl = `${environment.apiUrl}/api/v1/reading-progress`;
 
   /** Carregado pelo layout e após matrícula; `null` = sem matrícula ativa. */
@@ -135,7 +137,7 @@ export class ReadingProgressService {
         if (err.status === 404) {
           return of(null);
         }
-        return throwError(() => this.toError(err, 'Não foi possível carregar a matrícula.'));
+        return throwError(() => this.toError(err, 'common.errors.loadEnrollment'));
       })
     );
   }
@@ -143,14 +145,14 @@ export class ReadingProgressService {
   enroll(body: EnrollRequest): Observable<EnrollmentSummary> {
     return this.http.post<EnrollmentSummary>(`${this.baseUrl}/enrollment`, body).pipe(
       tap((row) => this.enrollmentSummary.set(row)),
-      catchError((err) => throwError(() => this.toError(err, 'Não foi possível concluir a matrícula.')))
+      catchError((err) => throwError(() => this.toError(err, 'common.errors.completeEnrollment')))
     );
   }
 
   deleteEnrollment(): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/enrollment`).pipe(
       tap(() => this.enrollmentSummary.set(null)),
-      catchError((err) => throwError(() => this.toError(err, 'Não foi possível encerrar a matrícula.')))
+      catchError((err) => throwError(() => this.toError(err, 'common.errors.endEnrollment')))
     );
   }
 
@@ -161,7 +163,7 @@ export class ReadingProgressService {
       })
       .pipe(
         catchError((err) =>
-          throwError(() => this.toError(err, 'Não foi possível carregar o painel de leitura.'))
+          throwError(() => this.toError(err, 'common.errors.loadDashboard'))
         )
       );
   }
@@ -177,7 +179,7 @@ export class ReadingProgressService {
           if (err.status === 404) {
             return of(null);
           }
-          return throwError(() => this.toError(err, 'Não foi possível carregar o painel de leitura.'));
+          return throwError(() => this.toError(err, 'common.errors.loadDashboard'));
         })
       );
   }
@@ -189,7 +191,7 @@ export class ReadingProgressService {
       })
       .pipe(
         catchError((err) =>
-          throwError(() => this.toError(err, 'Não foi possível carregar a leitura bíblica do dia.'))
+          throwError(() => this.toError(err, 'common.errors.loadTodayReading'))
         )
       );
   }
@@ -205,7 +207,7 @@ export class ReadingProgressService {
             return of(null);
           }
           return throwError(() =>
-            this.toError(err, 'Não foi possível carregar a leitura bíblica do dia.')
+            this.toError(err, 'common.errors.loadTodayReading')
           );
         })
       );
@@ -218,7 +220,7 @@ export class ReadingProgressService {
       })
       .pipe(
         catchError((err) =>
-          throwError(() => this.toError(err, 'Não foi possível carregar o calendário.'))
+          throwError(() => this.toError(err, 'common.errors.loadCalendar'))
         )
       );
   }
@@ -231,7 +233,7 @@ export class ReadingProgressService {
       })
       .pipe(
         catchError((err) =>
-          throwError(() => this.toError(err, 'Não foi possível carregar o calendário do ano.'))
+          throwError(() => this.toError(err, 'common.errors.loadYearCalendar'))
         )
       );
   }
@@ -246,7 +248,7 @@ export class ReadingProgressService {
     }
     return this.http.get<ReadingStatistics>(`${this.baseUrl}/statistics`, { params }).pipe(
       catchError((err) =>
-        throwError(() => this.toError(err, 'Não foi possível carregar as estatísticas.'))
+        throwError(() => this.toError(err, 'common.errors.loadStatistics'))
       )
     );
   }
@@ -265,26 +267,26 @@ export class ReadingProgressService {
         if (err.status === 404) {
           return of(null);
         }
-        return throwError(() => this.toError(err, 'Não foi possível carregar as estatísticas.'));
+        return throwError(() => this.toError(err, 'common.errors.loadStatistics'));
       })
     );
   }
 
   markDayRead(body: MarkDayReadRequest): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/days/read`, body).pipe(
-      catchError((err) => throwError(() => this.toError(err, 'Não foi possível registrar a leitura.')))
+      catchError((err) => throwError(() => this.toError(err, 'common.errors.recordReading')))
     );
   }
 
   catchUpDateRange(body: CatchUpDateRangeRequest): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/catch-up/date-range`, body).pipe(
       catchError((err) =>
-        throwError(() => this.toError(err, 'Não foi possível aplicar o período de leituras.'))
+        throwError(() => this.toError(err, 'common.errors.applyReadingPeriod'))
       )
     );
   }
 
-  private toError(err: unknown, fallback: string): Error {
+  private toError(err: unknown, fallbackKey: string): Error {
     const httpErr = err as HttpErrorResponse;
     const body = httpErr?.error as ApiErrorBody | undefined;
     const message =
@@ -292,7 +294,7 @@ export class ReadingProgressService {
         ? body.error
         : typeof httpErr?.message === 'string'
           ? httpErr.message
-          : fallback;
+          : this.transloco.translate(fallbackKey);
     return new Error(message);
   }
 }

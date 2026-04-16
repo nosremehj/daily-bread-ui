@@ -1,0 +1,20 @@
+{
+  "title": "Biblia",
+  "versionLabel": "Versión de la traducción",
+  "loading": "Cargando…",
+  "breadcrumb": {
+    "books": "Libros"
+  },
+  "chapterNav": {
+    "prev": "Anterior",
+    "next": "Siguiente"
+  },
+  "chapterAria": "{{book}} capítulo {{chapter}}",
+  "booksIntro": "Elige un libro para leer el capítulo 1, o abre un capítulo desde el inicio.",
+  "filter": {
+    "label": "Filtrar libros",
+    "placeholder": "Nombre, abreviatura o número…",
+    "hint": "Búsqueda local: {{count}} libros en esta versión.",
+    "empty": "Ningún libro coincide con “{{query}}”."
+  }
+}

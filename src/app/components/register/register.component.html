@@ -2,13 +2,13 @@
   <div class="auth-card glass">
     <div class="auth-brand">
       <i class="uil uil-book-reader" aria-hidden="true"></i>
-      <h1>Criar conta</h1>
-      <p>Pão diário — seu plano de leitura</p>
+      <h1>{{ 'auth.register.title' | transloco }}</h1>
+      <p>{{ 'auth.register.tagline' | transloco }}</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <label class="field">
-        <span class="label">Nome</span>
+        <span class="label">{{ 'auth.register.name' | transloco }}</span>
         <input
           type="text"
           formControlName="name"
@@ -17,12 +17,12 @@
           [class.invalid]="form.controls.name.invalid && form.controls.name.touched"
         />
         @if (form.controls.name.invalid && form.controls.name.touched) {
-          <span class="hint">Informe seu nome (máx. 256 caracteres).</span>
+          <span class="hint">{{ 'auth.register.nameHint' | transloco }}</span>
         }
       </label>
 
       <label class="field">
-        <span class="label">E-mail</span>
+        <span class="label">{{ 'auth.register.email' | transloco }}</span>
         <input
           type="email"
           formControlName="email"
@@ -31,12 +31,12 @@
           [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
         />
         @if (form.controls.email.invalid && form.controls.email.touched) {
-          <span class="hint">Informe um e-mail válido.</span>
+          <span class="hint">{{ 'auth.register.emailHint' | transloco }}</span>
         }
       </label>
 
       <label class="field">
-        <span class="label">Usuário</span>
+        <span class="label">{{ 'auth.register.username' | transloco }}</span>
         <input
           type="text"
           formControlName="username"
@@ -45,12 +45,12 @@
           [class.invalid]="form.controls.username.invalid && form.controls.username.touched"
         />
         @if (form.controls.username.invalid && form.controls.username.touched) {
-          <span class="hint">Mínimo 3 caracteres, máximo 64.</span>
+          <span class="hint">{{ 'auth.register.usernameHint' | transloco }}</span>
         }
       </label>
 
       <label class="field">
-        <span class="label">Senha</span>
+        <span class="label">{{ 'auth.register.password' | transloco }}</span>
         <input
           type="password"
           formControlName="password"
@@ -59,12 +59,12 @@
           [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
         />
         @if (form.controls.password.invalid && form.controls.password.touched) {
-          <span class="hint">Mínimo 8 caracteres, máximo 128.</span>
+          <span class="hint">{{ 'auth.register.passwordHint' | transloco }}</span>
         }
       </label>
 
       <label class="field">
-        <span class="label">Confirmar senha</span>
+        <span class="label">{{ 'auth.register.confirmPassword' | transloco }}</span>
         <input
           type="password"
           formControlName="confirmPassword"
@@ -76,29 +76,29 @@
           "
         />
         @if (form.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
-          <span class="hint">As senhas não coincidem.</span>
+          <span class="hint">{{ 'auth.register.passwordMismatch' | transloco }}</span>
         }
         @if (
           form.controls.confirmPassword.hasError('required') &&
           form.controls.confirmPassword.touched &&
           !form.hasError('passwordMismatch')
         ) {
-          <span class="hint">Confirme a senha.</span>
+          <span class="hint">{{ 'auth.register.confirmRequired' | transloco }}</span>
         }
       </label>
 
-      @if (serverError()) {
-        <p class="error-banner" role="alert">{{ serverError() }}</p>
+      @if (serverError(); as err) {
+        <p class="error-banner" role="alert">{{ err }}</p>
       }
 
       <button type="submit" class="btn-primary" [disabled]="submitting()">
-        {{ submitting() ? 'Cadastrando…' : 'Cadastrar' }}
+        {{ submitting() ? ('auth.register.submitting' | transloco) : ('auth.register.submit' | transloco) }}
       </button>
     </form>
 
     <p class="auth-footer">
-      Já tem conta?
-      <a routerLink="/login">Entrar</a>
+      {{ 'auth.register.hasAccount' | transloco }}
+      <a routerLink="/login">{{ 'auth.register.loginLink' | transloco }}</a>
     </p>
   </div>
 </div>

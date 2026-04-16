@@ -7,6 +7,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 
@@ -21,7 +22,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-change-password-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslocoPipe],
   templateUrl: './change-password-modal.component.html',
   styleUrl: './change-password-modal.component.scss'
 })

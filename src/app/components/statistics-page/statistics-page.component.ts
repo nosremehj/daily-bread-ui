@@ -7,8 +7,11 @@ import {
   NgZone,
   signal
 } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { LocaleDatePipe } from '../../core/i18n/locale-date.pipe';
+import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import {
   ReadingProgressService,
   ReadingStatistics
@@ -50,7 +53,7 @@ export type StatisticsPreset = 'default' | 'last30' | 'month' | 'year';
 @Component({
   selector: 'app-statistics-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslocoPipe, LocaleDatePipe, LanguageMenuComponent],
   templateUrl: './statistics-page.component.html',
   styleUrl: './statistics-page.component.scss'
 })
@@ -58,13 +61,15 @@ export class StatisticsPageComponent {
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
 
+  readonly maxRangeDays = MAX_RANGE_DAYS;
+
   readonly stats = signal<ReadingStatistics | null>(null);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly preset = signal<StatisticsPreset>('default');
   readonly customFrom = signal('');
   readonly customTo = signal('');
-  readonly clientRangeError = signal<string | null>(null);
+  readonly clientRangeError = signal<'bothRequired' | 'order' | 'maxDays' | null>(null);
 
   readonly heatmapDays = computed(() => {
     const s = this.stats();
@@ -76,19 +81,6 @@ export class StatisticsPageComponent {
       date,
       read: read.has(date)
     }));
-  });
-
-  readonly milestoneText = computed(() => {
-    const s = this.stats();
-    if (s == null || s.nextMilestonePercent == null || s.daysUntilNextMilestone == null) {
-      return null;
-    }
-    const pct = s.nextMilestonePercent;
-    const days = s.daysUntilNextMilestone;
-    if (days === 0) {
-      return `Você está no marco de ${pct}% do plano. Continue para o próximo objetivo.`;
-    }
-    return `Faltam ${days} dia(s) de plano para alcançar ${pct}% da leitura.`;
   });
 
   constructor() {
@@ -135,18 +127,16 @@ export class StatisticsPageComponent {
     const to = this.customTo().trim();
     this.clientRangeError.set(null);
     if (!from || !to) {
-      this.clientRangeError.set('Informe data inicial e final.');
+      this.clientRangeError.set('bothRequired');
       return;
     }
     if (parseIsoLocal(from) > parseIsoLocal(to)) {
-      this.clientRangeError.set('A data inicial não pode ser depois da final.');
+      this.clientRangeError.set('order');
       return;
     }
     const n = inclusiveDayCount(from, to);
     if (n > MAX_RANGE_DAYS) {
-      this.clientRangeError.set(
-        `O período não pode ultrapassar ${MAX_RANGE_DAYS} dias (regra da API).`
-      );
+      this.clientRangeError.set('maxDays');
       return;
     }
     this.preset.set('default');

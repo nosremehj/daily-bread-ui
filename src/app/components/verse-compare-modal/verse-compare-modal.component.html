@@ -8,14 +8,14 @@
     (click)="$event.stopPropagation()"
   >
     <div class="modal-header">
-      <h2 id="compare-title">Comparar versículo</h2>
-      <button type="button" class="btn-icon" (click)="close()" aria-label="Fechar">
+      <h2 id="compare-title">{{ 'modals.verseCompare.title' | transloco }}</h2>
+      <button type="button" class="btn-icon" (click)="close()" [attr.aria-label]="'common.actions.close' | transloco">
         <i class="uil uil-times" aria-hidden="true"></i>
       </button>
     </div>
 
     @if (loading()) {
-      <p class="state-msg">Carregando traduções…</p>
+      <p class="state-msg">{{ 'modals.verseCompare.loading' | transloco }}</p>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>
@@ -37,7 +37,7 @@
     }
 
     <div class="footer-actions">
-      <button type="button" class="btn-secondary" (click)="close()">Fechar</button>
+      <button type="button" class="btn-secondary" (click)="close()">{{ 'modals.verseCompare.close' | transloco }}</button>
     </div>
   </div>
 }

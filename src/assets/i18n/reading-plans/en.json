@@ -1,0 +1,15 @@
+{
+  "title": "Reading plan",
+  "subtitle": "Import a PDF or see plans already available on this device.",
+  "actionsAria": "Actions",
+  "uploadPdf": "Upload plan (PDF)",
+  "refreshList": "Refresh list",
+  "sectionTitle": "Available plans",
+  "loading": "Loading…",
+  "emptyTitle": "No plan imported yet.",
+  "emptyHint": "Use “Upload plan” to import a PDF.",
+  "following": "Following",
+  "meta": "{{days}} days · imported on {{date}}",
+  "viewPlan": "View plan",
+  "follow": "Follow"
+}

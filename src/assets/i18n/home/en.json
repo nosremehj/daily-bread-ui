@@ -1,0 +1,37 @@
+{
+  "greeting": "Hello, {{name}}!",
+  "loadingDashboard": "Loading your dashboard…",
+  "progress": {
+    "title": "Your progress",
+    "blurb": "You’ve completed {{completed}} of {{total}} plan days. Keep up the pace.",
+    "streak": "{{days}} days in a row",
+    "daysLeftYear": "{{days}} days left in the year"
+  },
+  "week": {
+    "title": "This week",
+    "viewFullCalendar": "View full calendar",
+    "todayAria": "Today: {{weekday}} {{day}}. Open today’s reading in the Bible.",
+    "dayStatusAria": "{{weekday}} {{day}}, {{status}}"
+  },
+  "weekStatus": {
+    "COMPLETED": "completed",
+    "ACTIVE": "today",
+    "MISSED": "missed",
+    "UPCOMING": "upcoming"
+  },
+  "today": {
+    "title": "Today’s reading",
+    "loadingChapters": "Loading chapters…",
+    "noReadings": "No readings scheduled for this date.",
+    "day": "Day {{day}}",
+    "openBibleHint": "Tap to open in the Bible (ch. {{chapter}}, v. {{verse}})",
+    "openBibleHintRange": "Tap to read in the Bible (chs. {{from}}–{{to}})",
+    "openReadingAria": "Open reading in the Bible: {{book}} chapters {{from}} to {{to}}"
+  },
+  "empty": {
+    "title": "Welcome",
+    "text": "Choose a reading plan and set when you started to track your progress here.",
+    "hint": "Import a PDF or use a plan already available.",
+    "cta": "Reading plan"
+  }
+}

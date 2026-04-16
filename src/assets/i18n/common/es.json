@@ -1,0 +1,64 @@
+{
+  "site": {
+    "title": "Pan del día - Plan de lectura"
+  },
+  "brand": "Pan del día",
+  "nav": {
+    "aria": "Navegación principal",
+    "home": "Inicio",
+    "readingPlans": "Plan de lectura",
+    "bible": "Biblia",
+    "statistics": "Estadísticas",
+    "settings": "Ajustes",
+    "logout": "Salir",
+    "languageAria": "Elegir idioma de la interfaz",
+    "langOptionPt": "Portugués (Brasil)",
+    "langOptionEn": "Inglés",
+    "langOptionEs": "Español"
+  },
+  "actions": {
+    "close": "Cerrar",
+    "cancel": "Cancelar",
+    "back": "Volver",
+    "loading": "Cargando…",
+    "saving": "Guardando…",
+    "confirm": "Confirmar",
+    "done": "Listo",
+    "refreshing": "Actualizando…"
+  },
+  "calendar": {
+    "weekday": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+    "prevMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente"
+  },
+  "compareVerse": "Comparar versículo {{verse}}",
+  "errors": {
+    "generic": "No se pudo completar la operación.",
+    "loadEnrollment": "No se pudo cargar la inscripción.",
+    "completeEnrollment": "No se pudo completar la inscripción.",
+    "endEnrollment": "No se pudo finalizar la inscripción.",
+    "loadDashboard": "No se pudo cargar el panel de lectura.",
+    "loadTodayReading": "No se pudo cargar la lectura bíblica del día.",
+    "loadCalendar": "No se pudo cargar el calendario.",
+    "loadYearCalendar": "No se pudo cargar el calendario del año.",
+    "loadStatistics": "No se pudieron cargar las estadísticas.",
+    "recordReading": "No se pudo registrar la lectura.",
+    "applyReadingPeriod": "No se pudo aplicar el período de lecturas.",
+    "loadVersions": "No se pudieron cargar las versiones.",
+    "loadBooks": "No se pudieron cargar los libros.",
+    "loadChapter": "No se pudo cargar el capítulo.",
+    "loadVerse": "No se pudo cargar el versículo.",
+    "compareVerse": "No se pudo comparar el versículo.",
+    "loadPlans": "No se pudieron cargar los planes.",
+    "loadPlan": "No se pudo cargar el plan.",
+    "importPdf": "No se pudo importar el PDF."
+  }
+}
