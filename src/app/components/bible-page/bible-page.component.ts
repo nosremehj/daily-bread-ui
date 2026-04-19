@@ -3,14 +3,14 @@ import {
   afterNextRender,
   Component,
   computed,
+  DestroyRef,
   inject,
   NgZone,
-  signal,
-  DestroyRef
+  signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import {
   BibleBookMeta,
@@ -23,6 +23,7 @@ import {
   normalizeBibleVersion,
   type BibleVersionCode
 } from '../../services/bible-preferences.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import { VerseCompareModalComponent } from '../verse-compare-modal/verse-compare-modal.component';
 
@@ -37,7 +38,14 @@ function normalizeForSearch(s: string): string {
 @Component({
   selector: 'app-bible-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, LanguageMenuComponent, VerseCompareModalComponent, TranslocoPipe],
+  imports: [
+    CommonModule,
+    RouterLink,
+    BookLoadingSpinnerComponent,
+    LanguageMenuComponent,
+    VerseCompareModalComponent,
+    TranslocoPipe,
+  ],
   templateUrl: './bible-page.component.html',
   styleUrl: './bible-page.component.scss'
 })
@@ -48,6 +56,7 @@ export class BiblePageComponent {
   private readonly prefs = inject(BiblePreferencesService);
   private readonly ngZone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly transloco = inject(TranslocoService);
 
   readonly versions = signal<BibleVersionMeta[]>([]);
   readonly books = signal<BibleBookMeta[] | null>(null);
@@ -72,6 +81,11 @@ export class BiblePageComponent {
   readonly chapter = signal<BibleChapter | null>(null);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  /** Livro escolhido sem capítulo na URL — grade de capítulos. */
+  readonly selectedBookMeta = signal<BibleBookMeta | null>(null);
+  /** Limite de capítulos para desabilitar “próximo” e montar a grade. */
+  readonly currentBookMaxChapter = signal<number | null>(null);
 
   readonly currentVersion = signal<BibleVersionCode>('nvi');
   readonly currentBook = signal<number | null>(null);
@@ -105,6 +119,7 @@ export class BiblePageComponent {
           const book = Number(bRaw);
           const chapter = Number(cRaw);
           if (Number.isFinite(book) && Number.isFinite(chapter) && book >= 1 && chapter >= 1) {
+            this.selectedBookMeta.set(null);
             this.currentBook.set(book);
             this.currentChapter.set(chapter);
             this.loadChapter(version, book, chapter);
@@ -113,9 +128,25 @@ export class BiblePageComponent {
           }
         }
 
+        if (bRaw != null && cRaw == null) {
+          const book = Number(bRaw);
+          if (Number.isFinite(book) && book >= 1) {
+            this.currentBook.set(book);
+            this.currentChapter.set(null);
+            this.chapter.set(null);
+            this.books.set(null);
+            this.selectedBookMeta.set(null);
+            this.currentBookMaxChapter.set(null);
+            this.loadBookMetaForPicker(version, book);
+            return;
+          }
+        }
+
         this.currentBook.set(null);
         this.currentChapter.set(null);
         this.chapter.set(null);
+        this.selectedBookMeta.set(null);
+        this.currentBookMaxChapter.set(null);
         this.loadBooks(version);
       });
 
@@ -137,6 +168,8 @@ export class BiblePageComponent {
       void this.router.navigate(['/bible', next, book, ch], {
         queryParams: verse ? { verse } : {}
       });
+    } else if (book != null && ch == null && this.selectedBookMeta() != null) {
+      void this.router.navigate(['/bible', next, book]);
     } else {
       void this.router.navigate(['/bible', next]);
     }
@@ -159,8 +192,21 @@ export class BiblePageComponent {
     if (book == null || ch == null) {
       return;
     }
+    const max = this.currentBookMaxChapter();
+    if (max != null && ch >= max) {
+      return;
+    }
     void this.router.navigate(['/bible', v, book, ch + 1]);
   }
+
+  readonly nextChapterDisabled = computed(() => {
+    const ch = this.chapter();
+    const max = this.currentBookMaxChapter();
+    if (!ch || max == null) {
+      return false;
+    }
+    return ch.chapter >= max;
+  });
 
   openCompare(bookNum: number, chapterNum: number, verseNum: number): void {
     this.compareBook.set(bookNum);
@@ -173,12 +219,63 @@ export class BiblePageComponent {
     this.compareOpen.set(open);
   }
 
+  /** Lista 1…N para a grade de capítulos; se `chapterCount` não vier da API, mostra só o cap. 1. */
+  /** Preserva `?verse=` ao abrir um capítulo a partir da grade (ex.: link da semana na home). */
+  chapterPickerQueryParams(): Record<string, string> {
+    const v = this.route.snapshot.queryParamMap.get('verse');
+    return v != null && v.trim() !== '' ? { verse: v.trim() } : {};
+  }
+
+  chapterNumbers(meta: BibleBookMeta): number[] {
+    const c = meta.chapterCount;
+    if (c == null || c < 1) {
+      return [1];
+    }
+    return Array.from({ length: c }, (_, i) => i + 1);
+  }
+
   attributionForVersion(versionId: string): string {
     const v = this.versions().find((x) => x.versionId === versionId);
     if (!v) {
       return '';
     }
     return [v.attribution, v.licenseNote].filter(Boolean).join(' — ');
+  }
+
+  private loadBookMetaForPicker(version: BibleVersionCode, bookNumber: number): void {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.bible
+      .getBooks(version)
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.loading.set(false);
+          })
+        )
+      )
+      .subscribe({
+        next: (rows) => {
+          this.ngZone.run(() => {
+            const meta = rows.find((b) => b.number === bookNumber) ?? null;
+            if (meta == null) {
+              this.errorMessage.set(this.transloco.translate('bible.errors.bookNotFound'));
+              this.selectedBookMeta.set(null);
+              return;
+            }
+            this.selectedBookMeta.set(meta);
+            const n = meta.chapterCount;
+            this.currentBookMaxChapter.set(n != null && n >= 1 ? n : null);
+            this.errorMessage.set(null);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.errorMessage.set(err.message);
+            this.selectedBookMeta.set(null);
+          });
+        }
+      });
   }
 
   private loadBooks(version: BibleVersionCode): void {
@@ -207,6 +304,21 @@ export class BiblePageComponent {
           });
         }
       });
+  }
+
+  private refreshChapterLimitForCurrentBook(version: BibleVersionCode, bookNumber: number): void {
+    this.bible.getBooks(version).subscribe({
+      next: (rows) => {
+        this.ngZone.run(() => {
+          const meta = rows.find((b) => b.number === bookNumber);
+          const n = meta?.chapterCount;
+          this.currentBookMaxChapter.set(n != null && n >= 1 ? n : null);
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => this.currentBookMaxChapter.set(null));
+      }
+    });
   }
 
   private scheduleScrollToVerse(): void {
@@ -240,6 +352,7 @@ export class BiblePageComponent {
           this.ngZone.run(() => {
             this.chapter.set(row);
             this.errorMessage.set(null);
+            this.refreshChapterLimitForCurrentBook(version, book);
             this.scheduleScrollToVerse();
           });
         },

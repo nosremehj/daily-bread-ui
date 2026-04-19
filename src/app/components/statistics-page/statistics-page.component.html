@@ -11,7 +11,9 @@
 </header>
 
 @if (loading()) {
-  <p class="muted state-loading">{{ 'statistics.loading' | transloco }}</p>
+  <div class="app-loading-host">
+    <app-book-loading-spinner [size]="'lg'" [labelKey]="'statistics.loading'" />
+  </div>
 } @else {
   @if (errorMessage(); as err) {
     <p class="banner-error" role="alert">{{ err }}</p>
@@ -104,6 +106,9 @@
                   }
           }}
         </p>
+        <p class="calendar-model-hint muted small">
+          {{ 'statistics.calendarModelHint' | transloco }}
+        </p>
       </section>
 
       @if (s.nextMilestonePercent != null && s.daysUntilNextMilestone != null) {
@@ -171,6 +176,68 @@
           }
         </div>
       </section>
+
+      @if (showExtendedCatchUp()) {
+        <section class="catch-up-section glass" aria-labelledby="catch-up-heading">
+          <h2 id="catch-up-heading" class="section-title">{{ 'statistics.catchUp.title' | transloco }}</h2>
+          <p class="muted small catch-up-intro">{{ 'statistics.catchUp.intro' | transloco }}</p>
+          @for (row of catchUpRanges(); track $index) {
+            <div class="catch-up-range-row">
+              <label class="date-field">
+                <span class="field-label">{{ 'statistics.catchUp.from' | transloco }}</span>
+                <input
+                  type="date"
+                  [value]="row.from"
+                  (change)="updateCatchUpFrom($index, $any($event.target).value)"
+                />
+              </label>
+              <label class="date-field">
+                <span class="field-label">{{ 'statistics.catchUp.to' | transloco }}</span>
+                <input type="date" [value]="row.to" (change)="updateCatchUpTo($index, $any($event.target).value)" />
+              </label>
+              <button
+                type="button"
+                class="btn-icon-catch-remove"
+                (click)="removeCatchUpRow($index)"
+                [attr.aria-label]="'statistics.catchUp.removeRangeAria' | transloco"
+              >
+                <i class="uil uil-trash-alt" aria-hidden="true"></i>
+              </button>
+            </div>
+          }
+          <button type="button" class="btn-add-catch" (click)="addCatchUpRow()">
+            <i class="uil uil-plus" aria-hidden="true"></i>
+            {{ 'statistics.catchUp.addRange' | transloco }}
+          </button>
+          <p class="muted small">{{ 'statistics.catchUp.rangeMaxHint' | transloco: { max: maxRangeDays } }}</p>
+          @if (catchUpError(); as ce) {
+            <p class="field-error" role="alert">{{ ce }}</p>
+          }
+          @if (catchUpSuccess()) {
+            <p class="catch-up-success">{{ 'statistics.catchUp.success' | transloco }}</p>
+          }
+          <div class="catch-up-actions">
+            <button
+              type="button"
+              class="btn-primary catch-up-submit btn-book-loading"
+              (click)="submitCatchUpRanges()"
+              [disabled]="catchUpSubmitting()"
+            >
+              @if (catchUpSubmitting()) {
+                <app-book-loading-spinner [size]="'sm'" [inline]="true" [showLabel]="false" />
+                <span>{{ 'statistics.catchUp.submitting' | transloco }}</span>
+              } @else {
+                {{ 'statistics.catchUp.submit' | transloco }}
+              }
+            </button>
+          </div>
+        </section>
+      } @else {
+        <section class="catch-up-section glass catch-up-simple" aria-labelledby="catch-up-simple-heading">
+          <h2 id="catch-up-simple-heading" class="section-title">{{ 'statistics.catchUp.simpleTitle' | transloco }}</h2>
+          <p class="muted small">{{ 'statistics.catchUp.noMissedInPeriod' | transloco }}</p>
+        </section>
+      }
 
       <section class="plan-meta glass">
         <h2 class="section-title">{{ 'statistics.planSection.title' | transloco }}</h2>

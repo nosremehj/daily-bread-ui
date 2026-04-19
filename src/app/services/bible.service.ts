@@ -34,6 +34,8 @@ export interface BibleBookMeta {
   number: number;
   abbrev: string;
   name: string;
+  /** Quantidade de capítulos nesta versão (quando a API envia). */
+  chapterCount?: number;
 }
 
 export interface BibleVersionMeta {

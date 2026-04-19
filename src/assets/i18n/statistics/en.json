@@ -51,5 +51,26 @@
   "milestone": {
     "atMark": "You’re at the {{pct}}% milestone of the plan. Keep going toward the next goal.",
     "remaining": "{{days}} more plan day(s) to reach {{pct}}% of the reading."
+  },
+  "calendarModelHint": "The plan follows the calendar: each day shows the next scheduled reading. The app does not keep a backlog queue in the background—use recovery below if you need to align past days.",
+  "catchUp": {
+    "title": "Catch up (mark past days)",
+    "intro": "Shown because there are missed scheduled days in this period. Add one or more date ranges; each follows the same rules as enrollment.",
+    "from": "From",
+    "to": "To",
+    "addRange": "Add range",
+    "removeRangeAria": "Remove this range",
+    "rangeMaxHint": "Each range: at most {{max}} days.",
+    "submit": "Apply ranges",
+    "submitting": "Applying…",
+    "success": "Ranges applied. Statistics refreshed.",
+    "simpleTitle": "No missed days in this period",
+    "noMissedInPeriod": "You have no missed scheduled days in the selected statistics period, so extra catch-up ranges are hidden.",
+    "errors": {
+      "partial": "For each range, fill both dates or leave the row empty.",
+      "order": "Start date cannot be after end date.",
+      "maxDays": "A range cannot exceed {{max}} days.",
+      "empty": "Add at least one complete date range."
+    }
   }
 }

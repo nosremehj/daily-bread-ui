@@ -34,6 +34,7 @@ export const routes: Routes = [
         children: [
           { path: '', pathMatch: 'full', redirectTo: 'nvi' },
           { path: ':version/:book/:chapter', component: BiblePageComponent },
+          { path: ':version/:book', component: BiblePageComponent },
           { path: ':version', component: BiblePageComponent }
         ]
       },

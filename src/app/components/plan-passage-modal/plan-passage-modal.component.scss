@@ -129,6 +129,11 @@
   cursor: not-allowed;
 }
 
+.passage-loading {
+  padding: 12px 8px 16px;
+  flex-shrink: 0;
+}
+
 .state-msg {
   font-size: 0.9rem;
   padding: 8px 0;
@@ -153,6 +158,16 @@
   font-weight: 600;
 }
 
+.banner-inline-error {
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #fecaca;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
 .verse-line {
   display: flex;
   gap: 10px;
@@ -160,6 +175,47 @@
   margin-bottom: 10px;
   line-height: 1.5;
   font-size: 0.92rem;
+}
+
+.verse-lead {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.verse-fav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.verse-fav:hover:not(:disabled) {
+  color: var(--accent-purple);
+  background: rgba(139, 92, 246, 0.12);
+}
+
+.verse-fav.is-fav {
+  color: #fbbf24;
+}
+
+.verse-fav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-unmark {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fecaca;
 }
 
 .verse-num {

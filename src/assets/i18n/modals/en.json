@@ -7,15 +7,20 @@
     "catchUpFieldHint": "Marks from day 1 through the plan day that matches this date, in a continuous rhythm.",
     "hideAdvanced": "Hide extra date range",
     "showAdvanced": "Extra date range…",
-    "advancedIntro": "Use when you want to mark a range of calendar days as read (helpful if you didn’t start on day 1 or read in jumps). Only fill this if you know the exact range.",
+    "advancedIntro": "Add one or more date ranges to mark calendar days as read (useful if you read in jumps). Use + to add another range.",
     "from": "From",
     "to": "To",
+    "addRange": "Add date range",
+    "removeRangeAria": "Remove this range",
+    "rangeMaxHint": "Each range can be at most {{max}} days.",
     "cancel": "Cancel",
     "submit": "Confirm and go to home",
     "submitting": "Saving…",
     "errors": {
       "startRequired": "Enter the plan start date.",
-      "advancedPartial": "Fill both start and end of the extra range, or leave both empty."
+      "advancedPartial": "For each range, fill both start and end, or leave the row empty.",
+      "rangeOrder": "Start date cannot be after end date.",
+      "rangeMaxDays": "A range cannot exceed {{max}} days."
     }
   },
   "upload": {
@@ -61,6 +66,10 @@
     "markComplete": "Mark today’s reading as done",
     "registering": "Saving…",
     "done": "Done",
+    "unmarkDay": "Remove reading mark",
+    "unmarking": "Removing…",
+    "favoriteAddAria": "Add verse {{verse}} to favorites for this day",
+    "favoriteRemoveAria": "Remove verse {{verse}} from favorites",
     "errors": {
       "noReference": "Reference date unavailable. Close and open again from the start."
     }
@@ -73,7 +82,11 @@
     "cellUnread": "{{date}}, not read",
     "legendRead": "Day with logged reading",
     "legendMiss": "Day without reading (current month)",
-    "close": "Close"
+    "close": "Close",
+    "favoritesFor": "Favorites on {{date}}",
+    "favoritesLoading": "Loading favorites…",
+    "favoritesEmpty": "No verse favorites for this day.",
+    "favBookFallback": "Book"
   },
   "verseCompare": {
     "title": "Compare verse",

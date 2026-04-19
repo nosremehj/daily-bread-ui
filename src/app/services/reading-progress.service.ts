@@ -87,6 +87,10 @@ export interface CatchUpDateRangeRequest {
   toInclusive: string;
 }
 
+export interface CatchUpDateRangesRequest {
+  ranges: CatchUpDateRangeRequest[];
+}
+
 /** Resposta de `GET /reading-progress/statistics`. */
 export interface ReadingStatistics {
   planId: number;
@@ -98,6 +102,8 @@ export interface ReadingStatistics {
   completedDaysInPlan: number;
   daysReadInPeriod: number;
   daysMissedInPeriod: number;
+  /** Quando ausente (API antiga), o front pode usar `daysMissedInPeriod > 0`. */
+  hasMissedDaysInPeriod?: boolean;
   currentStreakDays: number;
   longestStreakDays: number;
   annualProgressPercent: number;
@@ -283,6 +289,21 @@ export class ReadingProgressService {
       catchError((err) =>
         throwError(() => this.toError(err, 'common.errors.applyReadingPeriod'))
       )
+    );
+  }
+
+  catchUpDateRanges(body: CatchUpDateRangesRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/catch-up/date-ranges`, body).pipe(
+      catchError((err) =>
+        throwError(() => this.toError(err, 'common.errors.applyReadingPeriod'))
+      )
+    );
+  }
+
+  /** Remove marcação de leitura do dia do plano (idempotente). */
+  unmarkDayRead(dayNumber: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/days/${dayNumber}/read`).pipe(
+      catchError((err) => throwError(() => this.toError(err, 'common.errors.unmarkReading')))
     );
   }
 

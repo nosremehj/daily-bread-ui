@@ -791,3 +791,19 @@ p {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Área centralizada para o spinner de livro em telas que aguardam a API */
+.app-loading-host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: min(48vh, 420px);
+  padding: 28px 16px 40px;
+}
+
+.btn-book-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}

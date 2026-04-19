@@ -12,18 +12,29 @@ import {
   signal
 } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { Router } from '@angular/router';
 import { finalize, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import {
-  ReadingProgressService,
-  CatchUpDateRangeRequest
+  CatchUpDateRangeRequest,
+  ReadingProgressService
 } from '../../services/reading-progress.service';
+import {
+  inclusiveDayCount,
+  MAX_CATCH_UP_RANGE_DAYS,
+  parseIsoLocal
+} from '../../utils/date-range-validate';
+
+export interface DateRangeRow {
+  from: string;
+  to: string;
+}
 
 @Component({
   selector: 'app-enroll-plan-modal',
   standalone: true,
-  imports: [CommonModule, TranslocoPipe],
+  imports: [CommonModule, TranslocoPipe, BookLoadingSpinnerComponent],
   templateUrl: './enroll-plan-modal.component.html',
   styleUrl: './enroll-plan-modal.component.scss'
 })
@@ -41,11 +52,12 @@ export class EnrollPlanModalComponent implements OnChanges {
 
   readonly planStartDate = signal('');
   readonly catchUpThroughDate = signal('');
-  readonly catchUpFrom = signal('');
-  readonly catchUpTo = signal('');
+  readonly catchUpRanges = signal<DateRangeRow[]>([{ from: '', to: '' }]);
   readonly showAdvanced = signal(false);
   readonly submitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+
+  readonly maxRangeDays = MAX_CATCH_UP_RANGE_DAYS;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && this.open) {
@@ -53,8 +65,7 @@ export class EnrollPlanModalComponent implements OnChanges {
       this.submitting.set(false);
       this.showAdvanced.set(false);
       this.catchUpThroughDate.set('');
-      this.catchUpFrom.set('');
-      this.catchUpTo.set('');
+      this.catchUpRanges.set([{ from: '', to: '' }]);
       const y = new Date().getFullYear();
       this.planStartDate.set(`${y}-01-01`);
     }
@@ -77,7 +88,44 @@ export class EnrollPlanModalComponent implements OnChanges {
   }
 
   toggleAdvanced(): void {
-    this.showAdvanced.update((v) => !v);
+    const next = !this.showAdvanced();
+    this.showAdvanced.set(next);
+    if (next && this.catchUpRanges().length === 0) {
+      this.catchUpRanges.set([{ from: '', to: '' }]);
+    }
+  }
+
+  addRangeRow(): void {
+    this.catchUpRanges.update((rows) => [...rows, { from: '', to: '' }]);
+  }
+
+  removeRangeRow(index: number): void {
+    this.catchUpRanges.update((rows) => {
+      if (rows.length <= 1) {
+        return [{ from: '', to: '' }];
+      }
+      return rows.filter((_, i) => i !== index);
+    });
+  }
+
+  updateRangeFrom(index: number, value: string): void {
+    this.catchUpRanges.update((rows) => {
+      const next = rows.slice();
+      if (next[index]) {
+        next[index] = { ...next[index], from: value };
+      }
+      return next;
+    });
+  }
+
+  updateRangeTo(index: number, value: string): void {
+    this.catchUpRanges.update((rows) => {
+      const next = rows.slice();
+      if (next[index]) {
+        next[index] = { ...next[index], to: value };
+      }
+      return next;
+    });
   }
 
   submit(): void {
@@ -88,31 +136,39 @@ export class EnrollPlanModalComponent implements OnChanges {
       return;
     }
 
-    const catchThrough = this.catchUpThroughDate().trim();
-    const from = this.catchUpFrom().trim();
-    const to = this.catchUpTo().trim();
-
-    if (this.showAdvanced() && (from || to) && (!from || !to)) {
-      this.errorMessage.set(this.transloco.translate('modals.enroll.errors.advancedPartial'));
-      return;
+    let rangesPayload: CatchUpDateRangeRequest[] | null = null;
+    if (this.showAdvanced()) {
+      const parsed = this.parseCatchUpRanges();
+      if (parsed === 'partial') {
+        this.errorMessage.set(this.transloco.translate('modals.enroll.errors.advancedPartial'));
+        return;
+      }
+      if (parsed === 'order') {
+        this.errorMessage.set(this.transloco.translate('modals.enroll.errors.rangeOrder'));
+        return;
+      }
+      if (parsed === 'max') {
+        this.errorMessage.set(
+          this.transloco.translate('modals.enroll.errors.rangeMaxDays', { max: MAX_CATCH_UP_RANGE_DAYS })
+        );
+        return;
+      }
+      rangesPayload = parsed.length > 0 ? parsed : null;
     }
 
     this.submitting.set(true);
     this.errorMessage.set(null);
 
-    const rangeBody: CatchUpDateRangeRequest | null =
-      this.showAdvanced() && from && to ? { fromInclusive: from, toInclusive: to } : null;
-
     this.readingProgress
       .enroll({
         planId: id,
         planStartDate: start,
-        catchUpThroughDate: catchThrough || null
+        catchUpThroughDate: this.catchUpThroughDate().trim() || null
       })
       .pipe(
         switchMap(() => {
-          if (rangeBody) {
-            return this.readingProgress.catchUpDateRange(rangeBody);
+          if (rangesPayload && rangesPayload.length > 0) {
+            return this.readingProgress.catchUpDateRanges({ ranges: rangesPayload });
           }
           return of(undefined);
         }),
@@ -136,6 +192,32 @@ export class EnrollPlanModalComponent implements OnChanges {
           });
         }
       });
+  }
+
+  private parseCatchUpRanges():
+    | CatchUpDateRangeRequest[]
+    | 'partial'
+    | 'order'
+    | 'max' {
+    const out: CatchUpDateRangeRequest[] = [];
+    for (const r of this.catchUpRanges()) {
+      const a = r.from.trim();
+      const b = r.to.trim();
+      if (!a && !b) {
+        continue;
+      }
+      if (!a || !b) {
+        return 'partial';
+      }
+      if (parseIsoLocal(a) > parseIsoLocal(b)) {
+        return 'order';
+      }
+      if (inclusiveDayCount(a, b) > MAX_CATCH_UP_RANGE_DAYS) {
+        return 'max';
+      }
+      out.push({ fromInclusive: a, toInclusive: b });
+    }
+    return out;
   }
 
   close(): void {

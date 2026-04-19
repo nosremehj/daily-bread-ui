@@ -28,6 +28,13 @@
       </button>
     </div>
 
+    @if (favoriteError(); as fe) {
+      <p class="banner-inline-error" role="alert">{{ fe }}</p>
+    }
+    @if (unmarkError(); as ue) {
+      <p class="banner-inline-error" role="alert">{{ ue }}</p>
+    }
+
     <div class="toolbar">
       <label class="version-wrap">
         <span class="label">{{ 'modals.planPassage.version' | transloco }}</span>
@@ -79,7 +86,9 @@
     }
 
     @if (loading()) {
-      <p class="state-msg">{{ 'modals.planPassage.loadingChapter' | transloco }}</p>
+      <div class="passage-loading">
+        <app-book-loading-spinner [labelKey]="'modals.planPassage.loadingChapter'" />
+      </div>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>
@@ -92,14 +101,33 @@
             <h3 class="chapter-title">{{ ch.bookName }} {{ ch.chapter }}</h3>
             @for (v of ch.verses; track v.verse) {
               <p class="verse-line">
-                <button
-                  type="button"
-                  class="verse-num"
-                  (click)="openCompare(ch.bookNumber, ch.chapter, v.verse)"
-                  [attr.aria-label]="'common.compareVerse' | transloco: { verse: v.verse }"
-                >
-                  {{ v.verse }}
-                </button>
+                <span class="verse-lead">
+                  <button
+                    type="button"
+                    class="verse-num"
+                    (click)="openCompare(ch.bookNumber, ch.chapter, v.verse)"
+                    [attr.aria-label]="'common.compareVerse' | transloco: { verse: v.verse }"
+                  >
+                    {{ v.verse }}
+                  </button>
+                  @if (referenceDate?.trim()) {
+                    <button
+                      type="button"
+                      class="verse-fav"
+                      [class.is-fav]="favoriteIdForVerse(ch.bookNumber, ch.chapter, v.verse) != null"
+                      (click)="toggleFavoriteVerse(v.verse)"
+                      [disabled]="favoritesLoading() || favoriteToggleBusy()"
+                      [attr.aria-label]="
+                        (favoriteIdForVerse(ch.bookNumber, ch.chapter, v.verse) != null
+                          ? 'modals.planPassage.favoriteRemoveAria'
+                          : 'modals.planPassage.favoriteAddAria'
+                        ) | transloco: { verse: v.verse }
+                      "
+                    >
+                      <i class="uil uil-star" aria-hidden="true"></i>
+                    </button>
+                  }
+                </span>
                 <span class="verse-text">{{ v.text }}</span>
               </p>
             }
@@ -109,6 +137,21 @@
     }
 
     <div class="footer-actions">
+      @if (block.completed && referenceDate?.trim()) {
+        <button
+          type="button"
+          class="btn-secondary btn-unmark btn-book-loading"
+          (click)="unmarkDayReading()"
+          [disabled]="unmarkLoading()"
+        >
+          @if (unmarkLoading()) {
+            <app-book-loading-spinner [size]="'sm'" [inline]="true" [showLabel]="false" />
+            <span>{{ 'modals.planPassage.unmarking' | transloco }}</span>
+          } @else {
+            {{ 'modals.planPassage.unmarkDay' | transloco }}
+          }
+        </button>
+      }
       @if (showConfirmReadingEntry()) {
         <button type="button" class="btn-footer-primary" (click)="openConfirmModal()">
           {{ 'modals.planPassage.confirmReading' | transloco }}
@@ -162,12 +205,13 @@
         @if (!block.completed && !confirmSuccess()) {
           <button
             type="button"
-            class="btn-confirm-reading"
+            class="btn-confirm-reading btn-book-loading"
             (click)="confirmDailyReading()"
             [disabled]="confirmLoading() || !referenceDate?.trim()"
           >
             @if (confirmLoading()) {
-              {{ 'modals.planPassage.registering' | transloco }}
+              <app-book-loading-spinner [size]="'sm'" [inline]="true" [showLabel]="false" />
+              <span>{{ 'modals.planPassage.registering' | transloco }}</span>
             } @else {
               {{ 'modals.planPassage.markComplete' | transloco }}
             }

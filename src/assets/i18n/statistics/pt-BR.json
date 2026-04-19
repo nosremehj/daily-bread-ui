@@ -51,5 +51,26 @@
   "milestone": {
     "atMark": "Você está no marco de {{pct}}% do plano. Continue para o próximo objetivo.",
     "remaining": "Faltam {{days}} dia(s) de plano para alcançar {{pct}}% da leitura."
+  },
+  "calendarModelHint": "O plano segue o calendário: a cada dia civil aparece a próxima leitura prevista. Não há fila de atrasos automática em segundo plano — use a recuperação abaixo se precisar alinhar dias passados.",
+  "catchUp": {
+    "title": "Recuperação (marcar dias passados)",
+    "intro": "Exibido porque há dias agendados não lidos neste período. Adicione um ou mais intervalos de datas; as mesmas regras da matrícula se aplicam.",
+    "from": "De",
+    "to": "Até",
+    "addRange": "Adicionar intervalo",
+    "removeRangeAria": "Remover este intervalo",
+    "rangeMaxHint": "Cada intervalo: no máximo {{max}} dias.",
+    "submit": "Aplicar intervalos",
+    "submitting": "Aplicando…",
+    "success": "Intervalos aplicados. Estatísticas atualizadas.",
+    "simpleTitle": "Sem dias perdidos neste período",
+    "noMissedInPeriod": "Não há dias agendados perdidos no período de estatísticas selecionado; opções extras de recuperação ficam ocultas.",
+    "errors": {
+      "partial": "Em cada intervalo, preencha as duas datas ou deixe a linha vazia.",
+      "order": "A data inicial não pode ser depois da final.",
+      "maxDays": "Um intervalo não pode ultrapassar {{max}} dias.",
+      "empty": "Inclua pelo menos um intervalo de datas completo."
+    }
   }
 }

@@ -12,12 +12,13 @@ import {
   signal
 } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { ReadingPlanService } from '../../services/reading-plan.service';
 
 @Component({
   selector: 'app-upload-plan-modal',
   standalone: true,
-  imports: [CommonModule, TranslocoPipe],
+  imports: [CommonModule, TranslocoPipe, BookLoadingSpinnerComponent],
   templateUrl: './upload-plan-modal.component.html',
   styleUrl: './upload-plan-modal.component.scss'
 })

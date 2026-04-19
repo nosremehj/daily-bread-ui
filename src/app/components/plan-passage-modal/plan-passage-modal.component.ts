@@ -22,12 +22,14 @@ import {
 import { resolveBookNumberFromLabel } from '../../utils/bible-resolve-book';
 import type { TodayReadingBlock } from '../../services/reading-progress.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
+import { VerseFavoritesService } from '../../services/verse-favorites.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { VerseCompareModalComponent } from '../verse-compare-modal/verse-compare-modal.component';
 
 @Component({
   selector: 'app-plan-passage-modal',
   standalone: true,
-  imports: [CommonModule, VerseCompareModalComponent, TranslocoPipe],
+  imports: [CommonModule, BookLoadingSpinnerComponent, VerseCompareModalComponent, TranslocoPipe],
   templateUrl: './plan-passage-modal.component.html',
   styleUrl: './plan-passage-modal.component.scss'
 })
@@ -35,6 +37,7 @@ export class PlanPassageModalComponent implements OnChanges {
   private readonly bible = inject(BibleService);
   private readonly prefs = inject(BiblePreferencesService);
   private readonly readingProgress = inject(ReadingProgressService);
+  private readonly verseFavorites = inject(VerseFavoritesService);
   private readonly ngZone = inject(NgZone);
   private readonly transloco = inject(TranslocoService);
 
@@ -65,6 +68,13 @@ export class PlanPassageModalComponent implements OnChanges {
   readonly confirmSuccess = signal(false);
   readonly confirmModalOpen = signal(false);
 
+  readonly favoritesLoading = signal(false);
+  readonly favoriteIdByKey = signal<Map<string, number>>(new Map());
+  readonly favoriteToggleBusy = signal(false);
+  readonly unmarkLoading = signal(false);
+  readonly unmarkError = signal<string | null>(null);
+  readonly favoriteError = signal<string | null>(null);
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && !this.open) {
       this.chapter.set(null);
@@ -85,7 +95,9 @@ export class PlanPassageModalComponent implements OnChanges {
 
     if (this.open && this.block && (openedNow || blockIdChanged)) {
       this.resetConfirmState();
+      this.favoriteError.set(null);
       this.bootstrapFromBlock();
+      this.reloadFavoritesForDate();
     }
   }
 
@@ -93,6 +105,132 @@ export class PlanPassageModalComponent implements OnChanges {
     this.confirmLoading.set(false);
     this.confirmError.set(null);
     this.confirmSuccess.set(false);
+    this.unmarkError.set(null);
+  }
+
+  private reloadFavoritesForDate(): void {
+    const ref = this.referenceDate?.trim() ?? '';
+    if (!ref) {
+      this.favoriteIdByKey.set(new Map());
+      return;
+    }
+    this.favoritesLoading.set(true);
+    this.verseFavorites.listByReadingDate(ref).subscribe({
+      next: (rows) => {
+        this.ngZone.run(() => {
+          const m = new Map<string, number>();
+          for (const f of rows) {
+            m.set(this.favoriteLookupKey(f.versionId, f.bookNumber, f.chapterNumber, f.verseNumber), f.id);
+          }
+          this.favoriteIdByKey.set(m);
+          this.favoritesLoading.set(false);
+        });
+      },
+      error: () => {
+        this.ngZone.run(() => {
+          this.favoriteIdByKey.set(new Map());
+          this.favoritesLoading.set(false);
+        });
+      }
+    });
+  }
+
+  private favoriteLookupKey(versionId: string, book: number, chapter: number, verse: number): string {
+    return `${versionId}:${book}:${chapter}:${verse}`;
+  }
+
+  favoriteIdForVerse(bookNum: number, chapterNum: number, verseNum: number): number | undefined {
+    const vid = this.version();
+    return this.favoriteIdByKey().get(this.favoriteLookupKey(vid, bookNum, chapterNum, verseNum));
+  }
+
+  toggleFavoriteVerse(verseNum: number): void {
+    const ch = this.chapter();
+    const b = this.block;
+    const ref = this.referenceDate?.trim() ?? '';
+    if (!ch || !b || !ref || this.favoriteToggleBusy()) {
+      return;
+    }
+    this.favoriteError.set(null);
+    const bookNum = ch.bookNumber;
+    const vid = this.version();
+    const key = this.favoriteLookupKey(vid, bookNum, ch.chapter, verseNum);
+    const existing = this.favoriteIdByKey().get(key);
+    this.favoriteToggleBusy.set(true);
+    if (existing != null) {
+      this.verseFavorites.delete(existing).subscribe({
+        next: () => {
+          this.ngZone.run(() => {
+            const next = new Map(this.favoriteIdByKey());
+            next.delete(key);
+            this.favoriteIdByKey.set(next);
+            this.favoriteToggleBusy.set(false);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.favoriteToggleBusy.set(false);
+            this.favoriteError.set(err.message);
+          });
+        }
+      });
+      return;
+    }
+    this.verseFavorites
+      .create({
+        versionId: vid,
+        bookNumber: bookNum,
+        chapterNumber: ch.chapter,
+        verseNumber: verseNum,
+        readingDate: ref
+      })
+      .subscribe({
+        next: (created) => {
+          this.ngZone.run(() => {
+            const next = new Map(this.favoriteIdByKey());
+            next.set(key, created.id);
+            this.favoriteIdByKey.set(next);
+            this.favoriteToggleBusy.set(false);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.favoriteToggleBusy.set(false);
+            this.favoriteError.set(err.message);
+          });
+        }
+      });
+  }
+
+  unmarkDayReading(): void {
+    const b = this.block;
+    if (!b || this.unmarkLoading()) {
+      return;
+    }
+    this.unmarkLoading.set(true);
+    this.unmarkError.set(null);
+    this.readingProgress
+      .unmarkDayRead(b.dayNumber)
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.unmarkLoading.set(false);
+          })
+        )
+      )
+      .subscribe({
+        next: () => {
+          this.ngZone.run(() => {
+            this.readingConfirmed.emit();
+            this.close();
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.unmarkError.set(err.message);
+          });
+        }
+      });
   }
 
   /** Rodapé com confirmação: só no último capítulo da faixa, com texto carregado. */

@@ -13,9 +13,9 @@
     <i class="uil uil-upload" aria-hidden="true"></i>
     {{ 'reading-plans.uploadPdf' | transloco }}
   </button>
-  <button type="button" class="btn-ghost" (click)="refreshPlans()" [disabled]="loading()">
+  <button type="button" class="btn-ghost btn-book-loading" (click)="refreshPlans()" [disabled]="loading()">
     @if (loading()) {
-      {{ 'common.actions.refreshing' | transloco }}
+      <app-book-loading-spinner [size]="'sm'" [inline]="true" [labelKey]="'common.actions.refreshing'" />
     } @else {
       {{ 'reading-plans.refreshList' | transloco }}
     }
@@ -30,7 +30,9 @@
   <h2 id="plans-heading" class="section-title">{{ 'reading-plans.sectionTitle' | transloco }}</h2>
 
   @if (loading() && plans() === null) {
-    <p class="muted">{{ 'reading-plans.loading' | transloco }}</p>
+    <div class="app-loading-host plans-loading-host">
+      <app-book-loading-spinner [size]="'lg'" [labelKey]="'reading-plans.loading'" />
+    </div>
   } @else {
     @if (plans(); as list) {
       @if (list.length === 0) {

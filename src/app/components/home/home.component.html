@@ -11,7 +11,9 @@
 }
 
 @if (loading()) {
-  <p class="muted state-loading">{{ 'home.loadingDashboard' | transloco }}</p>
+  <div class="app-loading-host">
+    <app-book-loading-spinner [size]="'lg'" [labelKey]="'home.loadingDashboard'" />
+  </div>
 } @else {
   @if (dashboard(); as dash) {
     <div class="dashboard-grid">
@@ -155,7 +157,9 @@
           </div>
 
           @if (bibleTodayLoading()) {
-            <p class="muted bible-loading-hint">{{ 'home.today.loadingChapters' | transloco }}</p>
+            <div class="today-bible-loading">
+              <app-book-loading-spinner [labelKey]="'home.today.loadingChapters'" [size]="'sm'" />
+            </div>
           }
           @if (bibleTodayError(); as ber) {
             <p class="bible-inline-error" role="alert">{{ ber }}</p>

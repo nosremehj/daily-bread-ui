@@ -25,7 +25,9 @@
     </div>
 
     @if (loading()) {
-      <p class="state-msg">{{ 'modals.calendar.loading' | transloco }}</p>
+      <div class="modal-loading-block">
+        <app-book-loading-spinner [labelKey]="'modals.calendar.loading'" />
+      </div>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>
@@ -37,28 +39,74 @@
         </div>
         <div class="cells" role="grid" [attr.aria-label]="'modals.calendar.monthGridAria' | transloco: { month: monthTitle() }">
           @for (c of cells(); track c.date) {
-            <div
-              role="gridcell"
-              class="cell"
-              [class.out-month]="!c.inMonth"
-              [class.read]="c.read === true"
-              [class.no-read]="c.inMonth && c.read === false"
-              [attr.aria-label]="
-                c.read === true
-                  ? ('modals.calendar.cellRead' | transloco: { date: c.date })
-                  : c.read === false
-                    ? ('modals.calendar.cellUnread' | transloco: { date: c.date })
-                    : c.date
-              "
-            >
-              <span class="num">{{ c.dayNum }}</span>
-            </div>
+            @if (c.inMonth) {
+              <button
+                type="button"
+                role="gridcell"
+                class="cell cell-btn"
+                [class.read]="c.read === true"
+                [class.no-read]="c.read === false"
+                [class.selected]="selectedDate() === c.date"
+                (click)="selectDay(c.date, c.inMonth)"
+                [attr.aria-label]="
+                  c.read === true
+                    ? ('modals.calendar.cellRead' | transloco: { date: c.date })
+                    : c.read === false
+                      ? ('modals.calendar.cellUnread' | transloco: { date: c.date })
+                      : c.date
+                "
+              >
+                <span class="num">{{ c.dayNum }}</span>
+              </button>
+            } @else {
+              <div
+                role="gridcell"
+                class="cell out-month"
+                [attr.aria-hidden]="true"
+              >
+                <span class="num">{{ c.dayNum }}</span>
+              </div>
+            }
           }
         </div>
         <p class="legend">
           <span class="dot read"></span> {{ 'modals.calendar.legendRead' | transloco }}
           <span class="dot missed"></span> {{ 'modals.calendar.legendMiss' | transloco }}
         </p>
+
+        @if (selectedDate(); as sd) {
+          <section class="day-favorites glass-inner" [attr.aria-labelledby]="'fav-day-' + sd">
+            <h3 class="fav-heading" [id]="'fav-day-' + sd">
+              {{ 'modals.calendar.favoritesFor' | transloco: { date: sd } }}
+            </h3>
+            @if (dayFavoritesLoading()) {
+              <div class="favorites-loading-inline">
+                <app-book-loading-spinner [size]="'sm'" [labelKey]="'modals.calendar.favoritesLoading'" />
+              </div>
+            } @else {
+              @if (dayFavoritesError(); as fe) {
+                <p class="state-msg error" role="alert">{{ fe }}</p>
+              } @else if (dayFavorites().length === 0) {
+                <p class="muted small">{{ 'modals.calendar.favoritesEmpty' | transloco }}</p>
+              } @else {
+                <ul class="fav-list">
+                  @for (f of dayFavorites(); track f.id) {
+                    <li class="fav-item">
+                      <span class="fav-ref"
+                        >{{ f.bookName ?? ('modals.calendar.favBookFallback' | transloco) }} {{ f.chapterNumber }}:{{
+                          f.verseNumber
+                        }}</span
+                      >
+                      @if (f.verseText) {
+                        <span class="fav-text">{{ f.verseText }}</span>
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            }
+          </section>
+        }
       }
     }
 

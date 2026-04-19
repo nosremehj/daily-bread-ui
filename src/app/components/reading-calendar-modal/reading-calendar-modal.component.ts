@@ -16,7 +16,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { translocoToAngularLocale } from '../../core/i18n/angular-locale';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { ReadingProgressService } from '../../services/reading-progress.service';
+import { VerseFavorite, VerseFavoritesService } from '../../services/verse-favorites.service';
 
 export interface CalendarCell {
   date: string;
@@ -35,12 +37,13 @@ function toIsoLocal(d: Date): string {
 @Component({
   selector: 'app-reading-calendar-modal',
   standalone: true,
-  imports: [CommonModule, TranslocoPipe],
+  imports: [CommonModule, TranslocoPipe, BookLoadingSpinnerComponent],
   templateUrl: './reading-calendar-modal.component.html',
   styleUrl: './reading-calendar-modal.component.scss'
 })
 export class ReadingCalendarModalComponent implements OnChanges {
   private readonly readingProgress = inject(ReadingProgressService);
+  private readonly verseFavorites = inject(VerseFavoritesService);
   private readonly ngZone = inject(NgZone);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -66,14 +69,46 @@ export class ReadingCalendarModalComponent implements OnChanges {
   readonly cells = signal<CalendarCell[]>([]);
   readonly monthTitle = signal('');
 
+  readonly selectedDate = signal<string | null>(null);
+  readonly dayFavorites = signal<VerseFavorite[]>([]);
+  readonly dayFavoritesLoading = signal(false);
+  readonly dayFavoritesError = signal<string | null>(null);
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && this.open) {
       const now = new Date();
       this.viewYear.set(now.getFullYear());
       this.viewMonth.set(now.getMonth());
       this.errorMessage.set(null);
+      this.selectedDate.set(null);
+      this.dayFavorites.set([]);
+      this.dayFavoritesError.set(null);
       this.fetchMonth();
     }
+  }
+
+  selectDay(date: string, inMonth: boolean): void {
+    if (!inMonth) {
+      return;
+    }
+    this.selectedDate.set(date);
+    this.dayFavoritesLoading.set(true);
+    this.dayFavoritesError.set(null);
+    this.verseFavorites.listByReadingDate(date).subscribe({
+      next: (rows) => {
+        this.ngZone.run(() => {
+          this.dayFavorites.set(rows);
+          this.dayFavoritesLoading.set(false);
+        });
+      },
+      error: (err: Error) => {
+        this.ngZone.run(() => {
+          this.dayFavorites.set([]);
+          this.dayFavoritesError.set(err.message);
+          this.dayFavoritesLoading.set(false);
+        });
+      }
+    });
   }
 
   @HostListener('document:keydown.escape')

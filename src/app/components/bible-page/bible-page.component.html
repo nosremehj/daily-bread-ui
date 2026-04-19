@@ -27,14 +27,18 @@
 }
 
 @if (loading()) {
-  <p class="muted">{{ 'bible.loading' | transloco }}</p>
+  <div class="bible-loading-host">
+    <app-book-loading-spinner [labelKey]="'bible.loading'" />
+  </div>
 }
 
 @if (chapter(); as ch) {
   <nav class="breadcrumb glass-pill" aria-label="Navigation">
     <a [routerLink]="['/bible', currentVersion()]" class="crumb">{{ 'bible.breadcrumb.books' | transloco }}</a>
     <span class="sep" aria-hidden="true">/</span>
-    <span class="crumb-current">{{ ch.bookName }} {{ ch.chapter }}</span>
+    <a [routerLink]="['/bible', currentVersion(), ch.bookNumber]" class="crumb">{{ ch.bookName }}</a>
+    <span class="sep" aria-hidden="true">/</span>
+    <span class="crumb-current">{{ ch.chapter }}</span>
   </nav>
 
   <div class="chapter-nav glass">
@@ -42,7 +46,7 @@
       <i class="uil uil-arrow-left" aria-hidden="true"></i>
       {{ 'bible.chapterNav.prev' | transloco }}
     </button>
-    <button type="button" class="btn-ghost-sm" (click)="goNextChapter()">
+    <button type="button" class="btn-ghost-sm" (click)="goNextChapter()" [disabled]="nextChapterDisabled()">
       {{ 'bible.chapterNav.next' | transloco }}
       <i class="uil uil-arrow-right" aria-hidden="true"></i>
     </button>
@@ -73,44 +77,63 @@
     }
   }
 } @else {
-  @if (books(); as list) {
-    <p class="subtitle">{{ 'bible.booksIntro' | transloco }}</p>
-
-    <div class="book-filter-row glass">
-      <label class="book-filter-label">
-        <span class="book-filter-label-text">{{ 'bible.filter.label' | transloco }}</span>
-        <input
-          type="search"
-          class="book-filter-input select-themed"
-          [placeholder]="'bible.filter.placeholder' | transloco"
-          [value]="bookFilterText()"
-          (input)="onBookFilterInput($event)"
-          autocomplete="off"
-          aria-describedby="book-filter-hint"
-        />
-      </label>
-    </div>
-    <p id="book-filter-hint" class="filter-hint muted small">
-      {{ 'bible.filter.hint' | transloco: { count: list.length } }}
-    </p>
-
-    @if (filteredBooks().length === 0 && bookFilterText().trim()) {
-      <p class="filter-empty muted">
-        {{ 'bible.filter.empty' | transloco: { query: bookFilterText().trim() } }}
-      </p>
-    }
-
-    <ul class="book-grid">
-      @for (b of filteredBooks(); track b.number) {
-        <li>
-          <a [routerLink]="['/bible', currentVersion(), b.number, 1]" class="book-card glass">
-            <span class="book-num">{{ b.number }}</span>
-            <span class="book-name">{{ b.name }}</span>
-            <span class="book-abbrev">{{ b.abbrev }}</span>
-          </a>
-        </li>
+  @if (selectedBookMeta(); as bm) {
+    <nav class="breadcrumb glass-pill" aria-label="Navigation">
+      <a [routerLink]="['/bible', currentVersion()]" class="crumb">{{ 'bible.breadcrumb.books' | transloco }}</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <span class="crumb-current">{{ bm.name }}</span>
+    </nav>
+    <p class="subtitle">{{ 'bible.chapterPickerIntro' | transloco }}</p>
+    <div class="chapter-picker glass" role="navigation" [attr.aria-label]="'bible.chapterPickerAria' | transloco">
+      @for (n of chapterNumbers(bm); track n) {
+        <a
+          [routerLink]="['/bible', currentVersion(), bm.number, n]"
+          [queryParams]="chapterPickerQueryParams()"
+          class="chapter-pill"
+          >{{ n }}</a
+        >
       }
-    </ul>
+    </div>
+  } @else {
+    @if (books(); as list) {
+      <p class="subtitle">{{ 'bible.booksIntro' | transloco }}</p>
+
+      <div class="book-filter-row glass">
+        <label class="book-filter-label">
+          <span class="book-filter-label-text">{{ 'bible.filter.label' | transloco }}</span>
+          <input
+            type="search"
+            class="book-filter-input select-themed"
+            [placeholder]="'bible.filter.placeholder' | transloco"
+            [value]="bookFilterText()"
+            (input)="onBookFilterInput($event)"
+            autocomplete="off"
+            aria-describedby="book-filter-hint"
+          />
+        </label>
+      </div>
+      <p id="book-filter-hint" class="filter-hint muted small">
+        {{ 'bible.filter.hint' | transloco: { count: list.length } }}
+      </p>
+
+      @if (filteredBooks().length === 0 && bookFilterText().trim()) {
+        <p class="filter-empty muted">
+          {{ 'bible.filter.empty' | transloco: { query: bookFilterText().trim() } }}
+        </p>
+      }
+
+      <ul class="book-grid">
+        @for (b of filteredBooks(); track b.number) {
+          <li>
+            <a [routerLink]="['/bible', currentVersion(), b.number]" class="book-card glass">
+              <span class="book-num">{{ b.number }}</span>
+              <span class="book-name">{{ b.name }}</span>
+              <span class="book-abbrev">{{ b.abbrev }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
   }
 }
 

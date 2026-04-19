@@ -14,11 +14,12 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { BibleService, VerseCompareResult } from '../../services/bible.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 
 @Component({
   selector: 'app-verse-compare-modal',
   standalone: true,
-  imports: [CommonModule, TranslocoPipe],
+  imports: [CommonModule, TranslocoPipe, BookLoadingSpinnerComponent],
   templateUrl: './verse-compare-modal.component.html',
   styleUrl: './verse-compare-modal.component.scss'
 })

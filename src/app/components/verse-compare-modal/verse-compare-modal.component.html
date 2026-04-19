@@ -15,7 +15,9 @@
     </div>
 
     @if (loading()) {
-      <p class="state-msg">{{ 'modals.verseCompare.loading' | transloco }}</p>
+      <div class="compare-loading">
+        <app-book-loading-spinner [labelKey]="'modals.verseCompare.loading'" />
+      </div>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>

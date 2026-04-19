@@ -7,32 +7,28 @@ import {
   NgZone,
   signal
 } from '@angular/core';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { LocaleDatePipe } from '../../core/i18n/locale-date.pipe';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import {
+  CatchUpDateRangeRequest,
   ReadingProgressService,
   ReadingStatistics
 } from '../../services/reading-progress.service';
+import {
+  inclusiveDayCount,
+  MAX_CATCH_UP_RANGE_DAYS,
+  parseIsoLocal
+} from '../../utils/date-range-validate';
 
 function toIsoLocal(d: Date): string {
   const y = d.getFullYear();
   const m = d.getMonth() + 1;
   const day = d.getDate();
   return `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-function parseIsoLocal(iso: string): Date {
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
-
-function inclusiveDayCount(fromIso: string, toIso: string): number {
-  const a = parseIsoLocal(fromIso);
-  const b = parseIsoLocal(toIso);
-  return Math.round((b.getTime() - a.getTime()) / 86400000) + 1;
 }
 
 function eachDayInRange(fromIso: string, toIso: string): string[] {
@@ -46,20 +42,28 @@ function eachDayInRange(fromIso: string, toIso: string): string[] {
   return out;
 }
 
-const MAX_RANGE_DAYS = 366;
+const MAX_RANGE_DAYS = MAX_CATCH_UP_RANGE_DAYS;
 
 export type StatisticsPreset = 'default' | 'last30' | 'month' | 'year';
 
 @Component({
   selector: 'app-statistics-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslocoPipe, LocaleDatePipe, LanguageMenuComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    TranslocoPipe,
+    LocaleDatePipe,
+    LanguageMenuComponent,
+    BookLoadingSpinnerComponent,
+  ],
   templateUrl: './statistics-page.component.html',
   styleUrl: './statistics-page.component.scss'
 })
 export class StatisticsPageComponent {
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly ngZone = inject(NgZone);
+  private readonly transloco = inject(TranslocoService);
 
   readonly maxRangeDays = MAX_RANGE_DAYS;
 
@@ -70,6 +74,20 @@ export class StatisticsPageComponent {
   readonly customFrom = signal('');
   readonly customTo = signal('');
   readonly clientRangeError = signal<'bothRequired' | 'order' | 'maxDays' | null>(null);
+
+  readonly catchUpRanges = signal<{ from: string; to: string }[]>([{ from: '', to: '' }]);
+  readonly catchUpSubmitting = signal(false);
+  readonly catchUpError = signal<string | null>(null);
+  readonly catchUpSuccess = signal(false);
+
+  /** Fluxo estendido de recuperação: dias perdidos no período (API nova ou fallback). */
+  readonly showExtendedCatchUp = computed(() => {
+    const s = this.stats();
+    if (s == null) {
+      return false;
+    }
+    return s.hasMissedDaysInPeriod ?? s.daysMissedInPeriod > 0;
+  });
 
   readonly heatmapDays = computed(() => {
     const s = this.stats();
@@ -120,6 +138,109 @@ export class StatisticsPageComponent {
       const y = today.getFullYear();
       this.loadStatistics(`${y}-01-01`, `${y}-12-31`);
     }
+  }
+
+  addCatchUpRow(): void {
+    this.catchUpRanges.update((rows) => [...rows, { from: '', to: '' }]);
+  }
+
+  removeCatchUpRow(index: number): void {
+    this.catchUpRanges.update((rows) => {
+      if (rows.length <= 1) {
+        return [{ from: '', to: '' }];
+      }
+      return rows.filter((_, i) => i !== index);
+    });
+  }
+
+  updateCatchUpFrom(index: number, value: string): void {
+    this.catchUpRanges.update((rows) => {
+      const next = rows.slice();
+      if (next[index]) {
+        next[index] = { ...next[index], from: value };
+      }
+      return next;
+    });
+  }
+
+  updateCatchUpTo(index: number, value: string): void {
+    this.catchUpRanges.update((rows) => {
+      const next = rows.slice();
+      if (next[index]) {
+        next[index] = { ...next[index], to: value };
+      }
+      return next;
+    });
+  }
+
+  submitCatchUpRanges(): void {
+    this.catchUpError.set(null);
+    this.catchUpSuccess.set(false);
+    const parsed = this.parseCatchUpRanges();
+    if (parsed === 'partial') {
+      this.catchUpError.set(this.transloco.translate('statistics.catchUp.errors.partial'));
+      return;
+    }
+    if (parsed === 'order') {
+      this.catchUpError.set(this.transloco.translate('statistics.catchUp.errors.order'));
+      return;
+    }
+    if (parsed === 'max') {
+      this.catchUpError.set(
+        this.transloco.translate('statistics.catchUp.errors.maxDays', { max: MAX_RANGE_DAYS })
+      );
+      return;
+    }
+    if (parsed.length === 0) {
+      this.catchUpError.set(this.transloco.translate('statistics.catchUp.errors.empty'));
+      return;
+    }
+    this.catchUpSubmitting.set(true);
+    this.readingProgress
+      .catchUpDateRanges({ ranges: parsed })
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.catchUpSubmitting.set(false);
+          })
+        )
+      )
+      .subscribe({
+        next: () => {
+          this.ngZone.run(() => {
+            this.catchUpSuccess.set(true);
+            this.catchUpRanges.set([{ from: '', to: '' }]);
+            this.loadStatistics(this.stats()?.periodFrom, this.stats()?.periodTo);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.catchUpError.set(err.message);
+          });
+        }
+      });
+  }
+
+  private parseCatchUpRanges(): CatchUpDateRangeRequest[] | 'partial' | 'order' | 'max' {
+    const out: CatchUpDateRangeRequest[] = [];
+    for (const r of this.catchUpRanges()) {
+      const a = r.from.trim();
+      const b = r.to.trim();
+      if (!a && !b) {
+        continue;
+      }
+      if (!a || !b) {
+        return 'partial';
+      }
+      if (parseIsoLocal(a) > parseIsoLocal(b)) {
+        return 'order';
+      }
+      if (inclusiveDayCount(a, b) > MAX_RANGE_DAYS) {
+        return 'max';
+      }
+      out.push({ fromInclusive: a, toInclusive: b });
+    }
+    return out;
   }
 
   applyCustomRange(): void {

@@ -55,14 +55,37 @@
           <p class="advanced-intro">
             {{ 'modals.enroll.advancedIntro' | transloco }}
           </p>
-          <label class="field">
-            <span class="label">{{ 'modals.enroll.from' | transloco }}</span>
-            <input type="date" [value]="catchUpFrom()" (input)="catchUpFrom.set($any($event.target).value)" />
-          </label>
-          <label class="field">
-            <span class="label">{{ 'modals.enroll.to' | transloco }}</span>
-            <input type="date" [value]="catchUpTo()" (input)="catchUpTo.set($any($event.target).value)" />
-          </label>
+          @for (row of catchUpRanges(); track $index) {
+            <div class="range-row">
+              <label class="field range-field">
+                <span class="label">{{ 'modals.enroll.from' | transloco }}</span>
+                <input
+                  type="date"
+                  [value]="row.from"
+                  (input)="updateRangeFrom($index, $any($event.target).value)"
+                />
+              </label>
+              <label class="field range-field">
+                <span class="label">{{ 'modals.enroll.to' | transloco }}</span>
+                <input type="date" [value]="row.to" (input)="updateRangeTo($index, $any($event.target).value)" />
+              </label>
+              <button
+                type="button"
+                class="btn-remove-range"
+                (click)="removeRangeRow($index)"
+                [attr.aria-label]="'modals.enroll.removeRangeAria' | transloco"
+              >
+                <i class="uil uil-trash-alt" aria-hidden="true"></i>
+              </button>
+            </div>
+          }
+          <button type="button" class="btn-add-range" (click)="addRangeRow()">
+            <i class="uil uil-plus" aria-hidden="true"></i>
+            {{ 'modals.enroll.addRange' | transloco }}
+          </button>
+          <p class="range-cap-hint muted small">
+            {{ 'modals.enroll.rangeMaxHint' | transloco: { max: maxRangeDays } }}
+          </p>
         </div>
       }
     </div>
@@ -75,9 +98,9 @@
       <button type="button" class="btn-secondary" (click)="close()" [disabled]="submitting()">
         {{ 'modals.enroll.cancel' | transloco }}
       </button>
-      <button type="button" class="btn-primary inline" (click)="submit()" [disabled]="submitting()">
+      <button type="button" class="btn-primary inline btn-book-loading" (click)="submit()" [disabled]="submitting()">
         @if (submitting()) {
-          {{ 'modals.enroll.submitting' | transloco }}
+          <app-book-loading-spinner [size]="'sm'" [inline]="true" [labelKey]="'modals.enroll.submitting'" />
         } @else {
           {{ 'modals.enroll.submit' | transloco }}
         }

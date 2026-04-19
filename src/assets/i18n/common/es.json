@@ -59,6 +59,11 @@
     "compareVerse": "No se pudo comparar el versículo.",
     "loadPlans": "No se pudieron cargar los planes.",
     "loadPlan": "No se pudo cargar el plan.",
-    "importPdf": "No se pudo importar el PDF."
+    "importPdf": "No se pudo importar el PDF.",
+    "unmarkReading": "No se pudo quitar la marca de lectura.",
+    "loadVerseFavorites": "No se pudieron cargar los versículos favoritos.",
+    "saveVerseFavorite": "No se pudo guardar el versículo favorito.",
+    "removeVerseFavorite": "No se pudo quitar el favorito.",
+    "verseFavoriteDuplicate": "Este versículo ya está en tus favoritos de este día."
   }
 }

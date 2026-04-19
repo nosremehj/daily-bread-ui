@@ -10,7 +10,12 @@
     "next": "Siguiente"
   },
   "chapterAria": "{{book}} capítulo {{chapter}}",
-  "booksIntro": "Elige un libro para leer el capítulo 1, o abre un capítulo desde el inicio.",
+  "booksIntro": "Elige un libro para ver todos los capítulos y abre el que quieras.",
+  "chapterPickerIntro": "Ir al capítulo:",
+  "chapterPickerAria": "Lista de capítulos de este libro",
+  "errors": {
+    "bookNotFound": "Libro no encontrado en esta versión."
+  },
   "filter": {
     "label": "Filtrar libros",
     "placeholder": "Nombre, abreviatura o número…",

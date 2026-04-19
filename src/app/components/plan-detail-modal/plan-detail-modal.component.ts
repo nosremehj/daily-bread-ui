@@ -17,6 +17,7 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { LocaleDatePipe } from '../../core/i18n/locale-date.pipe';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { ReadingPlanDetail, ReadingDay, ReadingPlanService } from '../../services/reading-plan.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
 
@@ -33,7 +34,7 @@ function addDaysToIsoDate(iso: string, daysToAdd: number): string {
 @Component({
   selector: 'app-plan-detail-modal',
   standalone: true,
-  imports: [CommonModule, TranslocoPipe, LocaleDatePipe],
+  imports: [CommonModule, TranslocoPipe, LocaleDatePipe, BookLoadingSpinnerComponent],
   templateUrl: './plan-detail-modal.component.html',
   styleUrl: './plan-detail-modal.component.scss'
 })

@@ -10,6 +10,7 @@ import {
 import { TranslocoPipe } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const a = group.get('newPassword')?.value;
@@ -22,7 +23,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-change-password-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslocoPipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslocoPipe, BookLoadingSpinnerComponent],
   templateUrl: './change-password-modal.component.html',
   styleUrl: './change-password-modal.component.scss'
 })

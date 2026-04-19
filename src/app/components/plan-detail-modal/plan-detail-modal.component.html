@@ -25,7 +25,9 @@
     </div>
 
     @if (loading()) {
-      <p class="state-msg">{{ 'modals.planDetail.loading' | transloco }}</p>
+      <div class="modal-detail-loading">
+        <app-book-loading-spinner [labelKey]="'modals.planDetail.loading'" />
+      </div>
     } @else {
       @if (errorMessage(); as err) {
         <p class="state-msg error" role="alert">{{ err }}</p>

@@ -12,6 +12,8 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
+import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const password = group.get('password')?.value;
@@ -24,7 +26,14 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslocoPipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    TranslocoPipe,
+    LanguageMenuComponent,
+    BookLoadingSpinnerComponent,
+  ],
   templateUrl: './register.component.html',
   styleUrl: '../auth-form.scss'
 })

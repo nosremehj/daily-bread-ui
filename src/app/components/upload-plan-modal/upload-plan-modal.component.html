@@ -39,12 +39,12 @@
       </button>
       <button
         type="button"
-        class="btn-primary inline"
+        class="btn-primary inline btn-book-loading"
         (click)="submit()"
         [disabled]="!selectedFile() || uploading()"
       >
         @if (uploading()) {
-          <span>{{ 'modals.upload.uploading' | transloco }}</span>
+          <app-book-loading-spinner [size]="'sm'" [inline]="true" [labelKey]="'modals.upload.uploading'" />
         } @else {
           <span>{{ 'modals.upload.import' | transloco }}</span>
         }

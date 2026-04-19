@@ -22,6 +22,7 @@ import {
   TodayBibleReading,
   TodayReadingBlock,
 } from '../../services/reading-progress.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import { PlanPassageModalComponent } from '../plan-passage-modal/plan-passage-modal.component';
 import { ReadingCalendarModalComponent } from '../reading-calendar-modal/reading-calendar-modal.component';
@@ -45,6 +46,7 @@ interface TodayReadingNav {
     CommonModule,
     RouterLink,
     LanguageMenuComponent,
+    BookLoadingSpinnerComponent,
     ReadingCalendarModalComponent,
     PlanPassageModalComponent,
     TranslocoPipe,
@@ -86,12 +88,7 @@ export class HomeComponent {
       return null;
     }
     return {
-      commands: [
-        '/bible',
-        this.biblePrefs.version(),
-        b.bookNumber,
-        b.startChapter,
-      ],
+      commands: ['/bible', this.biblePrefs.version(), b.bookNumber],
       queryParams: { verse: String(this.firstVerseForBlock(b)) },
     };
   });

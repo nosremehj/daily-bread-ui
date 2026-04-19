@@ -1,4 +1,7 @@
 <div class="auth-page">
+  <div class="auth-lang-bar">
+    <app-language-menu />
+  </div>
   <div class="auth-card glass">
     <div class="auth-brand">
       <i class="uil uil-book-reader" aria-hidden="true"></i>
@@ -91,8 +94,12 @@
         <p class="error-banner" role="alert">{{ err }}</p>
       }
 
-      <button type="submit" class="btn-primary" [disabled]="submitting()">
-        {{ submitting() ? ('auth.register.submitting' | transloco) : ('auth.register.submit' | transloco) }}
+      <button type="submit" class="btn-primary btn-book-loading" [disabled]="submitting()">
+        @if (submitting()) {
+          <app-book-loading-spinner [size]="'sm'" [inline]="true" [labelKey]="'auth.register.submitting'" />
+        } @else {
+          {{ 'auth.register.submit' | transloco }}
+        }
       </button>
     </form>
 

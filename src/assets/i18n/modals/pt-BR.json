@@ -7,15 +7,20 @@
     "catchUpFieldHint": "Marca do dia 1 até o dia do plano correspondente a esta data, em ritmo contínuo.",
     "hideAdvanced": "Ocultar período adicional",
     "showAdvanced": "Período adicional por datas…",
-    "advancedIntro": "Use quando quiser marcar um intervalo de dias civis como lidos (útil se não começou do dia 1 ou leu em saltos). Só preencha se souber o intervalo exato.",
+    "advancedIntro": "Inclua um ou mais intervalos de datas para marcar dias como lidos (útil se leu em saltos). Use + para outro intervalo.",
     "from": "De",
     "to": "Até",
+    "addRange": "Adicionar intervalo de datas",
+    "removeRangeAria": "Remover este intervalo",
+    "rangeMaxHint": "Cada intervalo pode ter no máximo {{max}} dias.",
     "cancel": "Cancelar",
     "submit": "Confirmar e ir ao início",
     "submitting": "Salvando…",
     "errors": {
       "startRequired": "Informe a data de início do plano.",
-      "advancedPartial": "Preencha início e fim do período adicional, ou deixe os dois vazios."
+      "advancedPartial": "Em cada intervalo, preencha início e fim ou deixe a linha vazia.",
+      "rangeOrder": "A data inicial não pode ser depois da final.",
+      "rangeMaxDays": "Um intervalo não pode ultrapassar {{max}} dias."
     }
   },
   "upload": {
@@ -61,6 +66,10 @@
     "markComplete": "Marcar leitura de hoje como concluída",
     "registering": "Registrando…",
     "done": "Concluir",
+    "unmarkDay": "Remover marcação de leitura",
+    "unmarking": "Removendo…",
+    "favoriteAddAria": "Favoritar versículo {{verse}} neste dia",
+    "favoriteRemoveAria": "Remover versículo {{verse}} dos favoritos",
     "errors": {
       "noReference": "Data de referência indisponível. Feche e abra de novo a partir do início."
     }
@@ -73,7 +82,11 @@
     "cellUnread": "{{date}}, não lido",
     "legendRead": "Dia com leitura registrada",
     "legendMiss": "Dia sem leitura (no mês atual)",
-    "close": "Fechar"
+    "close": "Fechar",
+    "favoritesFor": "Favoritos em {{date}}",
+    "favoritesLoading": "Carregando favoritos…",
+    "favoritesEmpty": "Nenhum versículo favorito neste dia.",
+    "favBookFallback": "Livro"
   },
   "verseCompare": {
     "title": "Comparar versículo",

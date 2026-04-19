@@ -5,6 +5,7 @@ import { finalize } from 'rxjs/operators';
 import { LocaleDatePipe } from '../../core/i18n/locale-date.pipe';
 import { ReadingPlanService, ReadingPlanSummary } from '../../services/reading-plan.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
+import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
 import { EnrollPlanModalComponent } from '../enroll-plan-modal/enroll-plan-modal.component';
 import { LanguageMenuComponent } from '../language-menu/language-menu.component';
 import { PlanDetailModalComponent } from '../plan-detail-modal/plan-detail-modal.component';
@@ -21,6 +22,7 @@ import { UploadPlanModalComponent } from '../upload-plan-modal/upload-plan-modal
     UploadPlanModalComponent,
     PlanDetailModalComponent,
     EnrollPlanModalComponent,
+    BookLoadingSpinnerComponent,
   ],
   templateUrl: './reading-plans-page.component.html',
   styleUrl: './reading-plans-page.component.scss'

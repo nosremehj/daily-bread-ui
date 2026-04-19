@@ -59,6 +59,11 @@
     "compareVerse": "Could not compare the verse.",
     "loadPlans": "Could not load plans.",
     "loadPlan": "Could not load the plan.",
-    "importPdf": "Could not import the PDF."
+    "importPdf": "Could not import the PDF.",
+    "unmarkReading": "Could not remove the reading mark.",
+    "loadVerseFavorites": "Could not load verse favorites.",
+    "saveVerseFavorite": "Could not save the verse favorite.",
+    "removeVerseFavorite": "Could not remove the verse favorite.",
+    "verseFavoriteDuplicate": "This verse is already in your favorites for this day."
   }
 }

@@ -1,0 +1,17 @@
+<div
+  class="book-loading"
+  [class.book-loading--inline]="inline()"
+  [class.book-loading--sm]="size() === 'sm'"
+  [class.book-loading--lg]="size() === 'lg'"
+  role="status"
+  aria-live="polite"
+  [attr.aria-label]="showLabel() ? null : (labelKey() | transloco)"
+>
+  <span class="book-loading__visual" aria-hidden="true">
+    <span class="book-loading__track"></span>
+    <i class="uil uil-book-open book-loading__icon"></i>
+  </span>
+  @if (showLabel()) {
+    <span class="book-loading__label">{{ labelKey() | transloco }}</span>
+  }
+</div>

@@ -60,6 +60,93 @@
   margin-top: 0;
 }
 
+.calendar-model-hint {
+  margin: 10px 0 0;
+  line-height: 1.4;
+}
+
+.catch-up-section {
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.catch-up-intro {
+  margin-bottom: 14px;
+}
+
+.catch-up-range-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  .catch-up-range-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-icon-catch-remove {
+  height: 42px;
+  width: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-catch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px dashed rgba(139, 92, 246, 0.45);
+  background: transparent;
+  color: var(--accent-purple);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.catch-up-success {
+  color: #a7f3d0;
+  font-size: 0.9rem;
+  margin: 8px 0 0;
+}
+
+.catch-up-actions {
+  margin-top: 12px;
+}
+
+.catch-up-submit {
+  margin-top: 0;
+  padding: 12px 20px;
+  border-radius: 14px;
+  border: none;
+  background: var(--gradient-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.catch-up-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.catch-up-simple .section-title {
+  margin-bottom: 8px;
+}
+
 .filters {
   padding: 16px 20px;
   margin-bottom: 20px;

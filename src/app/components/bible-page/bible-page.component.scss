@@ -3,6 +3,10 @@
   max-width: 720px;
 }
 
+.bible-loading-host {
+  padding: 20px 0 28px;
+}
+
 .page-header {
   margin-bottom: 20px;
 }
@@ -229,6 +233,47 @@
 .book-abbrev {
   font-size: 0.75rem;
   color: var(--accent-purple);
+}
+
+.chapter-picker {
+  display: grid;
+  /* Faixas de largura fixa: evita células esticadas na última linha e mantém quadrados alinhados */
+  grid-template-columns: repeat(auto-fill, minmax(2.75rem, 2.75rem));
+  gap: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  justify-content: start;
+  align-items: start;
+}
+
+.chapter-pill {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.12s ease,
+    background 0.12s ease;
+}
+
+.chapter-pill:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.35);
+  transform: translateY(-1px);
 }
 
 .attribution {
