@@ -1,7 +1,6 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -20,15 +19,17 @@ $daily-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
-$daily-theme: mat.define-light-theme((
-  color: (
-    primary: $daily-primary,
-    accent: $daily-accent,
-    warn: $daily-warn,
-  ),
-  typography: mat.define-typography-config(),
-  density: 0
-));
+$daily-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $daily-primary,
+      accent: $daily-accent,
+      warn: $daily-warn,
+    ),
+    typography: mat.define-typography-config(),
+    density: 0,
+  )
+);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -62,7 +63,7 @@ $daily-theme: mat.define-light-theme((
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: "Outfit", system-ui, sans-serif;
 }
 
 html {
@@ -74,8 +75,16 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   background-image:
-    radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 40%);
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(139, 92, 246, 0.1) 0%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(245, 158, 11, 0.08) 0%,
+      transparent 40%
+    );
   background-attachment: fixed;
   overflow-x: hidden;
 }
@@ -314,7 +323,7 @@ p {
 }
 
 .progress-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50px;
   right: -50px;
@@ -612,8 +621,16 @@ p {
 
   body {
     background-image:
-      radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.12) 0%, transparent 35%),
-      radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.08) 0%, transparent 35%);
+      radial-gradient(
+        circle at 15% 10%,
+        rgba(139, 92, 246, 0.12) 0%,
+        transparent 35%
+      ),
+      radial-gradient(
+        circle at 85% 85%,
+        rgba(245, 158, 11, 0.08) 0%,
+        transparent 35%
+      );
   }
 
   .layout-wrapper {
@@ -789,8 +806,14 @@ p {
   }
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 /* Área centralizada para o spinner de livro em telas que aguardam a API */
 .app-loading-host {

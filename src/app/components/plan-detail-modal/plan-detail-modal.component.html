@@ -44,9 +44,6 @@
                   <th scope="col">{{ 'modals.planDetail.colReading' | transloco }}</th>
                   <th scope="col" class="hide-narrow">{{ 'modals.planDetail.colBook' | transloco }}</th>
                   <th scope="col" class="hide-narrow">{{ 'modals.planDetail.colChapters' | transloco }}</th>
-                  @if (followingThisPlan()) {
-                    <th scope="col">{{ 'modals.planDetail.colDone' | transloco }}</th>
-                  }
                 </tr>
               </thead>
               <tbody>
@@ -58,15 +55,6 @@
                     <td class="hide-narrow nowrap">
                       {{ day.startChapter }}–{{ day.endChapter }}
                     </td>
-                    @if (followingThisPlan()) {
-                      <td>
-                        @if (dayDone(day)) {
-                          <span class="badge done">{{ 'modals.planDetail.doneYes' | transloco }}</span>
-                        } @else {
-                          <span class="badge">{{ 'modals.planDetail.doneNo' | transloco }}</span>
-                        }
-                      </td>
-                    }
                   </tr>
                 }
               </tbody>
