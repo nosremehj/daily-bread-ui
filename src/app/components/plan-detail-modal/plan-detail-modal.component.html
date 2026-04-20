@@ -63,7 +63,43 @@
           <div class="footer-actions">
             <button type="button" class="btn-secondary" (click)="close()">{{ 'modals.planDetail.close' | transloco }}</button>
             @if (followingThisPlan()) {
-              <span class="following-pill" aria-live="polite">{{ 'modals.planDetail.followingPill' | transloco }}</span>
+              <div class="following-block">
+                <span class="following-pill" aria-live="polite">{{ 'modals.planDetail.followingPill' | transloco }}</span>
+                @if (!leaveConfirmOpen()) {
+                  <button type="button" class="btn-leave-plan" (click)="openLeaveConfirm()">
+                    {{ 'modals.planDetail.leavePlanCta' | transloco }}
+                  </button>
+                } @else {
+                  <div class="leave-plan-confirm" role="group" [attr.aria-label]="'modals.planDetail.leavePlanCta' | transloco">
+                    <p class="leave-plan-confirm__text">{{ 'modals.planDetail.leavePlanConfirmBody' | transloco }}</p>
+                    <div class="leave-plan-confirm__actions">
+                      <button
+                        type="button"
+                        class="btn-secondary"
+                        (click)="cancelLeaveConfirm()"
+                        [disabled]="leaveLoading()"
+                      >
+                        {{ 'modals.planDetail.leavePlanConfirmNo' | transloco }}
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-leave-plan-confirm"
+                        (click)="confirmLeavePlan()"
+                        [disabled]="leaveLoading()"
+                      >
+                        @if (leaveLoading()) {
+                          <app-book-loading-spinner [size]="'sm'" [inline]="true" [labelKey]="'modals.planDetail.leavePlanSubmitting'" />
+                        } @else {
+                          {{ 'modals.planDetail.leavePlanConfirmYes' | transloco }}
+                        }
+                      </button>
+                    </div>
+                    @if (leaveError(); as leaveErr) {
+                      <p class="leave-plan-confirm__error" role="alert">{{ leaveErr }}</p>
+                    }
+                  </div>
+                }
+              </div>
             } @else {
               <button type="button" class="btn-primary inline" (click)="requestEnroll()">
                 {{ 'modals.planDetail.followCta' | transloco }}

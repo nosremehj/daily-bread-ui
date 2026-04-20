@@ -45,7 +45,12 @@
     "doneYes": "Yes",
     "doneNo": "No",
     "followingPill": "Following this plan",
-    "followCta": "Follow this plan"
+    "followCta": "Follow this plan",
+    "leavePlanCta": "Stop following or switch plan",
+    "leavePlanConfirmBody": "Progress for this plan will no longer be used on home and statistics. You can follow another plan afterward.",
+    "leavePlanConfirmYes": "Stop following",
+    "leavePlanConfirmNo": "Keep",
+    "leavePlanSubmitting": "Ending…"
   },
   "planPassage": {
     "title": "Plan reading",

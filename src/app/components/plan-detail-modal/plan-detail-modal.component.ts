@@ -40,6 +40,9 @@ export class PlanDetailModalComponent implements OnChanges {
   readonly detail = signal<ReadingPlanDetail | null>(null);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly leaveConfirmOpen = signal(false);
+  readonly leaveLoading = signal(false);
+  readonly leaveError = signal<string | null>(null);
 
   readonly followingThisPlan = computed(() => {
     const d = this.detail();
@@ -55,6 +58,9 @@ export class PlanDetailModalComponent implements OnChanges {
       this.detail.set(null);
       this.errorMessage.set(null);
       this.loading.set(false);
+      this.leaveConfirmOpen.set(false);
+      this.leaveLoading.set(false);
+      this.leaveError.set(null);
       return;
     }
     if (this.planId != null) {
@@ -110,5 +116,45 @@ export class PlanDetailModalComponent implements OnChanges {
     if (id != null && d) {
       this.enrollRequest.emit({ id, filename: d.originalFilename });
     }
+  }
+
+  openLeaveConfirm(): void {
+    this.leaveError.set(null);
+    this.leaveConfirmOpen.set(true);
+  }
+
+  cancelLeaveConfirm(): void {
+    if (this.leaveLoading()) {
+      return;
+    }
+    this.leaveConfirmOpen.set(false);
+    this.leaveError.set(null);
+  }
+
+  confirmLeavePlan(): void {
+    this.leaveLoading.set(true);
+    this.leaveError.set(null);
+    this.readingProgress
+      .deleteEnrollment()
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.leaveLoading.set(false);
+          }),
+        ),
+      )
+      .subscribe({
+        next: () => {
+          this.ngZone.run(() => {
+            this.leaveConfirmOpen.set(false);
+            this.close();
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.leaveError.set(err.message);
+          });
+        },
+      });
   }
 }

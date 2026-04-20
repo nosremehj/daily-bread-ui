@@ -51,6 +51,49 @@
                     <span class="plan-following-badge">{{ 'reading-plans.following' | transloco }}</span>
                   }
                 </span>
+                @if (isFollowingPlan(p.id)) {
+                  <div class="plan-leave-block">
+                    @if (leaveConfirmPlanId() !== p.id) {
+                      <button
+                        type="button"
+                        class="btn-leave-plan"
+                        (click)="openLeaveConfirm(p.id)"
+                        [disabled]="leaveLoading()"
+                      >
+                        {{ 'modals.planDetail.leavePlanCta' | transloco }}
+                      </button>
+                    } @else {
+                      <div class="leave-plan-confirm" role="group" [attr.aria-label]="'modals.planDetail.leavePlanCta' | transloco">
+                        <p class="leave-plan-confirm__text">{{ 'modals.planDetail.leavePlanConfirmBody' | transloco }}</p>
+                        <div class="leave-plan-confirm__actions">
+                          <button
+                            type="button"
+                            class="btn-leave-back"
+                            (click)="cancelLeaveConfirm()"
+                            [disabled]="leaveLoading()"
+                          >
+                            {{ 'modals.planDetail.leavePlanConfirmNo' | transloco }}
+                          </button>
+                          <button
+                            type="button"
+                            class="btn-leave-plan-confirm"
+                            (click)="confirmLeavePlan()"
+                            [disabled]="leaveLoading()"
+                          >
+                            @if (leaveLoading()) {
+                              <app-book-loading-spinner [size]="'sm'" [inline]="true" [labelKey]="'modals.planDetail.leavePlanSubmitting'" />
+                            } @else {
+                              {{ 'modals.planDetail.leavePlanConfirmYes' | transloco }}
+                            }
+                          </button>
+                        </div>
+                        @if (leaveError(); as leaveErr) {
+                          <p class="leave-plan-confirm__error" role="alert">{{ leaveErr }}</p>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
                 <span class="plan-meta">
                   {{
                     'reading-plans.meta'

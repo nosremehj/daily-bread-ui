@@ -136,7 +136,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding-top: 14px;
   flex-shrink: 0;
@@ -166,6 +166,15 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.following-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: min(100%, 420px);
+  text-align: right;
+}
+
 .following-pill {
   display: inline-flex;
   align-items: center;
@@ -176,6 +185,81 @@
   color: #c4b5fd;
   background: rgba(139, 92, 246, 0.2);
   border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+.btn-leave-plan {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+  color: #fecaca;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1.35;
+}
+
+.btn-leave-plan:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.18);
+}
+
+.btn-leave-plan:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.leave-plan-confirm {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  text-align: right;
+}
+
+.leave-plan-confirm__text {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.leave-plan-confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-leave-plan-confirm {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  background: rgba(248, 113, 113, 0.18);
+  color: #fecaca;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-leave-plan-confirm:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.28);
+}
+
+.btn-leave-plan-confirm:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.leave-plan-confirm__error {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: #fecaca;
 }
 
 @media (max-width: 600px) {

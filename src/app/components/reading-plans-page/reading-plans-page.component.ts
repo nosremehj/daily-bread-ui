@@ -41,6 +41,10 @@ export class ReadingPlansPageComponent {
   readonly enrollModalOpen = signal(false);
   readonly enrollPlanId = signal<number | null>(null);
   readonly enrollPlanName = signal('');
+  /** Plano em que o usuário abriu o fluxo de encerrar matrícula (lista). */
+  readonly leaveConfirmPlanId = signal<number | null>(null);
+  readonly leaveLoading = signal(false);
+  readonly leaveError = signal<string | null>(null);
 
   constructor() {
     afterNextRender(() => {
@@ -126,5 +130,45 @@ export class ReadingPlansPageComponent {
       this.enrollPlanId.set(null);
       this.enrollPlanName.set('');
     }
+  }
+
+  openLeaveConfirm(planId: number): void {
+    this.leaveError.set(null);
+    this.leaveConfirmPlanId.set(planId);
+  }
+
+  cancelLeaveConfirm(): void {
+    if (this.leaveLoading()) {
+      return;
+    }
+    this.leaveConfirmPlanId.set(null);
+    this.leaveError.set(null);
+  }
+
+  confirmLeavePlan(): void {
+    this.leaveLoading.set(true);
+    this.leaveError.set(null);
+    this.readingProgress
+      .deleteEnrollment()
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.leaveLoading.set(false);
+          }),
+        ),
+      )
+      .subscribe({
+        next: () => {
+          this.ngZone.run(() => {
+            this.leaveConfirmPlanId.set(null);
+            this.leaveError.set(null);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.leaveError.set(err.message);
+          });
+        },
+      });
   }
 }
