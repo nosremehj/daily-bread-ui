@@ -45,6 +45,8 @@ export class PlanPassageModalComponent implements OnChanges {
   @Input() block: TodayReadingBlock | null = null;
   /** Data civil do dia no plano (ISO YYYY-MM-DD), para `POST .../days/read`. */
   @Input() referenceDate: string | null = null;
+  /** Quando vindo do fluxo de recuperação no calendário, envia `readWithDelay: true` ao confirmar. */
+  @Input() markReadWithDelay = false;
 
   @Output() openChange = new EventEmitter<boolean>();
   @Output() readingConfirmed = new EventEmitter<void>();
@@ -278,6 +280,9 @@ export class PlanPassageModalComponent implements OnChanges {
     const seg = b.segmentIndex;
     if (seg != null && seg !== 0) {
       body.segmentIndex = seg;
+    }
+    if (this.markReadWithDelay) {
+      body.readWithDelay = true;
     }
     this.readingProgress
       .markDayRead(body)

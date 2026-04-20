@@ -35,14 +35,24 @@
     "bestStreak": "Mejor racha",
     "bestStreakDetail": "días (desde el inicio)",
     "inPeriod": "En el período",
-    "inPeriodDetail": "días con lectura · {{missed}} sin lectura (esperados)"
+    "inPeriodDetail": "días con lectura · {{missed}} sin lectura (esperados)",
+    "onTimeInPeriod": "A tiempo",
+    "onTimeInPeriodDetail": "lecturas en el día programado",
+    "delayedInPeriod": "Con retraso",
+    "delayedInPeriodDetail": "registradas fuera del día programado",
+    "missedInPeriod": "No leídas",
+    "missedInPeriodDetail": "días programados sin lectura en esa fecha"
   },
   "heatmap": {
     "title": "Lecturas en el período",
-    "read": "Leída",
+    "onTime": "A tiempo",
+    "delayed": "Con retraso",
     "miss": "No leída",
-    "cellRead": "{{date}} — leída",
-    "cellMiss": "{{date}} — no leída"
+    "neutral": "Fuera del plan",
+    "cellOnTime": "{{date}} — a tiempo",
+    "cellDelayed": "{{date}} — con retraso",
+    "cellMissed": "{{date}} — no leída (esperada)",
+    "cellNeutral": "{{date}} — sin día del plano en esta fecha"
   },
   "planSection": {
     "title": "Plan",

@@ -6,6 +6,7 @@ import {
   inject,
   NgZone,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -55,11 +56,19 @@ interface TodayReadingNav {
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
+  @ViewChild(ReadingCalendarModalComponent)
+  private readonly calendarModal?: ReadingCalendarModalComponent;
+
   private readonly auth = inject(AuthService);
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly biblePrefs = inject(BiblePreferencesService);
   private readonly ngZone = inject(NgZone);
   private readonly transloco = inject(TranslocoService);
+
+  /** Sobrescreve a data civil usada em `POST .../days/read` ao abrir o trecho a partir do calendário. */
+  private readonly planPassageReferenceOverride = signal<string | null>(null);
+  /** Quando aberto pelo calendário (pendente), marca leitura como recuperação com atraso. */
+  readonly planPassageReadWithDelay = signal(false);
 
   readonly userName = computed(() => this.auth.getFirstName());
 
@@ -109,12 +118,17 @@ export class HomeComponent {
   });
 
   /** Data civil usada pelo plano (para registrar leitura no modal). */
-  readonly readingReferenceDate = computed(
-    () =>
+  readonly readingReferenceDate = computed(() => {
+    const override = this.planPassageReferenceOverride();
+    if (override) {
+      return override;
+    }
+    return (
       this.todayBible()?.referenceDate ??
       this.dashboard()?.today.referenceDate ??
-      null,
-  );
+      null
+    );
+  });
 
   readonly ringDashOffset = computed(() => {
     const p = this.dashboard()?.annualProgressPercent ?? 0;
@@ -229,7 +243,20 @@ export class HomeComponent {
   }
 
   openPlanPassageModal(block: TodayReadingBlock): void {
+    this.planPassageReferenceOverride.set(null);
+    this.planPassageReadWithDelay.set(false);
     this.planPassageBlock.set(block);
+    this.planPassageOpen.set(true);
+  }
+
+  onOpenPlanReadingFromCalendar(payload: {
+    block: TodayReadingBlock;
+    referenceDate: string;
+    readWithDelay: boolean;
+  }): void {
+    this.planPassageReferenceOverride.set(payload.referenceDate);
+    this.planPassageReadWithDelay.set(payload.readWithDelay);
+    this.planPassageBlock.set(payload.block);
     this.planPassageOpen.set(true);
   }
 
@@ -237,10 +264,13 @@ export class HomeComponent {
     this.planPassageOpen.set(open);
     if (!open) {
       this.planPassageBlock.set(null);
+      this.planPassageReferenceOverride.set(null);
+      this.planPassageReadWithDelay.set(false);
     }
   }
 
   onPlanReadingConfirmed(): void {
     this.refreshDashboard();
+    this.calendarModal?.refreshAfterProgressUpdate();
   }
 }

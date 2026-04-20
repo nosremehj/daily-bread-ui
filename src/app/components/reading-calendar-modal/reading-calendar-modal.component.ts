@@ -17,7 +17,11 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { finalize } from 'rxjs/operators';
 import { translocoToAngularLocale } from '../../core/i18n/angular-locale';
 import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
-import { ReadingProgressService } from '../../services/reading-progress.service';
+import {
+  CalendarDayDetailResponse,
+  ReadingProgressService,
+  TodayReadingBlock,
+} from '../../services/reading-progress.service';
 import { VerseFavorite, VerseFavoritesService } from '../../services/verse-favorites.service';
 
 export interface CalendarCell {
@@ -25,6 +29,8 @@ export interface CalendarCell {
   dayNum: number;
   inMonth: boolean;
   read: boolean | null;
+  /** Leitura na data, mas com atraso em relação ao dia do plano. */
+  readWithDelay: boolean;
 }
 
 function toIsoLocal(d: Date): string {
@@ -62,6 +68,14 @@ export class ReadingCalendarModalComponent implements OnChanges {
 
   @Output() openChange = new EventEmitter<boolean>();
 
+  /** Abrir leitura do plano com `readDate` = data civil selecionada no calendário. */
+  @Output() openPlanReading = new EventEmitter<{
+    block: TodayReadingBlock;
+    referenceDate: string;
+    /** Recuperação a partir do calendário: enviar `readWithDelay` ao marcar leitura. */
+    readWithDelay: boolean;
+  }>();
+
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly viewYear = signal(new Date().getFullYear());
@@ -74,6 +88,10 @@ export class ReadingCalendarModalComponent implements OnChanges {
   readonly dayFavoritesLoading = signal(false);
   readonly dayFavoritesError = signal<string | null>(null);
 
+  readonly dayDetail = signal<CalendarDayDetailResponse | null>(null);
+  readonly dayDetailLoading = signal(false);
+  readonly dayDetailError = signal<string | null>(null);
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['open'] && this.open) {
       const now = new Date();
@@ -83,17 +101,37 @@ export class ReadingCalendarModalComponent implements OnChanges {
       this.selectedDate.set(null);
       this.dayFavorites.set([]);
       this.dayFavoritesError.set(null);
+      this.dayDetail.set(null);
+      this.dayDetailError.set(null);
+      this.dayDetailLoading.set(false);
       this.fetchMonth();
     }
   }
 
-  selectDay(date: string, inMonth: boolean): void {
+  /** Chamado após registrar leitura no modal do plano para atualizar grade e detalhe do dia. */
+  refreshAfterProgressUpdate(): void {
+    if (!this.open) {
+      return;
+    }
+    this.fetchMonth();
+  }
+
+  selectDay(date: string, inMonth: boolean, read: boolean | null): void {
     if (!inMonth) {
       return;
     }
     this.selectedDate.set(date);
     this.dayFavoritesLoading.set(true);
     this.dayFavoritesError.set(null);
+    this.dayDetailError.set(null);
+
+    if (read === true) {
+      this.dayDetail.set(null);
+      this.dayDetailLoading.set(false);
+    } else {
+      this.fetchDayDetail(date);
+    }
+
     this.verseFavorites.listByReadingDate(date).subscribe({
       next: (rows) => {
         this.ngZone.run(() => {
@@ -109,6 +147,66 @@ export class ReadingCalendarModalComponent implements OnChanges {
         });
       }
     });
+  }
+
+  goToBlockReading(block: TodayReadingBlock, referenceDate: string): void {
+    this.openPlanReading.emit({ block, referenceDate, readWithDelay: true });
+  }
+
+  private fetchDayDetail(date: string): void {
+    this.dayDetailLoading.set(true);
+    this.dayDetail.set(null);
+    this.readingProgress
+      .getCalendarDay(date)
+      .pipe(
+        finalize(() =>
+          this.ngZone.run(() => {
+            this.dayDetailLoading.set(false);
+          })
+        )
+      )
+      .subscribe({
+        next: (row) => {
+          this.ngZone.run(() => {
+            this.dayDetail.set(row);
+            this.dayDetailError.set(null);
+          });
+        },
+        error: (err: Error) => {
+          this.ngZone.run(() => {
+            this.dayDetailError.set(err.message);
+            this.dayDetail.set(null);
+          });
+        }
+      });
+  }
+
+  private refreshSelectedDayDetailIfNeeded(): void {
+    const sd = this.selectedDate();
+    if (!sd) {
+      return;
+    }
+    const cell = this.cells().find((c) => c.date === sd && c.inMonth);
+    if (cell?.read === true) {
+      this.dayDetail.set(null);
+      this.dayDetailLoading.set(false);
+      this.dayDetailError.set(null);
+      return;
+    }
+    this.fetchDayDetail(sd);
+  }
+
+  blockTrackKey(block: TodayReadingBlock): string {
+    const seg = block.segmentIndex ?? 0;
+    return `${block.planDayId}:${seg}:${block.dayNumber}:${block.startChapter}:${block.endChapter}`;
+  }
+
+  cellForSelectedDate(): CalendarCell | null {
+    const sd = this.selectedDate();
+    if (!sd) {
+      return null;
+    }
+    return this.cells().find((c) => c.date === sd && c.inMonth) ?? null;
   }
 
   @HostListener('document:keydown.escape')
@@ -178,11 +276,12 @@ export class ReadingCalendarModalComponent implements OnChanges {
       .subscribe({
         next: (rows) => {
           this.ngZone.run(() => {
-            const map = new Map<string, boolean>();
+            const map = new Map<string, { read: boolean; readWithDelay: boolean }>();
             for (const r of rows) {
-              map.set(r.date, r.read);
+              map.set(r.date, { read: r.read, readWithDelay: r.readWithDelay ?? false });
             }
             this.cells.set(this.buildGrid(y, m, map));
+            this.refreshSelectedDayDetailIfNeeded();
           });
         },
         error: (err: Error) => {
@@ -194,45 +293,42 @@ export class ReadingCalendarModalComponent implements OnChanges {
       });
   }
 
-  private buildGrid(year: number, month: number, readByDate: Map<string, boolean>): CalendarCell[] {
+  private buildGrid(
+    year: number,
+    month: number,
+    byDate: Map<string, { read: boolean; readWithDelay: boolean }>,
+  ): CalendarCell[] {
     const first = new Date(year, month, 1);
     const startPad = first.getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const grid: CalendarCell[] = [];
 
-    for (let i = 0; i < startPad; i++) {
-      const d = new Date(year, month, -startPad + 1 + i);
-      const iso = toIsoLocal(d);
+    const pushCell = (iso: string, dayNum: number, inMonth: boolean) => {
+      const st = byDate.get(iso);
       grid.push({
         date: iso,
-        dayNum: d.getDate(),
-        inMonth: false,
-        read: readByDate.has(iso) ? readByDate.get(iso)! : null
+        dayNum,
+        inMonth,
+        read: st !== undefined ? st.read : null,
+        readWithDelay: st?.readWithDelay ?? false,
       });
+    };
+
+    for (let i = 0; i < startPad; i++) {
+      const d = new Date(year, month, -startPad + 1 + i);
+      pushCell(toIsoLocal(d), d.getDate(), false);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
       const d = new Date(year, month, day);
-      const iso = toIsoLocal(d);
-      grid.push({
-        date: iso,
-        dayNum: day,
-        inMonth: true,
-        read: readByDate.has(iso) ? readByDate.get(iso)! : null
-      });
+      pushCell(toIsoLocal(d), day, true);
     }
 
     let tail = 0;
     while (grid.length % 7 !== 0) {
       tail += 1;
       const d = new Date(year, month, daysInMonth + tail);
-      const iso = toIsoLocal(d);
-      grid.push({
-        date: iso,
-        dayNum: d.getDate(),
-        inMonth: false,
-        read: readByDate.has(iso) ? readByDate.get(iso)! : null
-      });
+      pushCell(toIsoLocal(d), d.getDate(), false);
     }
 
     return grid;

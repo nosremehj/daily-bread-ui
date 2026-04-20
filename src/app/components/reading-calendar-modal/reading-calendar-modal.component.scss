@@ -123,6 +123,12 @@ button.cell {
   color: var(--text-primary);
 }
 
+.cell.read-delay {
+  border-style: dashed;
+  border-color: rgba(251, 191, 36, 0.7);
+  background: rgba(139, 92, 246, 0.16);
+}
+
 .cell.no-read {
   border-color: rgba(239, 68, 68, 0.25);
 }
@@ -230,4 +236,84 @@ button.cell {
 
 .fav-text {
   color: var(--text-secondary);
+}
+
+.muted.small {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pending-reading {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.pending-heading {
+  font-size: 0.9rem;
+  margin: 0 0 10px;
+  font-weight: 600;
+}
+
+.pending-loading-inline {
+  padding: 6px 0 4px;
+}
+
+.pending-note {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.pending-date-line {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+}
+
+.pending-block-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pending-block-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pending-block-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.pending-block-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.pending-done-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }

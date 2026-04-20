@@ -86,7 +86,13 @@
     "favoritesFor": "Favorites on {{date}}",
     "favoritesLoading": "Loading favorites…",
     "favoritesEmpty": "No verse favorites for this day.",
-    "favBookFallback": "Book"
+    "favBookFallback": "Book",
+    "pendingTitle": "Recover reading for this day",
+    "pendingLoading": "Loading day details…",
+    "pendingNoPlanDay": "There is no scheduled plan day on this date.",
+    "pendingDayDoneElsewhere": "This plan day is already complete in your progress, but this calendar date does not have a reading logged. You may need to adjust marks if something looks wrong.",
+    "pendingScheduled": "Plan day {{day}}",
+    "pendingBlockDone": "Done"
   },
   "verseCompare": {
     "title": "Compare verse",

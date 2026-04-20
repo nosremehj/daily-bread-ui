@@ -99,6 +99,7 @@
                 <a
                   role="listitem"
                   class="day-item active week-day-link"
+                  [class.read-delay]="d.readWithDelay === true"
                   [routerLink]="nav.commands"
                   [queryParams]="nav.queryParams"
                   [attr.aria-label]="
@@ -121,6 +122,7 @@
                   role="listitem"
                   class="day-item"
                   [class.completed]="d.status === 'COMPLETED'"
+                  [class.read-delay]="d.readWithDelay === true"
                   [class.active]="d.status === 'ACTIVE'"
                   [class.missed]="d.status === 'MISSED'"
                   [class.upcoming]="d.status === 'UPCOMING'"
@@ -240,12 +242,14 @@
     <app-reading-calendar-modal
       [open]="calendarOpen()"
       (openChange)="onCalendarOpenChange($event)"
+      (openPlanReading)="onOpenPlanReadingFromCalendar($event)"
     />
 
     <app-plan-passage-modal
       [open]="planPassageOpen()"
       [block]="planPassageBlock()"
       [referenceDate]="readingReferenceDate()"
+      [markReadWithDelay]="planPassageReadWithDelay()"
       (openChange)="onPlanPassageOpenChange($event)"
       (readingConfirmed)="onPlanReadingConfirmed()"
     />

@@ -45,9 +45,10 @@
                 role="gridcell"
                 class="cell cell-btn"
                 [class.read]="c.read === true"
+                [class.read-delay]="c.read === true && c.readWithDelay"
                 [class.no-read]="c.read === false"
                 [class.selected]="selectedDate() === c.date"
-                (click)="selectDay(c.date, c.inMonth)"
+                (click)="selectDay(c.date, c.inMonth, c.read)"
                 [attr.aria-label]="
                   c.read === true
                     ? ('modals.calendar.cellRead' | transloco: { date: c.date })
@@ -75,6 +76,55 @@
         </p>
 
         @if (selectedDate(); as sd) {
+          @if (cellForSelectedDate(); as sel) {
+            @if (sel.inMonth && sel.read === false) {
+              <section class="pending-reading glass-inner" [attr.aria-labelledby]="'pending-day-' + sd">
+                <h3 class="pending-heading" [id]="'pending-day-' + sd">
+                  {{ 'modals.calendar.pendingTitle' | transloco }}
+                </h3>
+                @if (dayDetailLoading()) {
+                  <div class="pending-loading-inline">
+                    <app-book-loading-spinner [size]="'sm'" [labelKey]="'modals.calendar.pendingLoading'" />
+                  </div>
+                } @else {
+                  @if (dayDetailError(); as de) {
+                    <p class="state-msg error" role="alert">{{ de }}</p>
+                  } @else {
+                    @if (dayDetail(); as detail) {
+                      @if (detail.scheduledDayNumber === null) {
+                        <p class="muted small">{{ 'modals.calendar.pendingNoPlanDay' | transloco }}</p>
+                      } @else {
+                        @if (!detail.read && detail.dayCompleted) {
+                          <p class="pending-note">{{ 'modals.calendar.pendingDayDoneElsewhere' | transloco }}</p>
+                        }
+                        <p class="pending-date-line">{{ 'modals.calendar.pendingScheduled' | transloco: { day: detail.scheduledDayNumber } }}</p>
+                        <ul class="pending-block-list">
+                          @for (block of detail.blocks; track blockTrackKey(block)) {
+                            <li class="pending-block-item">
+                              <button
+                                type="button"
+                                class="pending-block-btn"
+                                (click)="goToBlockReading(block, sd)"
+                                [disabled]="block.completed"
+                              >
+                                <span class="pending-block-label">{{ block.readingText }}</span>
+                                @if (block.completed) {
+                                  <span class="pending-done-pill">{{ 'modals.calendar.pendingBlockDone' | transloco }}</span>
+                                } @else {
+                                  <i class="uil uil-angle-right-b" aria-hidden="true"></i>
+                                }
+                              </button>
+                            </li>
+                          }
+                        </ul>
+                      }
+                    }
+                  }
+                }
+              </section>
+            }
+          }
+
           <section class="day-favorites glass-inner" [attr.aria-labelledby]="'fav-day-' + sd">
             <h3 class="fav-heading" [id]="'fav-day-' + sd">
               {{ 'modals.calendar.favoritesFor' | transloco: { date: sd } }}

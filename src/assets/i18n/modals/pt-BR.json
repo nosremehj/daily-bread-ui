@@ -86,7 +86,13 @@
     "favoritesFor": "Favoritos em {{date}}",
     "favoritesLoading": "Carregando favoritos…",
     "favoritesEmpty": "Nenhum versículo favorito neste dia.",
-    "favBookFallback": "Livro"
+    "favBookFallback": "Livro",
+    "pendingTitle": "Recuperar leitura deste dia",
+    "pendingLoading": "Carregando detalhes do dia…",
+    "pendingNoPlanDay": "Nesta data não há dia do plano agendado.",
+    "pendingDayDoneElsewhere": "O plano já conta este dia como concluído, mas o calendário desta data ainda não mostra leitura registrada. Ajuste as marcações se necessário.",
+    "pendingScheduled": "Dia {{day}} do plano",
+    "pendingBlockDone": "Feito"
   },
   "verseCompare": {
     "title": "Comparar versículo",

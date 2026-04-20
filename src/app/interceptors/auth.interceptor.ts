@@ -1,7 +1,26 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, defer, finalize, share, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+
+/**
+ * O backend troca o refresh token a cada `/auth/refresh` (o antigo é apagado).
+ * Várias requisições em paralelo com access expirado disparariam vários refreshes;
+ * só o primeiro teria sucesso — os outros receberiam 401 no refresh e derrubariam a sessão.
+ */
+let refreshInFlight: Observable<string> | null = null;
+
+function coalescedRefresh(auth: AuthService): Observable<string> {
+  if (!refreshInFlight) {
+    refreshInFlight = defer(() => auth.refreshSession()).pipe(
+      share(),
+      finalize(() => {
+        refreshInFlight = null;
+      }),
+    );
+  }
+  return refreshInFlight;
+}
 
 /** Rotas em que 401 não deve disparar refresh+retry (credenciais incorretas, etc.). */
 function isAuthUrlExemptFromRefresh(url: string): boolean {
@@ -20,7 +39,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   let outgoing = req;
   if (token && !req.headers.has('Authorization')) {
     outgoing = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` }
+      setHeaders: { Authorization: `Bearer ${token}` },
     });
   }
 
@@ -33,22 +52,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         auth.logout();
         return throwError(() => err);
       }
-      return auth.refreshSession().pipe(
+      return coalescedRefresh(auth).pipe(
         switchMap((newAccess) =>
           next(
             req.clone({
               setHeaders: {
                 Authorization: `Bearer ${newAccess}`,
-                'X-Auth-Retry': '1'
-              }
-            })
-          )
+                'X-Auth-Retry': '1',
+              },
+            }),
+          ),
         ),
         catchError((refreshErr) => {
           auth.logout();
           return throwError(() => refreshErr);
-        })
+        }),
       );
-    })
+    }),
   );
 };

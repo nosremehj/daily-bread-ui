@@ -146,32 +146,51 @@
           <span class="stat-value">{{ s.longestStreakDays }}</span>
           <span class="stat-detail">{{ 'statistics.stats.bestStreakDetail' | transloco }}</span>
         </div>
-        <div class="stat-card glass">
-          <span class="stat-label">{{ 'statistics.stats.inPeriod' | transloco }}</span>
-          <span class="stat-value">{{ s.daysReadInPeriod }}</span>
-          <span class="stat-detail">{{
-            'statistics.stats.inPeriodDetail' | transloco: { missed: s.daysMissedInPeriod }
-          }}</span>
-        </div>
+        @if (hasPeriodBreakdownCards()) {
+          <div class="stat-card glass">
+            <span class="stat-label">{{ 'statistics.stats.onTimeInPeriod' | transloco }}</span>
+            <span class="stat-value">{{ periodOnTimeCount(s) }}</span>
+            <span class="stat-detail">{{ 'statistics.stats.onTimeInPeriodDetail' | transloco }}</span>
+          </div>
+          <div class="stat-card glass">
+            <span class="stat-label">{{ 'statistics.stats.delayedInPeriod' | transloco }}</span>
+            <span class="stat-value">{{ periodDelayedCount(s) }}</span>
+            <span class="stat-detail">{{ 'statistics.stats.delayedInPeriodDetail' | transloco }}</span>
+          </div>
+          <div class="stat-card glass">
+            <span class="stat-label">{{ 'statistics.stats.missedInPeriod' | transloco }}</span>
+            <span class="stat-value">{{ s.daysMissedInPeriod }}</span>
+            <span class="stat-detail">{{ 'statistics.stats.missedInPeriodDetail' | transloco }}</span>
+          </div>
+        } @else {
+          <div class="stat-card glass">
+            <span class="stat-label">{{ 'statistics.stats.inPeriod' | transloco }}</span>
+            <span class="stat-value">{{ s.daysReadInPeriod }}</span>
+            <span class="stat-detail">{{
+              'statistics.stats.inPeriodDetail' | transloco: { missed: s.daysMissedInPeriod }
+            }}</span>
+          </div>
+        }
       </section>
 
       <section class="heatmap-section" aria-labelledby="heatmap-heading">
         <h2 id="heatmap-heading" class="section-title">{{ 'statistics.heatmap.title' | transloco }}</h2>
         <p class="muted small heatmap-legend">
-          <span class="legend-swatch read" aria-hidden="true"></span> {{ 'statistics.heatmap.read' | transloco }}
+          <span class="legend-swatch ontime" aria-hidden="true"></span> {{ 'statistics.heatmap.onTime' | transloco }}
+          <span class="legend-swatch delayed" aria-hidden="true"></span> {{ 'statistics.heatmap.delayed' | transloco }}
           <span class="legend-swatch miss" aria-hidden="true"></span> {{ 'statistics.heatmap.miss' | transloco }}
+          <span class="legend-swatch neutral" aria-hidden="true"></span> {{ 'statistics.heatmap.neutral' | transloco }}
         </p>
         <div class="heatmap-grid" role="list">
           @for (cell of heatmapDays(); track cell.date) {
             <div
               role="listitem"
               class="heatmap-cell"
-              [class.read]="cell.read"
-              [attr.title]="
-                cell.read
-                  ? ('statistics.heatmap.cellRead' | transloco: { date: cell.date })
-                  : ('statistics.heatmap.cellMiss' | transloco: { date: cell.date })
-              "
+              [class.ontime]="cell.kind === 'onTime'"
+              [class.delayed]="cell.kind === 'delayed'"
+              [class.missed]="cell.kind === 'missed'"
+              [class.neutral]="cell.kind === 'neutral'"
+              [attr.title]="heatmapTooltip(cell)"
             ></div>
           }
         </div>

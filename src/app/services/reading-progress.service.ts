@@ -28,6 +28,8 @@ export interface WeekStripDay {
   dayOfMonth: number;
   weekdayLabel: string;
   status: WeekDayStatus;
+  /** Leitura na data civil, mas não o dia do plano previsto para essa data (atraso). */
+  readWithDelay?: boolean;
 }
 
 export interface TodayReadingBlock {
@@ -71,12 +73,27 @@ export interface ReadingProgressDashboard {
   currentStreakDays: number;
   daysRemainingInYear: number;
   weekStrip: WeekStripDay[];
+  /** ISO dates (dom–sáb da semana de referência) com leitura apenas com atraso. */
+  readWithDelayDatesInReferenceWeek?: string[];
   today: TodayReadingSection;
 }
 
 export interface CalendarDayRead {
   date: string;
   read: boolean;
+  /** `true` quando houve registro na data, mas não a leitura agendada para esse dia (atraso). */
+  readWithDelay?: boolean;
+}
+
+/** Resposta de `GET /reading-progress/calendar/day?date=`. */
+export interface CalendarDayDetailResponse {
+  date: string;
+  read: boolean;
+  readWithDelay?: boolean;
+  scheduledDayNumber: number | null;
+  scheduledDate: string | null;
+  dayCompleted: boolean;
+  blocks: TodayReadingBlock[];
 }
 
 export interface MarkDayReadRequest {
@@ -85,6 +102,11 @@ export interface MarkDayReadRequest {
   /** Se enviado, marca só este trecho; omitir marca o dia inteiro (catch-up / legado). */
   readingPlanDayId?: number;
   segmentIndex?: number;
+  /**
+   * `true` = recuperação/atraso (calendário e streak tratam como fora do prazo mesmo com `readDate` no slot).
+   * Omitir = backend infere por `readDate` ≠ data agendada do dia.
+   */
+  readWithDelay?: boolean;
 }
 
 export interface CatchUpDateRangeRequest {
@@ -113,6 +135,15 @@ export interface ReadingStatistics {
   longestStreakDays: number;
   annualProgressPercent: number;
   readDatesInPeriod: string[];
+  /** ISO dates no período com leitura registrada apenas com atraso. */
+  readWithDelayDatesInPeriod?: string[];
+  /** Contagens alinhadas ao calendário (API nova); opcional para compatibilidade. */
+  daysReadOnTimeInPeriod?: number;
+  daysReadWithDelayInPeriod?: number;
+  /** ISO — dias lidos no prazo (heatmap / tooltips). */
+  readOnTimeDatesInPeriod?: string[];
+  /** ISO — dias agendados sem leitura na data (alinhado a `daysMissedInPeriod`). */
+  missedScheduledDatesInPeriod?: string[];
   nextMilestonePercent: number | null;
   daysUntilNextMilestone: number | null;
 }
@@ -228,6 +259,19 @@ export class ReadingProgressService {
     return this.http
       .get<CalendarDayRead[]>(`${this.baseUrl}/calendar`, {
         params: { from, to }
+      })
+      .pipe(
+        catchError((err) =>
+          throwError(() => this.toError(err, 'common.errors.loadCalendar'))
+        )
+      );
+  }
+
+  /** Detalhe de um dia civil para o painel do calendário (trechos agendados, flags). */
+  getCalendarDay(date: string): Observable<CalendarDayDetailResponse> {
+    return this.http
+      .get<CalendarDayDetailResponse>(`${this.baseUrl}/calendar/day`, {
+        params: { date }
       })
       .pipe(
         catchError((err) =>

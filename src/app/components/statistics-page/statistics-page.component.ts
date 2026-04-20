@@ -46,6 +46,33 @@ const MAX_RANGE_DAYS = MAX_CATCH_UP_RANGE_DAYS;
 
 export type StatisticsPreset = 'default' | 'last30' | 'month' | 'year';
 
+/** Estados do heatmap alinhados à API (no prazo / atraso / não lido / fora do plano no intervalo). */
+export type HeatmapCellKind = 'onTime' | 'delayed' | 'missed' | 'neutral';
+
+export interface HeatmapDay {
+  date: string;
+  kind: HeatmapCellKind;
+}
+
+/** API com listas discriminadas para o período (heatmap não-binário). */
+function hasDiscriminatedHeatmap(s: ReadingStatistics): boolean {
+  return (
+    s.readOnTimeDatesInPeriod != null ||
+    s.readWithDelayDatesInPeriod != null ||
+    s.missedScheduledDatesInPeriod != null
+  );
+}
+
+/** Resumo em três faixas (cards) quando a API expõe contagens ou listas novas. */
+function hasPeriodBreakdown(s: ReadingStatistics): boolean {
+  return (
+    s.daysReadOnTimeInPeriod != null ||
+    s.daysReadWithDelayInPeriod != null ||
+    s.readOnTimeDatesInPeriod != null ||
+    s.missedScheduledDatesInPeriod != null
+  );
+}
+
 @Component({
   selector: 'app-statistics-page',
   standalone: true,
@@ -89,15 +116,40 @@ export class StatisticsPageComponent {
     return s.hasMissedDaysInPeriod ?? s.daysMissedInPeriod > 0;
   });
 
-  readonly heatmapDays = computed(() => {
+  readonly hasPeriodBreakdownCards = computed(() => {
+    const s = this.stats();
+    return s != null && hasPeriodBreakdown(s);
+  });
+
+  readonly heatmapDays = computed((): HeatmapDay[] => {
     const s = this.stats();
     if (s == null) {
-      return [] as { date: string; read: boolean }[];
+      return [];
+    }
+    const range = eachDayInRange(s.periodFrom, s.periodTo);
+    if (hasDiscriminatedHeatmap(s)) {
+      const onTime = new Set(s.readOnTimeDatesInPeriod ?? []);
+      const delayed = new Set(s.readWithDelayDatesInPeriod ?? []);
+      const missed = new Set(s.missedScheduledDatesInPeriod ?? []);
+      // Ordem fixa se houver sobreposição indevida na API: no prazo → atraso → não lido → neutro.
+      return range.map((date) => {
+        let kind: HeatmapCellKind;
+        if (onTime.has(date)) {
+          kind = 'onTime';
+        } else if (delayed.has(date)) {
+          kind = 'delayed';
+        } else if (missed.has(date)) {
+          kind = 'missed';
+        } else {
+          kind = 'neutral';
+        }
+        return { date, kind };
+      });
     }
     const read = new Set(s.readDatesInPeriod);
-    return eachDayInRange(s.periodFrom, s.periodTo).map((date) => ({
+    return range.map((date) => ({
       date,
-      read: read.has(date)
+      kind: read.has(date) ? 'onTime' : 'missed',
     }));
   });
 
@@ -262,6 +314,38 @@ export class StatisticsPageComponent {
     }
     this.preset.set('default');
     this.loadStatistics(from, to);
+  }
+
+  heatmapTooltip(cell: HeatmapDay): string {
+    const key =
+      cell.kind === 'onTime'
+        ? 'statistics.heatmap.cellOnTime'
+        : cell.kind === 'delayed'
+          ? 'statistics.heatmap.cellDelayed'
+          : cell.kind === 'missed'
+            ? 'statistics.heatmap.cellMissed'
+            : 'statistics.heatmap.cellNeutral';
+    return this.transloco.translate(key, { date: cell.date });
+  }
+
+  periodOnTimeCount(s: ReadingStatistics): number {
+    if (s.daysReadOnTimeInPeriod != null) {
+      return s.daysReadOnTimeInPeriod;
+    }
+    if (s.readOnTimeDatesInPeriod != null) {
+      return s.readOnTimeDatesInPeriod.length;
+    }
+    return 0;
+  }
+
+  periodDelayedCount(s: ReadingStatistics): number {
+    if (s.daysReadWithDelayInPeriod != null) {
+      return s.daysReadWithDelayInPeriod;
+    }
+    if (s.readWithDelayDatesInPeriod != null) {
+      return s.readWithDelayDatesInPeriod.length;
+    }
+    return 0;
   }
 
   private loadStatistics(from?: string, to?: string): void {

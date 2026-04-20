@@ -35,14 +35,24 @@
     "bestStreak": "Best streak",
     "bestStreakDetail": "days (since the start)",
     "inPeriod": "In period",
-    "inPeriodDetail": "days with reading · {{missed}} without reading (expected)"
+    "inPeriodDetail": "days with reading · {{missed}} without reading (expected)",
+    "onTimeInPeriod": "On time",
+    "onTimeInPeriodDetail": "readings on the scheduled day",
+    "delayedInPeriod": "Delayed",
+    "delayedInPeriodDetail": "logged outside the scheduled day",
+    "missedInPeriod": "Missed",
+    "missedInPeriodDetail": "scheduled days without a reading on that date"
   },
   "heatmap": {
     "title": "Readings in period",
-    "read": "Read",
-    "miss": "Not read",
-    "cellRead": "{{date}} — read",
-    "cellMiss": "{{date}} — not read"
+    "onTime": "On time",
+    "delayed": "Delayed",
+    "miss": "Missed",
+    "neutral": "Off-plan",
+    "cellOnTime": "{{date}} — on time",
+    "cellDelayed": "{{date}} — delayed",
+    "cellMissed": "{{date}} — missed (expected)",
+    "cellNeutral": "{{date}} — no plan day on this date"
   },
   "planSection": {
     "title": "Plan",
