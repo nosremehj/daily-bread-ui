@@ -170,7 +170,7 @@
           } @else {
             @for (
               block of displayBlocks();
-              track block.planDayId;
+              track readingBlockTrackKey(block);
               let i = $index
             ) {
               <div class="reading-card glass" [class.accent]="i === 0">

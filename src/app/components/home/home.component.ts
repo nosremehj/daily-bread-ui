@@ -141,6 +141,12 @@ export class HomeComponent {
     return 1;
   }
 
+  /** Chave estável para `@for` quando há vários trechos no mesmo dia. */
+  readingBlockTrackKey(block: TodayReadingBlock): string {
+    const seg = block.segmentIndex ?? 0;
+    return `${block.planDayId}:${seg}:${block.dayNumber}:${block.startChapter}:${block.endChapter}`;
+  }
+
   refreshDashboard(): void {
     const ref = toIsoLocal(new Date());
     this.loading.set(true);

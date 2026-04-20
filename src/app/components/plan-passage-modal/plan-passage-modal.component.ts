@@ -20,7 +20,7 @@ import {
   type BibleVersionCode
 } from '../../services/bible-preferences.service';
 import { resolveBookNumberFromLabel } from '../../utils/bible-resolve-book';
-import type { TodayReadingBlock } from '../../services/reading-progress.service';
+import type { MarkDayReadRequest, TodayReadingBlock } from '../../services/reading-progress.service';
 import { ReadingProgressService } from '../../services/reading-progress.service';
 import { VerseFavoritesService } from '../../services/verse-favorites.service';
 import { BookLoadingSpinnerComponent } from '../book-loading-spinner/book-loading-spinner.component';
@@ -88,10 +88,12 @@ export class PlanPassageModalComponent implements OnChanges {
     const openedNow =
       changes['open']?.currentValue === true && changes['open']?.previousValue === false;
     const prevBlock = changes['block']?.previousValue as TodayReadingBlock | null | undefined;
+    const prevSeg = prevBlock?.segmentIndex ?? 0;
+    const currSeg = this.block?.segmentIndex ?? 0;
     const blockIdChanged =
       !!changes['block'] &&
       this.block != null &&
-      prevBlock?.planDayId !== this.block.planDayId;
+      (prevBlock?.planDayId !== this.block.planDayId || prevSeg !== currSeg);
 
     if (this.open && this.block && (openedNow || blockIdChanged)) {
       this.resetConfirmState();
@@ -210,7 +212,7 @@ export class PlanPassageModalComponent implements OnChanges {
     this.unmarkLoading.set(true);
     this.unmarkError.set(null);
     this.readingProgress
-      .unmarkDayRead(b.dayNumber)
+      .unmarkPlanDayRead(b.planDayId, b.segmentIndex ?? 0)
       .pipe(
         finalize(() =>
           this.ngZone.run(() => {
@@ -268,8 +270,17 @@ export class PlanPassageModalComponent implements OnChanges {
     }
     this.confirmLoading.set(true);
     this.confirmError.set(null);
+    const body: MarkDayReadRequest = {
+      dayNumber: b.dayNumber,
+      readDate: ref,
+      readingPlanDayId: b.planDayId
+    };
+    const seg = b.segmentIndex;
+    if (seg != null && seg !== 0) {
+      body.segmentIndex = seg;
+    }
     this.readingProgress
-      .markDayRead({ dayNumber: b.dayNumber, readDate: ref })
+      .markDayRead(body)
       .pipe(
         finalize(() =>
           this.ngZone.run(() => {

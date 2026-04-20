@@ -32,6 +32,8 @@ export interface WeekStripDay {
 
 export interface TodayReadingBlock {
   planDayId: number;
+  /** Índice do bloco quando há vários trechos com o mesmo `planDayId` (texto legado). */
+  segmentIndex?: number;
   dayNumber: number;
   bookName: string;
   startChapter: number;
@@ -80,6 +82,9 @@ export interface CalendarDayRead {
 export interface MarkDayReadRequest {
   dayNumber: number;
   readDate: string | null;
+  /** Se enviado, marca só este trecho; omitir marca o dia inteiro (catch-up / legado). */
+  readingPlanDayId?: number;
+  segmentIndex?: number;
 }
 
 export interface CatchUpDateRangeRequest {
@@ -305,6 +310,19 @@ export class ReadingProgressService {
     return this.http.delete<void>(`${this.baseUrl}/days/${dayNumber}/read`).pipe(
       catchError((err) => throwError(() => this.toError(err, 'common.errors.unmarkReading')))
     );
+  }
+
+  /** Remove a conclusão de um trecho (`segmentIndex` omitido ou 0 = primeiro bloco). */
+  unmarkPlanDayRead(planDayId: number, segmentIndex = 0): Observable<void> {
+    let params = new HttpParams();
+    if (segmentIndex !== 0) {
+      params = params.set('segmentIndex', String(segmentIndex));
+    }
+    return this.http
+      .delete<void>(`${this.baseUrl}/plan-days/${planDayId}/read`, { params })
+      .pipe(
+        catchError((err) => throwError(() => this.toError(err, 'common.errors.unmarkReading')))
+      );
   }
 
   private toError(err: unknown, fallbackKey: string): Error {
